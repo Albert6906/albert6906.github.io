@@ -14,16 +14,28 @@
   const tokenStore={
     read(){
       try{
-        let value=localStorage.getItem(KEY);
+        let value=null;
+        try{value=localStorage.getItem(KEY)}catch{}
+        if(!value)value=sessionStorage.getItem(KEY);
         if(!value){
           value=sessionStorage.getItem('transmission_spotify_v2');
-          if(value){localStorage.setItem(KEY,value);sessionStorage.removeItem('transmission_spotify_v2')}
+          if(value){
+            try{localStorage.setItem(KEY,value)}catch{sessionStorage.setItem(KEY,value)}
+            sessionStorage.removeItem('transmission_spotify_v2');
+          }
         }
-        return value?JSON.parse(value):null
+        return value?JSON.parse(value):null;
       }catch{return null}
     },
-    write(x){localStorage.setItem(KEY,JSON.stringify(x))},
-    clear(){localStorage.removeItem(KEY);sessionStorage.removeItem('transmission_spotify_v2')}
+    write(x){
+      const value=JSON.stringify(x);
+      try{localStorage.setItem(KEY,value)}catch{sessionStorage.setItem(KEY,value)}
+    },
+    clear(){
+      try{localStorage.removeItem(KEY)}catch{}
+      try{sessionStorage.removeItem(KEY)}catch{}
+      try{sessionStorage.removeItem('transmission_spotify_v2')}catch{}
+    }
   };
   function base64url(bytes){
     return btoa(String.fromCharCode(...bytes)).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');
