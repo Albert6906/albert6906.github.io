@@ -30,7 +30,7 @@ function updateUi(state){
  shuffle.setAttribute('aria-pressed',String(shuffleOn));
  repeat.dataset.state=state.repeat||'off';
  repeat.lastChild&&null;
- if(oldId!==state.trackId && $('tm-options').hidden===false && $('tm-popover-content').dataset.mode==='lyrics')showLyrics();
+ if(oldId!==state.trackId)updateLyricsLink();
 }
 function positionUi(){
  if(!playback)return;
@@ -147,18 +147,14 @@ $('tm-devices-button').onclick=async()=>{
    if(!c.childElementCount)showText('No hay dispositivos disponibles. Abre Spotify en un dispositivo e inténtalo nuevamente.');
  }catch(err){showText(err.message)}
 };
-function showLyrics(){
- c.dataset.mode='lyrics';c.replaceChildren();
- const intro=document.createElement('div');intro.textContent='Spotify no permite consultar letras completas desde su Web API. Puedes abrir la canción en Spotify y usar su función oficial de letras.';c.append(intro);
+function updateLyricsLink(){
  const track=rt.currentTrack;
- if(track?.id){
-   const a=document.createElement('a');
-   a.href='https://open.spotify.com/track/'+encodeURIComponent(track.id);
-   a.target='_blank';a.rel='noopener noreferrer';a.textContent='ABRIR CANCIÓN EN SPOTIFY ↗';
-   a.style.display='inline-block';a.style.marginTop='10px';c.append(a);
- }
+ const id=track?.id&&/^[a-zA-Z0-9]{22}$/.test(track.id)?track.id:null;
+ const link=$('tm-lyrics-button');
+ link.href=id?'https://open.spotify.com/track/'+id:'https://open.spotify.com/';
+ link.title=id?'Abre la canción en Spotify y consulta sus letras oficiales':'Spotify muestra letras desde su propia aplicación';
 }
-$('tm-lyrics-button').onclick=showLyrics;
+updateLyricsLink();
 $('tm-diagnostics').onclick=async()=>{
  c.dataset.mode='diagnostics';c.replaceChildren(document.createTextNode('Comprobando Spotify…'));
  const checks=[];
@@ -184,7 +180,7 @@ $('tm-diagnostics').onclick=async()=>{
 window.addEventListener('tm:playback',e=>updateUi(e.detail));
 window.addEventListener('tm:track',e=>{
  const track=e.detail?.track;
- if(c.dataset.mode==='lyrics'&&!$('tm-options').hidden)showLyrics();
+ updateLyricsLink();
  if(track?.duration_ms&&playback&&playback.trackId!==track.id){
    updateUi({...playback,trackId:track.id,duration:track.duration_ms,position:0});
  }
