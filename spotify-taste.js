@@ -86,6 +86,7 @@ async function loadFirst(){
    likesTotal=liked.length;
  }
  render();
+ rt?.fillEmptyHome?.(liked);
  fillPlaylistRail();
  const holder=el('recent-items');
  if(ownerConnected && liked.length && holder && !holder.querySelector('button')){
