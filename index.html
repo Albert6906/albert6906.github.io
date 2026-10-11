@@ -100,11 +100,17 @@
 .record-image>.record-art{inset:7px 7px 37px 7px;background-size:contain;background-position:center}
 .card-play{bottom:7px;left:8px}
 .record-index{bottom:16px;right:7px}
+.tm-taste-artists{margin:15px 0 23px;padding-top:13px;border-top:1px solid #636363}
+.tm-taste-artists[hidden]{display:none}
+.tm-taste-artists .eyebrow{color:var(--yellow);font:10px var(--mono)}
+#taste-artist-names{display:flex;gap:8px 15px;flex-wrap:wrap;margin-top:9px}
+#taste-artist-names span{font-size:16px;font-weight:800;line-height:1;text-transform:uppercase}
+#taste-artist-names span:before{content:'↗ ';color:var(--yellow)}
 </style>
-<link rel="stylesheet" href="./spotify-controls.css?v=20261011h">
-<script defer src="./spotify-auth.js?v=20261011h"></script>
-<script defer src="./spotify-editorial.js?v=20261011h"></script>
-<script defer src="./spotify-controls.js?v=20261011h"></script>
+<link rel="stylesheet" href="./spotify-controls.css?v=20261011i">
+<script defer src="./spotify-auth.js?v=20261011i"></script>
+<script defer src="./spotify-editorial.js?v=20261011i"></script>
+<script defer src="./spotify-controls.js?v=20261011i"></script>
 </head>
 <body>
   <a class="skip-link" href="#main">Saltar al contenido</a>
@@ -220,6 +226,7 @@
     <span class="eyebrow">SPOTIFY / PERSONAL ARCHIVE</span>
     <h2>EVERY<br>FREQUENCY<br>HAS A STORY<span class="heading-period">.</span></h2>
     <p>Una biblioteca musical personal: canciones favoritas, álbumes que se repiten y selecciones para compartir. El audio se reproduce aquí con cada cuenta Premium.</p>
+    <div id="taste-artists" class="tm-taste-artists" hidden><span class="eyebrow">ARTISTS IN ORBIT</span><div id="taste-artist-names"></div></div>
     <a class="outline-cta" href="#collections">EXPLORE MY COLLECTION <span>↗</span></a>
   </div>
   <div class="discover-art" role="img" aria-label="Composición abstracta de discos y ondas">
