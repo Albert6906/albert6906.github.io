@@ -127,15 +127,32 @@
       await getToken(true);
       return api(path,options,false);
     }
+    let data=null;
+    // Some API responses are empty, plain text or HTML (e.g. quotas/CDN). Never
+    // expose a raw JSON parser exception or the body to the page.
+    if(res.status!==204&&res.status!==205){
+      const raw=typeof res.text==='function'
+        ?await res.text()
+        :null;
+      if(raw!==null){
+        if(raw.trim()){
+          try{data=JSON.parse(raw)}
+          catch{throw new SpotifyError(res.status,'Respuesta no válida de Spotify ('+res.status+'). Comprueba la sesión y el acceso en Diagnóstico.')}
+        }
+      }else{
+        try{data=await res.json()}catch{
+          throw new SpotifyError(res.status,'Spotify respondió con datos que no se pudieron interpretar ('+res.status+').');
+        }
+      }
+    }
     if(!res.ok){
-      const detail=await res.json().catch(()=>({}));
-      const reason=detail?.error?.reason||detail?.error?.message||'';
-      const message=res.status===403?'Spotify no permitió esta función. Comprueba Premium, permisos y usuarios autorizados en Developer Dashboard.':
-        res.status===429?(reason==='QUOTA_EXCEEDED'?'Se alcanzó la cuota compartida de Spotify para esta aplicación. Vuelve a intentarlo más tarde.':'Spotify está limitando temporalmente las peticiones. Espera y vuelve a intentarlo.') :
-        'Spotify respondió '+res.status+(reason?': '+String(reason):'');
+      const reason=data?.error?.reason||data?.error?.message||'';
+      const message=res.status===403?'Spotify no autorizó esta operación. Revisa permisos, acceso de desarrollo o cuota.':
+        res.status===429?'Spotify limitó las solicitudes; espera antes de actualizar.':
+        'Spotify respondió '+res.status+(reason?': '+String(reason).slice(0,140):'');
       throw new SpotifyError(res.status,message);
     }
-    return res.status===204?null:res.json();
+    return data;
   }
   function logout(){tokenStore.clear();sessionStorage.removeItem(PKCE);sessionStorage.removeItem('tm_return_to')}
   window.TransmissionSpotify={CONFIG,login,processRedirect,getToken,api,logout,isLogged:()=>!!tokenStore.read()?.access};
