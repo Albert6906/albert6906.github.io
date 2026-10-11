@@ -78,9 +78,18 @@
 @media(max-width:800px){.tm-strip-owner,.tm-strip-song small{display:none}.tm-player-state span{display:none}.tm-audio-panel{grid-template-columns:65px minmax(0,1fr) auto;gap:9px;padding:11px}.tm-player-art{width:55px;height:55px}.tm-player-copy .eyebrow{font-size:9px}.tm-strip-song{padding:0 7px}}
 @media(max-width:540px){.tm-player-state{min-width:92px}.tm-button{font-size:12px;padding:8px}.tm-strip-song strong{font-size:12px}.tm-recent-art-title{font-size:79px}.tm-history h2{font-size:55px}}
 @media(prefers-reduced-motion:reduce){.tm-recent-art-title{transition:none}}
+.tm-placeholder{display:flex;align-items:flex-end;justify-content:flex-start;padding:18px;background-position:center;background-size:cover}
+.tm-placeholder-title{position:relative;z-index:2;font-weight:900;font-size:clamp(31px,3.1vw,64px);line-height:.83;letter-spacing:-.05em;font-style:italic;text-shadow:2px 3px #090909;max-width:100%;overflow-wrap:anywhere}
+.tm-placeholder.graphic-one{background:radial-gradient(circle at 50% 40%,#fee344 0 15%,#df541b 16% 28%,#1d0e0b 29% 35%,#f15c2a 36% 45%,#180706 47% 75%)}
+.tm-placeholder.graphic-two{background:radial-gradient(circle at 65% 35%,#e5f0f5 0 13%,#28404d 15% 36%,#06151b 37% 65%,#012028 67%)}
+.tm-placeholder.graphic-three{background:repeating-linear-gradient(24deg,#253216 0 11px,#667d3a 11px 21px,#0c170d 21px 30px);filter:saturate(.8)}
+.tm-placeholder.art-focus{background:linear-gradient(55deg,#101213,#292327 43%,#8b5652 44% 50%,#16191c 65%)}
+.tm-recent-items .tm-empty{background:none;padding:12px 0}
+.tm-rail-image{background-size:cover!important;background-position:center!important}
+.toast.show{opacity:1;transform:translateY(0);pointer-events:auto}
 </style>
-<script defer src="./spotify-auth.js?v=20261011d"></script>
-<script defer src="./spotify-editorial.js?v=20261011d"></script>
+<script defer src="./spotify-auth.js?v=20261011e"></script>
+<script defer src="./spotify-editorial.js?v=20261011e"></script>
 </head>
 <body>
   <a class="skip-link" href="#main">Saltar al contenido</a>
