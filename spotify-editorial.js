@@ -384,12 +384,17 @@ try{
       account=await sp.api('/me');
       status('Conectado como '+(account.display_name||account.id)+'. Cargando canciones y playlists...');
       renderOtherDetails();
-      await Promise.allSettled([loadHome(),loadPlaylists(),loadRecent(),sdk()]);
+      const results=await Promise.allSettled([loadHome(),loadPlaylists(),loadRecent(),sdk()]);
+      const playerFailed=results[3].status==='rejected';
       await readPlaying();
       const requested=new URLSearchParams(location.search).get('playlist');
       if(requested&&/^[a-zA-Z0-9]{22}$/.test(requested))await loadShared(requested);
       clearInterval(poll);poll=setInterval(readPlaying,18000);
-      if(account)status('Spotify conectado. Haz clic en una carátula para reproducir aquí.');
+      if(playerFailed){
+        status('Spotify conectó la cuenta, pero falló el reproductor web: '+String(results[3].reason?.message||results[3].reason),true);
+      }else{
+        status('Spotify conectado. Haz clic en una carátula para reproducir aquí.');
+      }
     }catch(e){status(e.message,true)}
   }else{
     renderRail([]);renderTiles([]);renderRecent([]);renderOtherDetails();await loadHome();
