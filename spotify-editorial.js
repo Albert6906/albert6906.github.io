@@ -478,16 +478,13 @@ function renderArtistOrbit(items){
 async function loadOwnerExtras(){
   if(account?.id!==owner){renderArtistOrbit(publicSnapshot?.artists||[]);return}
   const values=await Promise.allSettled([
-    sp.api('/me/top/artists?limit=10&time_range=short_term'),
-    sp.api('/me/tracks?limit=50')
+    sp.api('/me/top/artists?limit=10&time_range=short_term')
   ]);
   if(values[0].status==='fulfilled'){
     ownerArtists=(values[0].value.items||[]).filter(x=>x?.name).slice(0,10);
     renderArtistOrbit(ownerArtists);
   }
-  if(values[1].status==='fulfilled'){
-    ownerSaved=(values[1].value.items||[]).map(x=>x.track).filter(x=>x?.uri&&x.id);
-  }
+  // La lectura de Me gusta se realiza en spotify-taste.js, con paginación.
 }
 
 async function loadHome(){
@@ -630,6 +627,7 @@ function bind(){
   $('collection-top').onclick=()=>document.getElementById('latest').scrollIntoView({behavior:'smooth'});
   $('collection-playlists').onclick=()=>document.getElementById('mixtapes').scrollIntoView({behavior:'smooth'});
   $('collection-recent').onclick=()=>document.getElementById('recent').scrollIntoView({behavior:'smooth'});
+  $('top-refresh').onclick=()=>void loadHome();
   $('random-discovery').onclick=()=>list.tracks.length?renderHero(Math.floor(Math.random()*list.tracks.length)):banner('La colección pública aún no está preparada.');
   $('tm-station-play').onclick=()=>void playStation();
   $('shared-form').onsubmit=e=>{e.preventDefault();const id=parsePlaylist($('shared-link').value);if(!id){status('Introduce el enlace real de una playlist de Spotify.',true);return}void loadShared(id).catch(err=>status(err.message,true))}
