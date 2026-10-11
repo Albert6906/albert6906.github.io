@@ -1,142 +1,249 @@
 <!doctype html>
 <html lang="es">
 <head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="theme-color" content="#090909">
-<meta name="description" content="Una colección personal de música, playlists y canciones que suenan aquí con tu Spotify Premium.">
-<title>TRANSMISSION — Mi espacio musical</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,800;1,900&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
-<style>
-:root{--acid:#e6ff60;--black:#090909;--panel:#101010;--edge:#424242;--muted:#a2a2a2;--display:'Barlow Condensed','Arial Narrow',Arial,sans-serif;--mono:'DM Mono',monospace;--white:#f7f7f3}*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;color:var(--white);background:var(--black);font:600 16px var(--display);-webkit-font-smoothing:antialiased}button,input{font:inherit}button{cursor:pointer}button:disabled{opacity:.4;cursor:not-allowed}a{color:inherit;text-decoration:none}button:focus-visible,a:focus-visible,input:focus-visible{outline:2px solid var(--acid);outline-offset:3px}img{max-width:100%;display:block}::selection{background:var(--acid);color:#000}.tiny{font:10px/1.5 var(--mono);letter-spacing:.065em}.muted{color:var(--muted);font:12px/1.7 var(--mono)}.header{height:50px;display:flex;align-items:stretch;position:sticky;top:0;background:#090909;z-index:50;border-bottom:1px solid var(--edge)}.logo{padding:0 15px;background:white;color:#000;font-style:italic;font-size:31px;font-weight:900;letter-spacing:-2px;display:grid;place-items:center}.header>a:not(.logo){padding:0 17px;display:flex;align-items:center;border-right:1px solid var(--edge);font-size:16px;font-weight:700}.header>a.is-active{background:var(--acid);color:#070707}.header .sep{flex:1;border-right:1px solid var(--edge)}.header .header-number{font:11px var(--mono);padding:0 16px;color:#aaa;display:flex;align-items:center}.overline{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 17px;border-bottom:1px solid var(--edge);color:#999}.overline strong{color:var(--acid);font-weight:500}.hero{display:grid;grid-template-columns:55% 45%;min-height:430px;border-bottom:1px solid var(--edge)}.hero-copy{padding:27px 30px 30px;display:flex;flex-direction:column;justify-content:space-between;position:relative;overflow:hidden}.mastlabel{color:var(--acid);display:flex;gap:12px}.green-dot{width:7px;height:7px;border-radius:50%;background:var(--acid);display:inline-block;flex:none;margin-top:4px}.headline{font-size:clamp(100px,15vw,255px);font-weight:900;font-style:italic;line-height:.65;letter-spacing:-.085em;margin:34px 0 40px;padding-right:15px}.headline span{color:var(--acid)}.hero-copy p{font:12px/1.75 var(--mono);max-width:420px;color:#c2c2c2;margin:0}.hero-cover{border-left:1px solid var(--edge);position:relative;background:radial-gradient(ellipse at center,#2c3421 0,#11140e 45%,#080808 76%);display:grid;place-items:center;overflow:hidden}.hero-cover .ring{width:66%;aspect-ratio:1;max-width:320px;border-radius:50%;border:1px dashed #788552;display:grid;place-items:center;box-shadow:0 0 0 35px #101410,0 0 0 36px #43493a,0 0 0 77px #0b0d09,0 0 0 78px #292d25;transform:rotate(-15deg)}.hero-cover .ring span{font-size:clamp(60px,9vw,170px);font-weight:900;letter-spacing:-.13em;color:var(--acid);font-style:italic}.hero-cover .tiny{position:absolute;bottom:16px;left:17px;color:#aaa}.access{display:grid;grid-template-columns:1fr 1fr;border-bottom:1px solid var(--edge)}.access-col{padding:22px 28px 28px;min-height:242px}.access-col+.access-col{border-left:1px solid var(--edge)}.access-col h2{font-size:clamp(30px,4.1vw,59px);font-weight:900;letter-spacing:-.04em;font-style:italic;line-height:.87;margin:24px 0 16px;text-transform:uppercase}.access-col p{font:11px/1.8 var(--mono);color:#aaa;margin:0 0 18px;max-width:500px}.button{appearance:none;display:inline-flex;align-items:center;justify-content:space-between;gap:16px;padding:10px 14px;border:1px solid #767676;color:white;background:none;font-weight:800;line-height:1;text-transform:uppercase;font-size:17px;min-height:43px}.button:hover:not(:disabled){background:#fff;color:#050505}.button.acid{background:var(--acid);border-color:var(--acid);color:#050505}.button.acid:hover{background:#fff;border-color:#fff}.button.small{font-size:15px;padding:9px 12px;min-height:36px}.button.selected{background:var(--acid);color:#111;border-color:var(--acid)}.statusline{display:flex;align-items:center;gap:12px;min-height:40px;border-bottom:1px solid var(--edge);padding:9px 18px;color:#b7b7b7;font:11px/1.55 var(--mono)}.statusline .dot{width:6px;height:6px;border-radius:50%;background:var(--acid);flex:none}.statusline[data-error=true]{color:#ff9696}.intro{padding:22px 27px;border-bottom:1px solid var(--edge)}.intro h2{font-size:clamp(45px,8vw,95px);font-style:italic;text-transform:uppercase;line-height:.8;margin:10px 0 18px;letter-spacing:-.05em}.intro p{font:11px/1.7 var(--mono);color:#a9a9a9;max-width:650px}.member-head{display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--edge);padding:14px 24px;gap:12px}.member-head strong{font-size:20px;font-weight:800}.member-head span[data-owner=true]{color:var(--acid)}.member-head .tiny{color:#aaa}.now-layout{display:grid;grid-template-columns:minmax(280px,39%) 1fr;min-height:395px;border-bottom:1px solid var(--edge)}.now-art{background:#1d1f18;padding:24px;display:grid;place-items:center;position:relative;border-right:1px solid var(--edge)}.cover-holder{width:min(100%,355px);aspect-ratio:1;box-shadow:0 18px 70px #0008;position:relative;background:repeating-linear-gradient(135deg,#2d3422 0 16px,#1c211a 16px 32px);display:grid;place-items:center;overflow:hidden}#current-cover{width:100%;height:100%}.cover-holder .cover-big{width:100%;height:100%;object-fit:cover}.cover-holder.is-empty:before{content:'T/M';font-size:80px;font-style:italic;font-weight:900;letter-spacing:-.1em;color:var(--acid)}.cover-holder.is-playing:after{content:'▶';position:absolute;right:10px;bottom:10px;padding:7px 11px;color:#000;background:var(--acid)}.now-meta{padding:26px 30px;display:flex;flex-direction:column;justify-content:space-between;gap:16px}.now-meta .upper{color:#aaa}.now-meta h2{font-size:clamp(54px,6.4vw,112px);letter-spacing:-.05em;line-height:.83;text-transform:uppercase;margin:10px 0 18px;font-weight:900;font-style:italic;overflow-wrap:anywhere}.now-meta p{font:14px/1.5 var(--mono);color:#aaa;margin:0}.now-meta .album{color:#747474;font-size:11px;margin-top:6px}.device-info{margin:10px 0;color:#b7b7b7;font:10px/1.6 var(--mono)}.now-actions{display:flex;flex-wrap:wrap;align-items:center;gap:9px;margin:14px 0}.player-progress{display:grid;grid-template-columns:35px 1fr 35px;gap:9px;align-items:center;font:10px var(--mono);color:#aaa;margin-top:16px}input[type=range]{accent-color:var(--acid);width:100%;cursor:pointer}.section-header{display:flex;align-items:end;justify-content:space-between;gap:15px;border-bottom:1px solid var(--edge);padding:18px 23px;flex-wrap:wrap}.section-header h2{font-weight:900;font-size:clamp(29px,4vw,55px);line-height:1;text-transform:uppercase;font-style:italic;margin:0}.section-header .tiny{color:#aaa}.toggles{display:flex;gap:7px;flex-wrap:wrap}.track-grid{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:1px;background:var(--edge);border-bottom:1px solid var(--edge)}.track-card{min-width:0;background:var(--black);padding:10px 10px 15px;display:flex;flex-direction:column}.track-art{background:linear-gradient(135deg,#343b23,#13150f);border:0;width:100%;aspect-ratio:1;position:relative;padding:0;display:block;overflow:hidden}.track-art img,.playlist-image img,.result-art img{width:100%;height:100%;object-fit:cover}.over-play{position:absolute;right:8px;bottom:8px;width:32px;height:32px;background:var(--acid);color:#000;display:grid;place-items:center;opacity:0;transform:translateY(8px);transition:.2s}.track-art:hover .over-play,.track-art:focus-visible .over-play{opacity:1;transform:none}.track-caption{display:grid;grid-template-columns:24px minmax(0,1fr);gap:3px 5px;padding-top:10px}.track-index{font:10px var(--mono);color:#797979;grid-row:1 / 3}.track-title{font-size:16px;font-weight:800;line-height:1.05;overflow:hidden;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2}.track-by{font:10px/1.45 var(--mono);color:#a5a5a5;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}.track-grid>.muted{grid-column:1/-1;padding:18px}.lists-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:1px;background:var(--edge);border-bottom:1px solid var(--edge)}.list-card{min-width:0;padding:14px;background:var(--black)}.playlist-image{border:0;background:#171c12;width:100%;aspect-ratio:1;display:grid;place-items:center;padding:0}.list-name{font-size:24px;line-height:1;text-transform:uppercase;margin:12px 0 6px;overflow-wrap:anywhere}.list-count{font:10px var(--mono);color:#858585}.list-actions{display:flex;gap:14px;margin-top:17px}.text-link{font:11px var(--mono);color:var(--acid);padding:0;border:0;background:none}.text-link:hover{text-decoration:underline}.lists-grid>.muted{grid-column:1/-1;padding:18px}.search-block{padding:22px 25px;border-bottom:1px solid var(--edge);background:#111}.search-form{display:flex;gap:8px;margin-top:18px}.search-form input{flex:1;min-width:0;background:#070707;border:1px solid #696969;color:white;padding:11px 14px;font:14px var(--mono)}.search-form input:focus{border-color:var(--acid);outline:none}.results{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--edge)}.result-row{display:grid;grid-template-columns:46px 1fr 25px;gap:12px;align-items:center;text-align:left;background:var(--black);border:0;color:white;padding:11px 14px;min-width:0}.result-row:hover{background:#212121}.result-art{display:block;width:46px;height:46px;background:#373a30}.result-info{min-width:0;display:flex;flex-direction:column}.result-info b{font-weight:800;font-size:18px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}.result-info small{font:10px var(--mono);color:#aaa;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.result-play{color:var(--acid)}.results .muted{padding:13px}.editorial-note{padding:20px 25px;background:#202316;color:#bec0af;border-bottom:1px solid var(--edge);font:11px/1.7 var(--mono)}.editorial-note b{color:var(--acid)}.footer{display:flex;justify-content:space-between;gap:15px;align-items:center;padding:26px;border-top:1px solid var(--edge);font:10px/1.6 var(--mono);color:#999}.footer strong{font:800 21px var(--display);color:white}.playerbar{position:sticky;bottom:0;z-index:80;display:none;align-items:center;gap:13px;background:var(--acid);color:#080808;padding:8px 14px;border-top:2px solid #080808}.playerbar.visible{display:flex}.playerbar-art{height:42px;width:42px;background:#050505;flex:none}.playerbar-art img{width:100%;height:100%;object-fit:cover}.playerbar-info{min-width:0;flex:1;display:flex;flex-direction:column}.playerbar-info b{font-size:19px;line-height:1;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}.playerbar-info small{font:10px var(--mono);overflow:hidden;white-space:nowrap;text-overflow:ellipsis}.playerbar button{background:#0a0a0a;border:0;color:var(--acid);width:40px;height:36px;font:800 19px var(--display)}[hidden]{display:none!important}@media(max-width:1050px){.track-grid{grid-template-columns:repeat(4,1fr)}.lists-grid{grid-template-columns:repeat(3,1fr)}}@media(max-width:740px){.hero{grid-template-columns:1fr}.hero-copy{min-height:305px}.headline{font-size:clamp(85px,20vw,164px)}.hero-cover{border-left:0;border-top:1px solid var(--edge);min-height:235px}.hero-cover .ring{max-width:150px}.access{grid-template-columns:1fr}.access-col+.access-col{border-left:0;border-top:1px solid var(--edge)}.now-layout{grid-template-columns:1fr}.now-art{border-right:0;border-bottom:1px solid var(--edge)}.now-art .cover-holder{max-width:275px}.now-meta{padding:24px 19px}.track-grid{grid-template-columns:repeat(3,minmax(0,1fr))}.lists-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.results{grid-template-columns:1fr}.header-number{display:none!important}}@media(max-width:480px){.header{height:47px}.logo{font-size:24px;padding:0 11px}.header>a:not(.logo){font-size:13px;padding:0 10px}.hero-copy{padding:22px 16px}.headline{font-size:clamp(75px,19vw,115px)}.access-col{padding:20px 16px}.overline{padding:8px 10px;font-size:9px}.track-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.lists-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.section-header{padding:16px 12px}.search-block{padding:17px 12px}.now-meta h2{font-size:59px}.button{font-size:15px}.footer{flex-direction:column;align-items:start;padding:18px}.playerbar-info b{font-size:16px}}@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}.over-play{transition:none}}
-.shared-session{padding:19px 24px 24px;border-bottom:1px solid var(--edge);background:linear-gradient(115deg,#151810,#0b0b0b);display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:20px}
-.shared-session h2{font-size:clamp(27px,3.8vw,48px);font-weight:900;font-style:italic;text-transform:uppercase;letter-spacing:-.04em;margin:4px 0 9px;line-height:.92}
-.shared-session p{font:11px/1.7 var(--mono);color:#aaa;margin:0 0 10px}
-.shared-session .session-art{display:flex;align-items:center;gap:12px;margin:14px 0}
-.session-art img{width:70px;height:70px;object-fit:cover;background:#252a1a}
-.session-art strong{display:block;font-size:25px;line-height:1}
-.session-art span{font:11px/1.5 var(--mono);color:#aaa}
-.shared-session input{width:min(100%,350px);background:#090909;color:white;border:1px solid #6c6c6c;padding:11px;font:12px var(--mono)}
-@media(max-width:670px){.shared-session{grid-template-columns:1fr;padding:17px}.shared-session .session-art img{width:58px;height:58px}}
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#080808">
+  <meta name="description" content="TRANSMISSION: tu biblioteca, playlists y canciones de Spotify dentro de una web personal.">
+  <title>TRANSMISSION — Personal music archive</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;500;600;700;800;900&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+:root{--ink:#0a0a0a;--paper:#f2f0eb;--line:#4f4f4f;--yellow:#e6ff60;--mono:'DM Mono',monospace;--display:'Barlow Condensed','Arial Narrow',Arial,sans-serif}*{box-sizing:border-box}html{scroll-behavior:smooth;scroll-padding-top:85px}body{margin:0;background:var(--ink);color:#f8f8f8;font-family:var(--display);-webkit-font-smoothing:antialiased}button,input{font:inherit}button{cursor:pointer}button:focus-visible,a:focus-visible,input:focus-visible{outline:3px solid var(--yellow);outline-offset:3px}a{color:inherit;text-decoration:none}svg{fill:none;stroke:currentColor;stroke-width:1.7}img{max-width:100%}.skip-link{position:absolute;top:-60px;left:8px;background:white;color:black;padding:12px;z-index:500}.skip-link:focus{top:8px}.site-header{position:sticky;top:0;z-index:100;background:#050505}.top-bar{height:45px;display:flex;align-items:stretch;border-bottom:1px solid #555}.brand{padding:0 12px;display:grid;place-items:center;border-right:1px solid #4f4f4f;min-width:74px}.brand-mark{background:white;color:black;padding:0 4px 1px;font-family:var(--display);font-size:29px;font-style:italic;font-weight:900;line-height:30px;letter-spacing:-2px;transform:skew(-8deg)}.brand-mark-slash{font-size:21px;letter-spacing:-3px}.main-nav{display:flex;align-items:stretch;flex:1;min-width:0}.nav-link,.support-link{display:flex;align-items:center;padding:0 14px;font-size:16px;line-height:1;white-space:nowrap;font-weight:600}.nav-link:hover,.nav-link.is-current{color:#dedede}.nav-link:hover{text-decoration:underline;text-underline-offset:5px}.support-link{background:#f9f9f9;color:black;font-weight:800;height:29px;align-self:center;margin-left:3px;padding:0 10px;transition:background .2s}.support-link:hover{background:var(--yellow)}.support-link span{font-size:11px;margin-left:8px}.header-tools{display:flex;align-items:stretch;margin-left:auto}.icon-button{background:transparent;color:white;border:0;display:grid;place-items:center;min-width:40px}.header-search{width:45px}.header-search svg{width:18px;height:18px}.tool-divider{height:18px;align-self:center;border-left:1px solid #555;margin:0 2px}.header-account{display:flex;align-items:center;gap:8px;border:0;background:transparent;color:white;font-size:14px;padding:0 10px;white-space:nowrap}.header-account:hover,.icon-button:hover{color:var(--yellow)}.header-account svg{width:16px;height:16px}.saved-counter{font-family:var(--mono);font-size:9px;background:#444;padding:2px 4px;border-radius:8px}.more-trigger{font-size:15px;letter-spacing:3px;width:36px}.mobile-trigger{display:none}.live-strip{height:34px;display:flex;align-items:stretch;border-bottom:1px solid #777;background:#101010;overflow:hidden}.live-badge{font-size:12px;font-weight:900;color:black;background:#fff;white-space:nowrap;padding:0 9px;display:flex;align-items:center;gap:5px}.pulse-dot{display:inline-block;width:7px;height:7px;background:#ef4242;border-radius:100%;animation:pulse 1.7s infinite}.live-channel{color:white;border:0;border-left:1px solid #777;border-right:1px solid #777;background:#080808;display:flex;gap:8px;align-items:center;min-width:0;flex:1;text-align:left;padding:0;transition:background .15s}.live-channel:hover,.live-channel.is-active{background:#242424}.channel-number{align-self:stretch;background:white;color:black;font-weight:900;font-size:18px;padding:3px 10px;min-width:31px;display:grid;place-items:center}.channel-play{font-size:13px;padding-left:1px}.live-channel strong{font-size:15px;white-space:nowrap;text-overflow:ellipsis;overflow:hidden;letter-spacing:.03em}.broadcast-city{font-size:12px;font-weight:500;margin-left:auto;padding:0 8px}.strip-control{border:0;border-left:1px solid #777;background:#0c0c0c;color:white;min-width:37px;font-size:15px}.strip-control:hover{background:white;color:black}
+.lead-layout{display:grid;grid-template-columns:minmax(0,1fr) 212px;min-height:calc(100vh - 80px);height:min(760px,calc(100svh - 80px));border-bottom:1px solid #787878}.hero-slider,.hero-visual{min-height:0;height:100%;position:relative;overflow:hidden}.hero-visual{background:#151515}.hero-image{position:absolute;inset:0;background-position:center;background-size:cover;transform:scale(1.035);transition:opacity .42s ease,transform 7s ease;opacity:.88}.hero-image.animate{transform:scale(1.115)}.hero-visual:before{content:"";pointer-events:none;position:absolute;inset:0;background:linear-gradient(0deg,rgba(0,0,0,.94) 0%,rgba(0,0,0,.32) 38%,transparent 75%),linear-gradient(90deg,rgba(0,0,0,.32),transparent 75%);z-index:1}.hero-grain{pointer-events:none;position:absolute;inset:0;z-index:1;opacity:.17;background-image:url('data:image/svg+xml,%3Csvg viewBox="0 0 180 180" xmlns="http://www.w3.org/2000/svg"%3E%3Cfilter id="n"%3E%3CfeTurbulence type="fractalNoise" baseFrequency=".85" numOctaves="3" stitchTiles="stitch"/%3E%3C/filter%3E%3Crect width="100%25" height="100%25" filter="url(%23n)" opacity=".28"/%3E%3C/svg%3E')}.hero-topline{position:absolute;left:26px;right:26px;top:23px;z-index:2;display:flex;justify-content:space-between;font-family:var(--mono);font-size:10px;letter-spacing:.06em;text-shadow:0 1px 4px #111}.hero-onair{display:flex;align-items:center;gap:6px}.hero-onair i{width:6px;height:6px;border-radius:50%;background:#e74747;display:block;animation:pulse 1.5s infinite}.hero-caption{position:absolute;left:clamp(24px,4.2vw,70px);bottom:112px;right:10%;z-index:3;max-width:620px}.hero-play{height:57px;width:57px;background:white;border:1px solid white;color:#0b0b0b;display:grid;place-items:center;margin-bottom:18px;transition:transform .2s,background .2s}.hero-play svg{width:26px;height:26px;fill:currentColor;stroke:none}.hero-play:hover{transform:scale(1.08);background:var(--yellow)}.hero-kicker{font-size:14px;text-transform:uppercase;letter-spacing:.08em;margin:0 0 3px}.hero-title{font-weight:800;line-height:.8;letter-spacing:-.045em;font-size:clamp(60px,7.7vw,148px);margin:0 0 16px;text-transform:uppercase}.hero-description{font-family:Arial,sans-serif;max-width:390px;font-size:15px;line-height:1.4;margin:0}.slider-footer{position:absolute;z-index:3;left:clamp(24px,4.2vw,70px);bottom:35px;right:30px;display:flex;align-items:center;gap:14px}.slider-progress{height:2px;flex:1;max-width:465px;background:#767676;overflow:hidden}.slider-progress span{display:block;width:1%;background:white;height:100%;transition:width .12s linear}.slider-count{font-family:var(--mono);font-size:11px;color:#ddd;white-space:nowrap}.slider-controls{display:flex;gap:14px;margin-left:auto}.slider-controls button{background:none;border:0;color:white;font-size:31px;line-height:1;min-width:20px;transition:transform .18s}.slider-controls button:hover{transform:scale(1.2);color:var(--yellow)}#pause-slide{font-size:15px;font-weight:bold}.mixtape-rail{height:100%;border-left:1px solid #666;display:flex;flex-direction:column;min-height:0}.rail-head{flex:1.65;min-height:0;position:relative;background:linear-gradient(175deg,rgba(0,0,0,.5),#141414),radial-gradient(circle at 70% 15%,#4d233b,transparent 60%);padding:21px 13px 13px;display:flex;flex-direction:column;border-bottom:1px solid #777}.rail-heading{font-size:29px;font-weight:900;line-height:.83;letter-spacing:-.01em}.rail-heading-arrows{position:absolute;right:14px;top:17px;font-size:23px}.rail-head p{font-family:Arial,sans-serif;font-size:12px;line-height:1.38;max-width:165px;margin-top:auto}.rail-item{background:#101010;flex:1;min-height:0;display:flex;align-items:center;gap:9px;text-align:left;color:white;border:0;border-bottom:1px solid #666;padding:5px 9px;overflow:hidden;transition:background .18s}.rail-item:hover{background:#2c2c2c}.rail-item-cover{height:62px;width:56px;flex-shrink:0;display:grid;place-items:center;font-size:30px}.art-pool{background:#e17b7c;color:#ffedbe}.art-focus{background:#8299ac;color:white}.art-low{background:#b6ba8a;color:#32352e}.art-feel{background:#e3c04a;color:#453523}.rail-item-label{font-size:18px;line-height:1.02;font-weight:800;flex:1}.rail-item-label small{display:block;font-size:9px;color:#aaa;letter-spacing:.08em;margin-top:5px}.rail-item-arrow{font-size:13px}.rail-all{border:0;background:white;color:black;height:43px;display:flex;align-items:center;justify-content:space-between;padding:0 11px;font-size:13px;font-weight:900;letter-spacing:.02em}.rail-all:hover{background:var(--yellow)}
+.catalog-section{padding:32px 24px 54px;border-bottom:1px solid #777}.section-heading{display:flex;justify-content:space-between;gap:18px;align-items:end;margin-bottom:22px}.section-heading .eyebrow{margin-bottom:5px}.eyebrow{display:block;font-family:var(--mono);font-size:10px;letter-spacing:.09em;color:#aaa}.section-heading h2{font-weight:900;font-size:34px;line-height:1;margin:0;letter-spacing:-.01em}.heading-indicator{font-size:15px;vertical-align:top;color:#aaa;margin-left:4px}.view-all{font-size:14px;border:0;background:transparent;color:white;padding:5px 0;font-weight:600;letter-spacing:.02em;white-space:nowrap}.view-all span{margin-left:4px}.view-all:hover{color:var(--yellow)}.picks-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:24px}.record-card{min-width:0}.record-image{display:block;border:1px solid #5e5e5e;position:relative;aspect-ratio:1 / 1;width:100%;overflow:hidden;background:#181818;padding:0;text-align:left;color:white}.record-art{position:absolute;inset:0;background-size:cover;background-position:center;transition:transform .6s cubic-bezier(.2,.7,.2,1),filter .4s}.record-image:hover .record-art{transform:scale(1.065);filter:brightness(.88)}.record-image:after{content:'';position:absolute;inset:0;box-shadow:inset 0 0 0 0 white;transition:box-shadow .2s;pointer-events:none}.record-image:hover:after{box-shadow:inset 0 0 0 2px white}.card-play{position:absolute;left:12px;bottom:12px;width:37px;height:37px;background:white;color:black;display:grid;place-items:center;font-size:14px;opacity:0;transform:translateY(8px);transition:.2s}.record-image:hover .card-play,.record-image:focus-visible .card-play{opacity:1;transform:translateY(0)}.record-index{position:absolute;right:9px;top:9px;padding:4px 6px;background:#000c;color:white;font-family:var(--mono);font-size:9px}.record-info{display:flex;justify-content:space-between;align-items:start;gap:10px;margin-top:12px}.record-type{font-family:var(--mono);font-size:10px;color:#aaa}.record-info h3{font-size:22px;line-height:1.02;margin:4px 0 5px;font-weight:800}.record-info p{margin:0;max-width:260px;color:#999;font-family:Arial,sans-serif;font-size:12px;line-height:1.38}.save-button{flex-shrink:0;color:white;background:transparent;border:1px solid #777;width:29px;height:29px;display:grid;place-items:center;font-family:Arial,sans-serif;font-size:24px;font-weight:normal;line-height:1}.save-button:hover,.save-button.is-saved{color:black;background:var(--yellow);border-color:var(--yellow)}.graphic-one{background:linear-gradient(147deg,#f26930 0 52%,#220e28 52%);padding:21px}.graphic-one .graphic-overline{position:absolute;top:12px;left:18px;font:9px var(--mono);color:black}.graphic-one b{position:absolute;bottom:15%;left:10px;color:#f5eacb;font-size:clamp(40px,5.5vw,101px);font-style:italic;font-weight:900;line-height:.65;letter-spacing:-.09em;transform:rotate(-8deg);text-shadow:5px 5px 0 #090909}.graphic-bottom{position:absolute;bottom:12px;right:12px;font:10px var(--mono);color:#ffceb8}.graphic-two{background:radial-gradient(circle at 54% 40%,#c6e8c2 0,#4e6f68 24%,#141a3b 42%,#131216 70%)}.graphic-two .orbital{position:absolute;left:15%;top:12%;width:80%;height:75%;border:1px solid #d1f1baaa;border-radius:50%;transform:rotate(35deg) scaleX(.5)}.graphic-two .orbital-two{transform:rotate(-35deg) scaleX(.7)}.graphic-two strong{position:absolute;font-size:clamp(50px,5vw,96px);font-weight:900;line-height:.74;letter-spacing:-.06em;left:8%;bottom:15%;color:#e5ecde;text-shadow:3px 3px 12px #111}.graphic-two small{position:absolute;bottom:7%;left:9%;font:10px var(--mono)}.graphic-three{background:#9d85ce;color:#1a1432}.graphic-three .graphic-number{position:absolute;top:13px;left:16px;font:10px var(--mono)}.graphic-three strong{position:absolute;top:27%;left:6%;font-size:clamp(49px,5.1vw,102px);font-weight:900;line-height:.67;letter-spacing:-.075em;z-index:2}.connections-lines{position:absolute;inset:-30%;background:repeating-linear-gradient(25deg,transparent 0 19px,#2c2548 20px 21px,transparent 22px 36px);opacity:.28;transform:rotate(16deg)}.graphic-footer{position:absolute;bottom:13px;right:13px;font:10px var(--mono)}
+.discover-panel{min-height:530px;display:grid;grid-template-columns:1fr 1fr;border-bottom:1px solid #666;overflow:hidden}.discover-copy{padding:clamp(38px,5vw,80px);display:flex;flex-direction:column;align-items:start;justify-content:center;background:#d6dfdb;color:#0d1212}.discover-copy .eyebrow{color:#444}.discover-copy h2{margin:22px 0;font-size:clamp(67px,7vw,134px);letter-spacing:-.065em;font-weight:900;line-height:.81}.heading-period{color:#e95537}.discover-copy p{font-family:Arial,sans-serif;font-size:15px;max-width:390px;line-height:1.55;margin:0 0 28px}.outline-cta{border:1px solid currentColor;display:flex;align-items:center;justify-content:space-between;gap:40px;padding:12px 14px;font-size:14px;font-weight:900;transition:.2s;background:transparent;color:inherit}.outline-cta:hover{background:#121212;color:white}.outline-cta span{font-size:20px}.discover-art{position:relative;min-height:500px;background:#aacead;overflow:hidden}.discover-art:before{content:'';position:absolute;inset:0;background:repeating-linear-gradient(0deg,transparent 0 20px,#36534831 21px 22px),repeating-linear-gradient(90deg,transparent 0 20px,#36534831 21px 22px)}.circles{border-radius:50%;border:3px solid #0a2a20;position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);aspect-ratio:1}.circle-a{width:75%;background:#bdd4bc;box-shadow:0 0 0 35px #7cb58b,0 0 0 39px #18392f}.circle-b{width:50%;border-width:10px;border-style:double;background:#dbe6a4}.circle-c{width:25%;border-width:16px;background:#163a30}.disc-mark{position:absolute;inset:0;display:grid;place-items:center;color:#dbf5be;font-size:clamp(90px,13vw,210px);letter-spacing:-.1em;font-style:italic;font-weight:900;transform:rotate(-18deg)}.sideprint{position:absolute;left:18px;bottom:17px;color:#10281f;font:10px var(--mono)}.crosshair{position:absolute;right:21px;top:18px;color:#18362d;font-size:42px;animation:slow-spin 18s linear infinite}.collection-section{padding-top:49px}.collection-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:22px}.collection-tile{display:block;min-width:0;background:none;color:white;text-align:left;border:0;padding:0}.collection-art{position:relative;display:block;overflow:hidden;aspect-ratio:1.27}.collection-art-one{background:radial-gradient(circle at 50% 50%,#ffda1a 0 15%,#2c2822 16% 18%,#f18c24 19% 30%,#271b19 32% 45%,#d1481a 46% 58%,#211211 60%)}.collection-art-one:before{content:'';position:absolute;inset:-50%;background:repeating-conic-gradient(from 2deg at 50% 50%,transparent 0 12deg,#20130b70 13deg 14deg);animation:slow-spin 45s linear infinite}.distortion-title{position:absolute;font-size:clamp(42px,4.9vw,89px);font-weight:900;line-height:.8;letter-spacing:-.045em;left:18px;bottom:26px;transform:rotate(-3deg);text-shadow:4px 4px #170803;z-index:1}.distortion-coord{position:absolute;top:14px;left:17px;font:10px var(--mono);z-index:1}.collection-art-two{background:#edc9b1;color:#392415}.sun-disc{position:absolute;left:30%;top:9%;width:65%;aspect-ratio:1;border-radius:50%;background:linear-gradient(165deg,#fef1dc 5%,#e7a478 70%,#be4e55 100%);box-shadow:0 0 0 20px #f0b3a1,0 0 0 23px #4b2d28}.collection-art-two strong{position:absolute;left:8%;bottom:8%;font-size:clamp(64px,6.4vw,120px);font-weight:900;letter-spacing:-.04em;line-height:.73}.tiny-invert{position:absolute;top:13px;left:13px;font:9px var(--mono)}.collection-art-three{background:#0f442d;color:#d1ff7e}.collection-art-three:before{content:'';position:absolute;inset:0;background:repeating-linear-gradient(0deg,transparent 0 4px,#a4ff843b 5px 6px);mix-blend-mode:screen}.pixel-cloud{position:absolute;right:5%;top:0;font-size:clamp(52px,7vw,110px);font-family:monospace;line-height:.6;letter-spacing:-.13em;transform:rotate(20deg);opacity:.75}.collection-art-three strong{position:absolute;left:7%;bottom:12%;font-size:clamp(42px,5vw,92px);font-weight:900;letter-spacing:-.055em;line-height:.75}.collection-art-three small{position:absolute;left:7%;bottom:6%;font:10px var(--mono)}.collection-tile:hover .collection-art{filter:contrast(1.15)}.collection-tile:hover .collection-art>strong,.collection-tile:hover .distortion-title{transform:translateY(-7px);transition:.2s}.collection-caption{display:flex;justify-content:space-between;gap:8px;padding:13px 0}.collection-caption b{font-size:19px;line-height:1}.collection-caption span{font:9px var(--mono);color:#bdbdbd;align-self:center;white-space:nowrap}.marquee-band{background:var(--yellow);color:#101010;overflow:hidden;padding:15px 0;border-bottom:1px solid #131313}.marquee-inner{white-space:nowrap;font-weight:900;letter-spacing:-.02em;font-size:clamp(24px,3vw,49px);line-height:1;animation:move-left 30s linear infinite;width:max-content}.studio-block{display:grid;grid-template-columns:1fr 1fr;min-height:530px;border-bottom:1px solid #777}.studio-image{position:relative;overflow:hidden;background:#111;min-height:500px}.studio-img{position:absolute;inset:0;background-size:cover;background-position:center;filter:grayscale(.75) contrast(1.1);transition:filter .5s,transform 1s}.studio-image:hover .studio-img{filter:grayscale(0);transform:scale(1.05)}.studio-sticker{position:absolute;right:22px;top:30px;background:var(--yellow);color:black;font-size:28px;font-weight:900;line-height:.8;padding:17px 22px;transform:rotate(8deg);box-shadow:7px 7px black}.studio-sticker small{font:10px var(--mono)}.studio-content{padding:clamp(38px,5vw,90px);display:flex;flex-direction:column;justify-content:center;align-items:start;background:#1a1a1a}.studio-content h2{font-size:clamp(62px,7vw,130px);line-height:.8;font-weight:900;letter-spacing:-.04em;margin:20px 0}.studio-content p{font:15px/1.5 Arial,sans-serif;max-width:380px;margin:0 0 30px;color:#d0d0d0}.studio-content .outline-cta:hover{background:white;color:black}.support-section{padding:64px 42px 80px;background:#d8e363;color:#111}.support-section .eyebrow{color:#30390b}.support-flex{display:flex;align-items:end;justify-content:space-between;gap:50px}.support-flex h2{margin:17px 0 0;font-size:clamp(75px,10vw,190px);line-height:.75;letter-spacing:-.05em;font-weight:900}.support-flex>div{max-width:280px}.support-flex p{font:15px/1.4 Arial,sans-serif;margin:0 0 26px}.light-cta{border-bottom:2px solid;padding:8px 0;font-weight:900;display:flex;justify-content:space-between;gap:50px;font-size:16px}
+.footer{background:#080808}.footer-main{display:grid;grid-template-columns:1.5fr .7fr .9fr 1.3fr;gap:40px;padding:58px 30px 86px}.footer-logo{font-size:93px;font-weight:900;letter-spacing:-.09em;line-height:.85;font-style:italic}.footer-logo span{font-size:34px;vertical-align:top;letter-spacing:normal;margin-left:12px}.footer-main p{font:12px/1.4 var(--mono);color:#999}.footer-title{display:block;font:11px var(--mono);color:#8d8d8d;margin-bottom:18px}.footer-main a{display:block;font-size:20px;line-height:1.6;font-weight:700}.footer-main a:hover{color:var(--yellow)}.footer-note{display:block;margin-top:20px;font:10px var(--mono);color:#666}.footer-news p{max-width:220px}.coming-soon{margin-top:30px;border-bottom:1px solid #888;padding-bottom:10px;display:flex;justify-content:space-between;font:14px var(--mono)}.footer-bottom{display:flex;justify-content:space-between;gap:15px;padding:14px 30px;border-top:1px solid #555;font:10px var(--mono);color:#a6a6a6}.footer-bottom .pulse-dot{width:5px;height:5px}
+.overlay{position:fixed;inset:0;z-index:200;background:rgba(0,0,0,.85);display:none;align-items:flex-start;justify-content:center;padding:90px 20px 25px;overflow-y:auto;backdrop-filter:blur(6px)}.overlay.is-open{display:flex;animation:fade-in .2s}.overlay-panel{position:relative;width:min(720px,100%);background:#161616;border:1px solid #777;padding:clamp(27px,5vw,60px);box-shadow:0 18px 90px #000b}.close-overlay{position:absolute;right:14px;top:12px;background:none;border:0;color:white;font-size:24px;padding:6px 11px}.close-overlay:hover{color:var(--yellow)}.overlay h2{font-size:clamp(44px,6vw,84px);font-weight:900;letter-spacing:-.02em;line-height:.83;margin:15px 0 28px}.search-field{display:flex;gap:12px;border-bottom:2px solid white;padding-bottom:11px}.search-field svg{width:22px;height:22px;align-self:center}.search-field input{width:100%;background:transparent;border:0;outline:0;color:white;font-size:23px;font-weight:700}.search-field input::placeholder{color:#777}.search-results{margin-top:20px;display:flex;flex-direction:column;gap:1px}.search-result{color:white;background:#222;border:0;text-align:left;display:flex;justify-content:space-between;align-items:center;font-size:19px;font-weight:800;padding:12px}.search-result:hover{background:#555}.search-result small{font:10px var(--mono);color:#aaa}.details-panel>p{font:16px/1.45 Arial,sans-serif;color:#c6c6c6;max-width:510px}.details-actions{display:flex;flex-wrap:wrap;gap:9px;margin-top:35px}.details-panel .details-hint{font:11px/1.5 var(--mono);margin-top:26px;color:#888}.button-cta:hover{background:white;color:black}.toast{position:fixed;bottom:22px;right:20px;z-index:240;max-width:350px;background:var(--yellow);color:#111;padding:14px 20px;font:12px var(--mono);opacity:0;pointer-events:none;transform:translateY(15px);transition:opacity .2s,transform .2s;box-shadow:8px 8px 0 #000}.toast.is-visible{opacity:1;transform:translateY(0)}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.2}}@keyframes slow-spin{to{transform:rotate(360deg)}}@keyframes move-left{to{transform:translateX(-50%)}}@keyframes fade-in{from{opacity:0}to{opacity:1}}
+@media(max-width:1180px){.broadcast-city{display:none}.nav-link{padding:0 10px}.header-account span:not(.saved-counter){display:none}.picks-grid{gap:15px}.record-info h3{font-size:19px}.collection-caption{flex-direction:column}.discover-copy h2{font-size:clamp(62px,6.5vw,98px)}}
+@media(max-width:850px){.top-bar{height:54px}.mobile-trigger{display:grid;margin-right:0}.brand{min-width:66px}.main-nav{display:none;position:absolute;top:54px;left:0;right:0;background:#111;flex-direction:column;border-bottom:1px solid #777;padding:12px 16px 18px;box-shadow:0 14px 25px #0008}.main-nav.is-open{display:flex}.main-nav a{min-height:38px;padding:9px 12px;font-size:22px}.main-nav .support-link{align-self:flex-start;margin-top:10px;min-height:32px;font-size:17px}.header-tools{margin-left:auto}.live-strip{height:34px}.live-channel strong{font-size:12px}.live-channel:nth-of-type(3){display:none}.lead-layout{grid-template-columns:1fr;min-height:0;height:auto}.hero-slider,.hero-visual{height: min(650px,calc(82svh - 88px));min-height:430px}.mixtape-rail{display:grid;grid-template-columns:repeat(4,1fr);grid-template-rows:100px 110px;height:auto;border-left:0}.rail-head{grid-column:1/-1;padding:14px 17px;display:block}.rail-heading{font-size:27px}.rail-head p{max-width:unset;margin:8px 0}.rail-item{border-right:1px solid #666;min-width:0;flex-direction:column;align-items:start;justify-content:center;padding:10px}.rail-item-cover{height:35px;width:35px;font-size:19px}.rail-item-label{font-size:16px}.rail-item-label small{display:none}.rail-item-arrow{display:none}.rail-all{display:none}.picks-grid{grid-template-columns:repeat(2,1fr);row-gap:29px}.discover-panel{grid-template-columns:1fr}.discover-copy{min-height:450px}.discover-art{min-height:420px}.studio-block{grid-template-columns:1fr}.studio-content{min-height:450px}.studio-image{min-height:430px}.footer-main{grid-template-columns:1.6fr 1fr;gap:35px}.footer-news{grid-column:2}.support-flex{align-items:start;flex-direction:column;gap:24px}.support-flex h2{font-size:clamp(75px,12vw,120px)}}
+@media(max-width:540px){.top-bar{height:49px}.main-nav{top:49px}.brand{padding:0 8px}.brand-mark{font-size:24px;line-height:27px}.header-account{padding:0 5px}.more-trigger,.tool-divider{display:none}.live-strip{height:32px}.live-badge{font-size:10px;padding:0 6px}.live-channel{flex:1}.live-channel .channel-number{font-size:14px;min-width:25px;padding:0 6px}.live-channel strong{font-size:12px;white-space:nowrap}.live-channel:nth-of-type(3){display:none}.strip-control{min-width:30px}.strip-control:nth-last-child(-n+2){display:none}.hero-slider,.hero-visual{height:clamp(470px,72svh,640px)}.hero-topline{left:15px;right:15px;top:14px;font-size:8px}.hero-caption{left:19px;right:15px;bottom:96px}.hero-title{font-size:clamp(67px,18vw,104px)}.hero-description{font-size:13px;max-width:260px}.hero-play{width:49px;height:49px}.slider-footer{left:19px;bottom:21px;right:15px}.slider-progress{max-width:unset}.slider-controls{gap:8px}.mixtape-rail{grid-template-columns:repeat(2,minmax(0,1fr));grid-template-rows:91px 88px 88px}.rail-head{grid-column:1/-1}.rail-item{flex-direction:row;padding:10px;gap:8px}.rail-item-label{font-size:17px}.rail-item-cover{flex-shrink:0}.catalog-section{padding:30px 14px 42px}.section-heading h2{font-size:28px}.picks-grid{gap:11px;row-gap:26px}.record-info{gap:5px}.record-info h3{font-size:19px}.record-info p{font-size:11px}.record-type{font-size:9px}.save-button{width:26px;height:26px;font-size:19px}.graphic-one b{font-size:clamp(37px,11vw,66px)}.graphic-two strong{font-size:clamp(34px,10vw,69px)}.graphic-three strong{font-size:clamp(30px,9vw,67px)}.record-index{font-size:7px}.discover-copy{padding:38px 20px;min-height:430px}.discover-copy h2{font-size:clamp(62px,15vw,93px)}.discover-art{min-height:370px}.collection-grid{grid-template-columns:1fr;gap:22px}.collection-art{aspect-ratio:1.4}.distortion-title,.collection-art-two strong,.collection-art-three strong{font-size:clamp(60px,17vw,105px)}.marquee-inner{font-size:30px}.studio-content{padding:40px 20px}.studio-content h2{font-size:clamp(72px,16vw,100px)}.studio-image{min-height:340px}.studio-sticker{font-size:22px}.support-section{padding:50px 20px}.support-flex h2{font-size:clamp(65px,16vw,100px)}.footer-main{grid-template-columns:1fr 1fr;gap:25px;padding:40px 18px}.footer-main>div:first-child{grid-column:1/-1}.footer-news{grid-column:1/-1}.footer-logo{font-size:65px}.footer-bottom{padding:13px 18px;flex-direction:column;font-size:9px}.overlay{padding:60px 10px}.overlay-panel{padding:35px 20px}.search-field input{font-size:17px}.search-result{font-size:16px}}
+@media(prefers-reduced-motion:reduce){*,*:before,*:after{animation-duration:.01ms!important;transition-duration:.01ms!important;scroll-behavior:auto!important}}
 
-.hero-cover{isolation:isolate}
-#owner-feature-image{position:absolute;top:8%;left:20%;width:60%;height:60%;object-fit:cover;box-shadow:0 24px 80px #0009;z-index:2;animation:featured-enter .5s ease-out}
-.feature-bottom{z-index:3;position:absolute;bottom:0;left:0;right:0;padding:53px 18px 18px;background:linear-gradient(0deg,rgba(0,0,0,.97) 0%,rgba(0,0,0,.79) 65%,transparent 100%);}
-.feature-bottom .tiny{color:var(--acid)}
-.feature-title{margin-top:7px;font-size:clamp(26px,3.3vw,45px);font-weight:900;line-height:.88;font-style:italic;letter-spacing:-.035em;text-transform:uppercase;overflow-wrap:anywhere}
-.feature-artist{font:10px/1.4 var(--mono);color:#bdbdbd;margin:8px 0 11px}
-.feature-play{border:1px solid var(--acid);color:#080808;background:var(--acid);font:800 16px var(--display);padding:8px 12px;cursor:pointer}
-.feature-play:disabled{background:transparent;color:#aaa;border-color:#777;cursor:not-allowed}
-.feature-play:not(:disabled):hover{background:#fff;border-color:#fff}
-@keyframes featured-enter{from{opacity:.4;transform:scale(.97)}to{opacity:1;transform:none}}
-@media(max-width:740px){
-.hero-cover{min-height:355px}
-#owner-feature-image{top:6%;height:63%;width:auto;left:50%;transform:translateX(-50%);aspect-ratio:1}
-.feature-bottom{padding-top:46px}
-}
-@media(prefers-reduced-motion:reduce){#owner-feature-image{animation:none}}
 </style>
-<script defer src="./spotify-auth.js?v=20261011c"></script>
-<script defer src="./spotify-room.js?v=20261011c"></script>
+  
+  
+
+
+<style>
+/* Restore native TRANSMISSION editorial grid, with actual Spotify metadata instead of fake broadcasts */
+#hero-image{background-image:radial-gradient(circle at 64% 30%,#515d26 0 11%,#101212 12% 18%,#2b3320 19% 36%,#0a0c0d 60%),linear-gradient(120deg,#111,#343b33);opacity:1}
+.hero-visual{background:#141714}
+.tm-audio-panel{display:grid;grid-template-columns:85px minmax(0,1fr) minmax(155px,auto);align-items:center;gap:17px;background:#191919;padding:13px 18px;border-bottom:1px solid #5a5a5a}
+.tm-player-art{height:70px;width:70px;display:grid;place-items:center;background:radial-gradient(circle,#deff70,#172115);font-size:32px;font-weight:900;color:#121212;background-size:cover;background-position:center}
+.tm-player-copy{display:flex;flex-direction:column;gap:5px;overflow:hidden}
+.tm-player-copy strong{font-size:clamp(22px,3vw,34px);font-weight:900;line-height:1;text-transform:uppercase;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.tm-player-copy small{font-family:var(--mono);font-size:11px;color:#aaa;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+.tm-player-state{display:flex;flex-direction:column;align-items:flex-end;gap:7px}
+.tm-player-state span{font:10px var(--mono);color:#c3c3c3}
+.tm-button{background:var(--yellow);border:1px solid var(--yellow);color:#080808;padding:9px 12px;font-weight:900;font-size:15px}
+.tm-button:hover{background:white}
+.tm-status{font:11px/1.65 var(--mono);background:#161616;padding:8px 18px;color:#bbb;border-bottom:1px solid #4d4d4d;min-height:33px}
+.tm-status.is-error{color:#ff9f9f}
+.tm-strip-song{display:flex;align-items:center;gap:12px;flex:1;min-width:0;padding:0 15px;white-space:nowrap;overflow:hidden}
+.tm-strip-song strong{font-size:15px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+.tm-strip-song small{font:10px var(--mono);color:#aaa;overflow:hidden;text-overflow:ellipsis}
+.tm-strip-owner{color:#a6a6a6;font:10px var(--mono);padding:0 14px;align-self:center;white-space:nowrap}
+.tm-rail-image{background-position:center;background-size:cover}
+.tm-empty{padding:22px 15px;background:#1b1b1b;color:#aaa;font:11px/1.7 var(--mono);grid-column:1/-1}
+.record-art.no-cover{background:radial-gradient(circle at 56% 41%,#8f9249 0 8%,#0f1614 9% 21%,#5e532b 22% 24%,#172318 25% 50%,#080808 66%)}
+.tm-recent-panel{background:linear-gradient(160deg,#080d0c,#203a39 57%,#030707)}
+.tm-studio-gradient{background:radial-gradient(circle at 40% 40%,#557b56,#0c2d21 26%,#090d0a 60%),repeating-conic-gradient(from 45deg,#181818 0 25deg,#040404 25deg 50deg)}
+.tm-recent-art-title{position:absolute;left:12%;top:35%;font-size:clamp(70px,8vw,150px);font-weight:900;font-style:italic;line-height:.7;letter-spacing:-.07em;text-shadow:7px 7px #080808}
+.tm-recent-art-title span{font-size:60px;color:var(--yellow)}
+.tm-history{display:block}
+.tm-history h2{font-size:clamp(43px,5vw,85px);margin:12px 0 22px}
+.tm-recent-items{width:100%;border-top:1px solid #555}
+.tm-recent-item{width:100%;padding:10px 0;display:flex;gap:12px;align-items:center;border:0;border-bottom:1px solid #555;background:none;color:white;text-align:left}
+.tm-recent-item:hover{background:#303030}
+.tm-recent-index{font:10px var(--mono);color:#888;width:20px;flex:none}
+.tm-recent-cover{height:50px;width:50px;background:#343434;background-position:center;background-size:cover;flex:none}
+.tm-recent-desc{min-width:0;flex:1;display:flex;flex-direction:column}
+.tm-recent-desc strong{font-size:20px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tm-recent-desc small{font:10px var(--mono);color:#aaa;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tm-recent-arrow{font-size:18px;color:var(--yellow);padding:0 6px}
+.tm-share .tm-form{display:flex;gap:8px;flex-wrap:wrap;margin:14px 0 12px}
+.tm-form input{background:#fff;color:#090909;font:12px var(--mono);border:1px solid #ccc;padding:10px;min-width:0;flex:1}
+.tm-form .tm-submit,.tm-actions .tm-submit{display:inline-flex;align-items:center;justify-content:center;padding:10px 14px;border:1px solid #111;background:#111;color:white;font:900 15px var(--display);cursor:pointer}
+.tm-form .tm-submit:hover,.tm-actions .tm-submit:hover{background:#353535}
+.tm-actions{display:flex;gap:8px;flex-wrap:wrap;margin:15px 0}
+.tm-actions button:disabled{opacity:.45;cursor:not-allowed}
+.tm-shared-name{font-size:22px!important;font-family:var(--display)!important;font-weight:900;line-height:1.1}
+.tm-link{border:0;background:none;color:#111;text-decoration:underline;cursor:pointer;font:700 14px var(--display);padding:0}
+.support-section .tm-share{max-width:620px}
+#prev-slide:disabled,#pause-slide:disabled,#next-slide:disabled,#hero-play:disabled{opacity:.5;cursor:not-allowed}
+.record-info p{overflow:hidden;text-overflow:ellipsis}
+@media(max-width:800px){.tm-strip-owner,.tm-strip-song small{display:none}.tm-player-state span{display:none}.tm-audio-panel{grid-template-columns:65px minmax(0,1fr) auto;gap:9px;padding:11px}.tm-player-art{width:55px;height:55px}.tm-player-copy .eyebrow{font-size:9px}.tm-strip-song{padding:0 7px}}
+@media(max-width:540px){.tm-player-state{min-width:92px}.tm-button{font-size:12px;padding:8px}.tm-strip-song strong{font-size:12px}.tm-recent-art-title{font-size:79px}.tm-history h2{font-size:55px}}
+@media(prefers-reduced-motion:reduce){.tm-recent-art-title{transition:none}}
+</style>
+<script defer src="./spotify-auth.js?v=20261011d"></script>
+<script defer src="./spotify-editorial.js?v=20261011d"></script>
 </head>
 <body>
-<header class="header" aria-label="Navegación">
- <a class="logo" href="/" title="TRANSMISSION">T/M</a>
- <a href="#listening" class="is-active">ESCUCHAR</a>
- <a href="#rotation">ROTACIÓN</a>
- <a href="#collection">PLAYLISTS</a>
- <a href="#discovery">BUSCAR</a>
- <span class="sep"></span><span class="header-number">TRANSMISSION / PERSONAL RADIO</span>
-</header>
-<div class="overline tiny"><span>PERSONAL ARCHIVE / MUSIC THAT STAYS</span><span><strong>NO. 001</strong> / ONGOING COLLECTION</span></div>
-<main>
-<section class="hero" id="listening">
- <div class="hero-copy">
-   <div class="mastlabel tiny"><i class="green-dot"></i> TRANSMISSION / PERSONAL MUSIC ARCHIVE</div>
-   <h1 class="headline">MY<br><span>FREQ.</span></h1>
-   <p>Mi música, mis rotaciones y las canciones que quiero compartir. Aquí se escucha con Spotify Premium, directamente en el navegador: no hay programas de radio ficticios ni reproducciones de muestra.</p>
- </div>
- <div class="hero-cover" id="owner-feature" aria-label="Selección destacada">
-  <div class="ring" id="owner-feature-empty" aria-hidden="true"><span>T/M</span></div>
-  <img id="owner-feature-image" alt="" hidden>
-  <div class="feature-bottom">
-    <div class="tiny" id="owner-feature-label">ESPERANDO LA PRIMERA SELECCIÓN</div>
-    <div id="owner-feature-title" class="feature-title">MY ROTATION</div>
-    <div id="owner-feature-artist" class="feature-artist">SELECCIÓN DE MÚSICA PERSONAL</div>
-    <button id="owner-feature-play" class="feature-play" type="button" disabled>▶ ESCUCHAR CANCIÓN</button>
+  <a class="skip-link" href="#main">Saltar al contenido</a>
+<header class="site-header" id="top">
+  <div class="top-bar">
+    <a class="brand" href="#top" aria-label="Transmission — inicio"><span class="brand-mark">T<span class="brand-mark-slash">/</span>M</span></a>
+    <button class="mobile-trigger icon-button" id="menu-toggle" aria-label="Abrir menú" aria-expanded="false"><span class="menu-symbol"></span></button>
+    <nav class="main-nav" id="main-nav" aria-label="Navegación principal">
+      <a class="nav-link is-current" href="#radio">ESCUCHAR</a>
+      <a class="nav-link" href="#latest">EN ROTACIÓN</a>
+      <a class="nav-link" href="#explore">EXPLORAR</a>
+      <a class="nav-link" href="#mixtapes">PLAYLISTS</a>
+      <a class="nav-link" href="#recent">RECIENTES</a>
+      <a class="support-link" href="#support">COMPARTIR <span aria-hidden="true">↗</span></a>
+    </nav>
+    <div class="header-tools">
+      <button class="header-search icon-button" id="search-trigger" aria-label="Buscar en Spotify" title="Buscar en Spotify"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.4"/><path d="m15.2 15.2 5 5"/></svg></button>
+      <span class="tool-divider"></span>
+      <button class="header-account" id="saved-trigger" title="Conectar o desconectar Spotify"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 4h12v17l-6-4-6 4z"/></svg> <span>MY SIGNAL</span></button>
+    </div>
   </div>
- </div>
-</section>
-<div class="statusline" id="music-status" role="status" aria-live="polite"><i class="dot"></i> PREPARANDO SESIÓN...</div>
-<section id="connect-view" class="access" aria-label="Conectar con Spotify">
- <div class="access-col">
-   <div class="tiny" style="color:#aaa">01 / YOUR SPOTIFY ACCOUNT</div>
-   <h2>DALE AL<br> PLAY.</h2>
-   <p>Conecta tu cuenta Premium y reproduce canciones sin abandonar esta web. Tu contraseña se introduce exclusivamente en Spotify.</p>
-   <button type="button" class="button acid" id="connect-button">CONECTAR SPOTIFY <span aria-hidden="true">↗</span></button>
- </div>
- <div class="access-col">
-   <div class="tiny" style="color:#aaa">02 / WHAT IS INSIDE</div>
-   <h2>UNA WEB.<br> UNA SESIÓN.</h2>
-   <p>Carátulas reales, canciones favoritas, tus playlists, selección compartida y reproductor Spotify para cada invitado. Toda la página gira alrededor de la música.</p>
-   <div class="tiny" style="color:var(--acid)">HTTPS / OAUTH PKCE / WEB PLAYBACK SDK</div>
- </div>
-</section>
-<div id="connected-view" hidden>
- <div class="member-head"><div><div class="tiny" style="color:#999">CUENTA CONECTADA</div><strong id="account-name">SPOTIFY</strong></div><div style="text-align:right"><span class="tiny" id="owner-tag">CUENTA PREMIUM</span><div style="margin-top:7px"><button type="button" class="text-link" id="disconnect-button">DESCONECTAR ↗</button></div></div></div>
- <section class="shared-session" id="shared-session" aria-label="Playlist compartida">
- <div>
-   <div class="tiny" style="color:var(--acid)">EDITORIAL SELECTION / SHARED PLAYLIST</div>
-   <h2>ESCUCHAR JUNTOS.</h2>
-   <p>Abre una playlist en esta página, sin salir a Spotify. Comparte la dirección resultante con tu novia o tus amigos.</p>
-   <form id="shared-form" style="display:flex;flex-wrap:wrap;gap:9px">
-     <input id="shared-url" aria-label="Enlace de playlist" placeholder="Pega el enlace de tu playlist de Spotify" autocomplete="off">
-     <button class="button acid small" type="submit">CARGAR ↗</button>
-   </form>
-   <div id="shared-info" class="session-art" hidden></div>
-   <p id="shared-feedback" role="status" style="margin-top:10px"></p>
- </div>
- <div style="display:grid;gap:8px">
-   <button class="button small" type="button" id="play-shared" disabled>▶ REPRODUCIR</button>
-   <button class="button small" type="button" id="copy-shared" disabled>⧉ COMPARTIR</button>
- </div>
- </section>
-<section class="now-layout" aria-label="Reproducción actual">
-   <div class="now-art"><div id="current-cover-wrap" class="cover-holder is-empty"><div id="current-cover"></div></div></div>
-   <div class="now-meta">
-      <div><div class="tiny upper" id="source-label">NOW PLAYING / SPOTIFY CONNECT</div><h2 id="current-name">YOUR<br> FREQUENCY</h2><p id="current-artist">Selecciona una canción para comenzar</p><p class="album" id="current-album"></p></div>
-      <div><div class="tiny upper" id="now-indicator">ESPERANDO REPRODUCCIÓN</div><div class="device-info" id="current-device">DISPOSITIVO / AÚN SIN ELEGIR</div><div class="device-info" id="device-label">WEB PLAYER / INICIANDO</div>
-        <div class="now-actions">
-         <button type="button" class="button acid" id="listen-here" disabled>▶ ESCUCHAR AQUÍ</button>
-         <button type="button" class="button" id="previous" title="Anterior">⏮</button>
-         <button type="button" class="button" id="toggle-button">REPRODUCIR</button>
-         <button type="button" class="button" id="next" title="Siguiente">⏭</button>
-         <button type="button" class="button" id="current-share" disabled>COMPARTIR ↗</button>
-        </div>
-        <div class="player-progress"><span id="position">0:00</span><input type="range" id="track-progress" min="0" max="1" value="0" aria-label="Posición de reproducción"><span id="duration">0:00</span></div>
+  <div class="live-strip" id="radio">
+    <div class="live-badge" id="live-label">SPOTIFY <span class="pulse-dot"></span></div>
+    <div class="tm-strip-song"><strong id="strip-song">TRANSMISSION / PERSONAL RADIO</strong><small id="strip-artist">LA MÚSICA SE CARGA AL CONECTAR</small></div>
+    <span class="tm-strip-owner" id="owner-display">SPOTIFY PREMIUM</span>
+    <button class="strip-control" id="audio-previous" aria-label="Canción anterior">⏮</button>
+    <button class="strip-control" id="audio-toggle" aria-label="Reproducir o pausar">▶</button>
+    <button class="strip-control" id="audio-next" aria-label="Siguiente canción">⏭</button>
+  </div>
+</header>
+
+  <main id="main">
+    <section class="lead-layout" aria-label="Música destacada y playlists">
+  <div class="hero-slider" id="hero-slider">
+    <div class="hero-visual" id="hero-visual">
+      <div class="hero-image" id="hero-image"></div><div class="hero-grain" aria-hidden="true"></div>
+      <div class="hero-topline"><span>TRANSMISSION / PERSONAL ROTATION</span><span class="hero-onair"><i></i> SPOTIFY / MY FREQUENCY</span></div>
+      <div class="hero-caption">
+        <button class="hero-play" id="hero-play" aria-label="Reproducir canción destacada" disabled><svg viewBox="0 0 40 40" aria-hidden="true"><path d="M10 5v30L34 20z"/></svg></button>
+        <p class="hero-kicker" id="hero-kicker">PERSONAL MUSIC ARCHIVE</p>
+        <h1 class="hero-title" id="hero-title">YOUR FREQUENCY</h1>
+        <p class="hero-description" id="hero-description">Conecta tu cuenta Premium para cargar canciones y carátulas de Spotify.</p>
       </div>
-   </div>
- </section>
- <div class="section-header" id="rotation"><div><div class="tiny" style="color:#aaa" id="collection-label">LAST 4 WEEKS</div><h2>EN ROTACIÓN / TOP TRACKS</h2></div><div class="toggles"><button type="button" class="button small selected" id="top-short">4 SEMANAS</button><button type="button" class="button small" id="top-medium">6 MESES</button><button type="button" class="button small" id="top-long">1 AÑO</button></div></div>
- <section id="tracks-grid" class="track-grid" aria-label="Canciones destacadas"><p class="muted">Inicia sesión para ver tus canciones.</p></section>
- <div class="section-header" id="collection"><div><div class="tiny" style="color:#aaa">PERSONAL LIBRARY / ACCOUNT-BASED</div><h2>PLAYLISTS / LISTAS</h2></div><button class="button small" type="button" id="refresh-data">ACTUALIZAR ↺</button></div>
- <section class="lists-grid" id="playlists-grid" aria-label="Mis playlists"></section>
- <div class="section-header"><div><div class="tiny" style="color:#aaa">LISTENING HISTORY</div><h2>ÚLTIMAS ESCUCHAS</h2></div><span class="tiny" style="color:#aaa">RECENT / 08</span></div>
- <section id="recent-grid" class="track-grid" aria-label="Escuchado recientemente"></section>
- <section class="search-block" id="discovery" aria-label="Buscar canciones">
-   <div class="tiny" style="color:var(--acid)">DISCOVER / THE CATALOGUE</div>
-   <div class="section-header" style="padding:13px 0;border:0"><h2>BUSCA / REPRODUCE</h2><span class="tiny" style="color:#aaa">SPOTIFY SEARCH</span></div>
-   <form id="search-form" class="search-form">
-      <input id="search-query" type="search" placeholder="Artista, canción, álbum..." minlength="2" required autocomplete="off" aria-label="Buscar canciones">
-      <button class="button acid" type="submit">BUSCAR ↗</button>
-   </form>
- </section>
- <div id="search-results" class="results" aria-live="polite"></div>
- <p id="editorial-note" class="editorial-note"><b>MI ROTACIÓN.</b> Cuando conecte mi cuenta, esta portada puede destacar lo que estoy escuchando o lo que más escuché últimamente. Para que los demás vean automáticamente mis cambios incluso cuando no estoy conectado, hará falta configurar la sincronización pública.</p>
+      <div class="slider-footer">
+        <div class="slider-progress" id="slider-progress" aria-label="Posición del carrusel"><span id="progress-fill"></span></div>
+        <span class="slider-count" id="slider-count">00 / 00</span>
+        <div class="slider-controls">
+          <button id="prev-slide" aria-label="Canción anterior en carrusel">‹</button>
+          <button id="pause-slide" aria-label="Reproducir la canción seleccionada" disabled>▶</button>
+          <button id="next-slide" aria-label="Siguiente canción en carrusel">›</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <aside class="mixtape-rail" id="mixtapes" aria-label="Playlists personales">
+    <div class="rail-head"><div class="rail-heading">PERSONAL<br>PLAYLISTS</div><span class="rail-heading-arrows">↗</span><p>Las listas se llenarán con tu música real, sin ejemplos ficticios.</p></div>
+    <button class="rail-item" type="button" id="rail-placeholder"><span class="rail-item-cover art-focus">♫</span><span class="rail-item-label">TUS PLAYLISTS <small>CONÉCTATE A SPOTIFY</small></span><span class="rail-item-arrow">↗</span></button>
+    <button class="rail-all" id="rail-all" type="button">EXPLORE THE COLLECTION <span>↗</span></button>
+  </aside>
+</section>
+<section class="tm-audio-panel" id="player" aria-label="Reproductor integrado de Spotify">
+  <div class="tm-player-art" id="player-art">T/M</div>
+  <div class="tm-player-copy"><span class="eyebrow">WEB PLAYBACK SDK / STREAMED BY SPOTIFY</span><strong id="player-track">YOUR MUSIC, HERE.</strong><small id="player-artist">Conecta Spotify y selecciona una canción en las carátulas.</small></div>
+  <div class="tm-player-state"><span id="player-device">WEB PLAYER / DESCONECTADO</span><button id="connect-button" class="tm-button" type="button">CONECTAR SPOTIFY</button></div>
+</section>
+<div class="tm-status" id="spotify-status" role="status" aria-live="polite">Preparando Spotify…</div>
+
+    <section class="catalog-section" id="latest">
+  <div class="section-heading">
+    <div><span class="eyebrow" id="pick-period">PERSONAL ROTATION / LAST 4 WEEKS</span><h2>ON MY RADAR <span class="heading-indicator">✳</span></h2></div>
+    <button class="view-all" data-view="all" id="top-refresh" type="button" onclick="document.querySelector('#latest').scrollIntoView({behavior:'smooth'})">TOP TRACKS <span>↗</span></button>
+  </div>
+  <div class="picks-grid" id="picks-grid" aria-label="Canciones más escuchadas"></div>
+</section>
+
+    <section class="discover-panel" id="explore">
+  <div class="discover-copy">
+    <span class="eyebrow">SPOTIFY / PERSONAL ARCHIVE</span>
+    <h2>EVERY<br>FREQUENCY<br>HAS A STORY<span class="heading-period">.</span></h2>
+    <p>Una biblioteca musical personal: canciones favoritas, álbumes que se repiten y selecciones para compartir. El audio se reproduce aquí con cada cuenta Premium.</p>
+    <a class="outline-cta" href="#collections">EXPLORE MY COLLECTION <span>↗</span></a>
+  </div>
+  <div class="discover-art" role="img" aria-label="Composición abstracta de discos y ondas">
+    <div class="circles circle-a"></div><div class="circles circle-b"></div><div class="circles circle-c"></div>
+    <div class="disc-mark">T/M</div><div class="sideprint">EVERYTHING IS CONNECTED · 001—∞</div><div class="crosshair">✳</div>
+  </div>
+</section>
+
+    <section class="catalog-section collection-section" id="collections">
+  <div class="section-heading"><div><span class="eyebrow">LISTEN DIFFERENTLY</span><h2>COLLECTIONS <span class="heading-indicator">↗</span></h2></div><button class="view-all" id="random-discovery" type="button">SURPRISE ME <span>↗</span></button></div>
+  <div class="collection-grid">
+    <button class="collection-tile" id="collection-top" type="button">
+      <span class="collection-art collection-art-one"><span class="distortion-title">TOP<br>TRACKS</span><span class="distortion-coord">MY ROTATION / 4 WEEKS</span></span>
+      <span class="collection-caption"><b>MOST PLAYED</b><span id="collection-count-1">CONECTAR PARA VER ↗</span></span>
+    </button>
+    <button class="collection-tile" id="collection-playlists" type="button">
+      <span class="collection-art collection-art-two"><span class="sun-disc"></span><strong>MY<br>PLAYLISTS</strong><span class="tiny-invert">PERSONAL LISTENING</span></span>
+      <span class="collection-caption"><b>MY PLAYLISTS</b><span id="collection-count-2">CONECTAR PARA VER ↗</span></span>
+    </button>
+    <button class="collection-tile" id="collection-recent" type="button">
+      <span class="collection-art collection-art-three"><span class="pixel-cloud">░▒▓▒░<br>▒░▓░▒<br>▓▒░▒▓</span><strong>RECENT<br>LISTENS</strong><small>RECORDS / TRACKS</small></span>
+      <span class="collection-caption"><b>RECENTLY PLAYED</b><span id="collection-count-3">CONECTAR PARA VER ↗</span></span>
+    </button>
+  </div>
+</section>
+
+    <section class="marquee-band" aria-label="Identidad visual"><div class="marquee-inner" aria-hidden="true">MY FREQUENCY&nbsp; ✳ &nbsp;MUSIC THAT STAYS&nbsp; ✳ &nbsp;NO FIXED GENRE&nbsp; ✳ &nbsp;MY FREQUENCY&nbsp; ✳ &nbsp;MUSIC THAT STAYS&nbsp; ✳ &nbsp;NO FIXED GENRE&nbsp; ✳ &nbsp;</div></section>
+
+    <section class="studio-block" id="recent">
+  <div class="studio-image tm-recent-panel">
+    <span class="studio-img tm-studio-gradient" aria-hidden="true"></span>
+    <span class="studio-sticker">HISTORY<br>LOG<br><small>VOL. 001</small></span>
+    <span class="tm-recent-art-title">AFTER<br>HOURS<span>✳</span></span>
+  </div>
+  <div class="studio-content tm-history">
+    <span class="eyebrow">SPOTIFY / YOUR LISTENING HISTORY</span><h2>THE<br>RECENT<br>ROTATION.</h2>
+    <div id="recent-items" class="tm-recent-items" aria-label="Tus últimas reproducciones"></div>
+  </div>
+</section>
+
+    <section class="support-section" id="support">
+  <span class="eyebrow">SHARED / PERSONAL / PREMIUM</span>
+  <div class="support-flex">
+    <h2>LISTEN<br>TOGETHER.</h2>
+    <div class="tm-share">
+      <p>Pega una playlist de Spotify. La abriremos desde esta misma página y podrás compartir el enlace con tu novia o tus amigos.</p>
+      <form id="shared-form" class="tm-form">
+        <input id="shared-link" type="url" placeholder="https://open.spotify.com/playlist/..." aria-label="URL de playlist" required>
+        <button class="light-cta tm-submit" type="submit">CARGAR PLAYLIST ↗</button>
+      </form>
+      <div id="shared-info" class="eyebrow">NO PLAYLIST LOADED</div>
+      <p id="shared-name" class="tm-shared-name"></p>
+      <div class="tm-actions">
+        <button id="shared-button" class="light-cta tm-submit" disabled type="button">▶ PLAY HERE</button>
+        <button id="shared-share" class="light-cta tm-submit" type="button">COPIAR ENLACE ↗</button>
+      </div>
+      <button id="reconnect-button" class="tm-link" type="button">CONECTAR / DESCONECTAR SPOTIFY ↗</button>
+    </div>
+  </div>
+</section>
+
+  </main>
+  <footer class="footer">
+  <div class="footer-main">
+    <div><div class="footer-logo">T/M<span>✳</span></div><p>AN OPEN CHANNEL<br>FOR PERSONAL MUSIC.</p></div>
+    <div><span class="footer-title">LISTEN</span><a href="#radio">SPOTIFY PLAYER</a><a href="#latest">IN ROTATION</a><a href="#mixtapes">PLAYLISTS</a><a href="#recent">RECENT LISTENS</a></div>
+    <div><span class="footer-title">COLLECTIONS</span><a href="#collections">THE ARCHIVE</a><a href="#support">SHARE A PLAYLIST</a><a href="#top">BACK TO TOP</a><span class="footer-note">INDEPENDENT / NON-AFFILIATED</span></div>
+    <div class="footer-news"><span class="footer-title">PERSONAL FREQUENCIES</span><p>La música la reproduce Spotify. Cada oyente usa su propia cuenta Premium.</p><div class="coming-soon">TRANSMISSION 001 <span>↗</span></div></div>
+  </div>
+  <div class="footer-bottom"><span>© 2026 TRANSMISSION / PERSONAL ARCHIVE</span><span>STREAMING VIA SPOTIFY <span class="pulse-dot"></span></span></div>
+</footer>
+
+  <div class="overlay" id="search-overlay" aria-hidden="true">
+  <div class="overlay-panel search-panel" role="dialog" aria-modal="true" aria-labelledby="search-title">
+    <button class="close-overlay" data-close aria-label="Cerrar">✕</button>
+    <span class="eyebrow">SEARCH SPOTIFY CATALOG</span>
+    <h2 id="search-title">WHAT ARE YOU<br>LOOKING FOR?</h2>
+    <label class="search-field"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10" cy="10" r="6"/><path d="m15 15 6 6"/></svg><input id="search-input" type="search" placeholder="ARTISTS, TRACKS, ALBUMS..." autocomplete="off" aria-label="Buscar Spotify"></label>
+    <div class="search-results" id="search-results" role="status"></div>
+  </div>
 </div>
-</main>
-<footer class="footer"><strong>TRANSMISSION / PERSONAL FREQUENCY</strong><span>SPOTIFY STREAMING / LISTENED VIA YOUR ACCOUNT · NO AFFILIATION</span></footer>
-<div class="playerbar" id="playerbar" aria-live="polite"><div class="playerbar-art" id="playerbar-art"></div><div class="playerbar-info"><b id="playerbar-track">CANCION</b><small id="playerbar-artist">ARTISTA</small></div><button id="bar-play" type="button" title="Pausar o reproducir">▶</button></div>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
 </body>
 </html>
