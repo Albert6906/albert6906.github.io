@@ -115,8 +115,16 @@
 .tm-public-embed[hidden]{display:none}
 .tm-public-embed iframe{width:100%;height:352px;display:block;border:0;border-radius:8px;background:#191414}
 .tm-shared-name{overflow-wrap:anywhere}
+.tm-spotify-embed{display:grid;grid-template-columns:1fr;gap:11px;background:#111;border-bottom:1px solid #535353;padding:15px 20px 18px}
+.tm-spotify-embed[hidden]{display:none}
+.tm-embed-heading{display:flex;justify-content:space-between;align-items:center;gap:15px}
+.tm-embed-heading button{border:0;background:none;color:#ddd;font-size:20px;cursor:pointer}
+.tm-embed-heading button:hover{color:var(--yellow)}
+#tm-embed-frame iframe{display:block;width:100%;max-width:680px;height:152px;border:0;border-radius:8px;background:#191414}
+.tm-spotify-embed p{font:11px/1.55 var(--mono);color:#a5a5a5;margin:0}
+@media(max-width:720px){.tm-spotify-embed{padding:13px}}
 </style>
-<link rel="stylesheet" href="./spotify-controls.css?v=20261011master">
+<link rel="stylesheet" href="./spotify-controls.css?v=20261011master2">
 <script defer src="./spotify-auth.js?v=20261011final"></script>
 <script defer src="./spotify-editorial.js?v=20261011final"></script>
 <script defer src="./spotify-controls.js?v=20261011final"></script>
@@ -221,6 +229,12 @@
   </div>
 </section>
 <div class="tm-status" id="spotify-status" role="status" aria-live="polite">Preparando Spotify…</div>
+<section id="tm-spotify-embed" class="tm-spotify-embed" hidden aria-label="Reproductor oficial de Spotify">
+  <div class="tm-embed-heading"><span class="eyebrow">SPOTIFY / REPRODUCTOR OFICIAL</span>
+    <button id="tm-embed-close" type="button" aria-label="Cerrar reproductor oficial">✕</button></div>
+  <div id="tm-embed-frame"></div>
+  <p>Esta reproducción utiliza directamente el reproductor oficial de Spotify.</p>
+</section>
 
     <section class="catalog-section" id="latest">
   <div class="section-heading">
