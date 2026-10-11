@@ -41,6 +41,25 @@ function renderOwnerFeature(track,label){
   if(button)button.disabled=!track.uri;
 }
 
+async function loadPublicFeature(){
+  try{
+    const response=await fetch('./featured.json?rev='+Math.floor(Date.now()/3600000),{cache:'no-store'});
+    if(!response.ok)return;
+    const data=await response.json();
+    const info=data?.track;
+    if(data?.status!=='ready'||!info?.id||!/^[A-Za-z0-9]{22}$/.test(info.id))return;
+    const publication={
+      id:info.id,uri:'spotify:track:'+info.id,name:info.name||'',
+      artists:[{name:info.artist||'Artista'}],
+      album:{images:[{url:info.image||''}]},
+      external_urls:{spotify:'https://open.spotify.com/track/'+info.id}
+    };
+    renderOwnerFeature(publication,'DESTACADA / MI ROTACIÓN');
+  }catch(error){
+    console.warn('No se pudo consultar la selección pública.',error?.message||error);
+  }
+}
+
 function displayTrack(track,{playingState=false}={}){
   if(!track?.id&&!track?.uri)return;
   currentTrack=track;lastTrackId=track.id||null;
@@ -402,6 +421,7 @@ el('track-progress').onchange=e=>runAction('Cambiando posición...',async()=>{
 el('refresh-data').onclick=async()=>{await Promise.allSettled([loadTop(activeMode),loadLists(),loadRecent(),updatePlayback()]);status('Biblioteca actualizada.')};
 document.addEventListener('visibilitychange',()=>{if(!document.hidden&&sp.isLogged())updatePlayback()});
 try {
+  await loadPublicFeature();
   await sp.processRedirect();
   if(sp.isLogged())await afterLogin();
   else status('Conecta tu Spotify Premium. No guardamos contraseñas ni alojamos tu música.');
