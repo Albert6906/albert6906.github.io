@@ -159,6 +159,28 @@ function showLyrics(){
  }
 }
 $('tm-lyrics-button').onclick=showLyrics;
+$('tm-diagnostics').onclick=async()=>{
+ c.dataset.mode='diagnostics';c.replaceChildren(document.createTextNode('Comprobando Spotify…'));
+ const checks=[];
+ checks.push('Cuenta: '+(rt.account?'AUTORIZADA':'SIN INICIAR SESIÓN'));
+ checks.push('Web Playback SDK: '+(rt.player?'CONECTADO':'NO INICIADO'));
+ checks.push('Dispositivo navegador: '+(rt.device?'REGISTRADO':'NO DISPONIBLE'));
+ if(rt.account){
+   try{
+     const s=await sp.api('/me/player');
+     checks.push('Sesión de audio: '+(s?.device?.name||'SIN DISPOSITIVO ACTIVO'));
+     checks.push('Reproducción: '+(s?.is_playing?'SONANDO':s?'PAUSADA':'SIN AUDIO'));
+   }catch(e){checks.push('Spotify API: '+(e.status||'ERROR')+' / '+e.message)}
+   try{
+     const devices=await sp.api('/me/player/devices');
+     checks.push('Dispositivos disponibles: '+(devices?.devices?.length??'—'));
+   }catch(e){checks.push('Lista de dispositivos: '+e.message)}
+ }
+ checks.push('Nota: solo una cuenta Premium autorizada puede reproducir. Algunos navegadores exigen pulsar directamente ▶ antes de permitir el audio.');
+ if(c.dataset.mode==='diagnostics')c.replaceChildren(...checks.map(line=>{
+   const p=document.createElement('div');p.textContent=line;p.style.margin='0 0 8px';return p
+ }));
+};
 window.addEventListener('tm:playback',e=>updateUi(e.detail));
 window.addEventListener('tm:track',e=>{
  const track=e.detail?.track;
