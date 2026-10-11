@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#0b0b0b">
+<meta name="description" content="Un espacio personal para escuchar y compartir música en Spotify.">
+<title>MI MÚSICA / TRANSMISSION</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;500;600;700;800;900&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{--black:#0b0b0b;--line:#575757;--acid:#e6ff60;--grey:#b1b1b1;--font:'Barlow Condensed','Arial Narrow',Arial,sans-serif;--mono:'DM Mono',monospace}*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--black);color:#f5f5f1;font-family:var(--font);-webkit-font-smoothing:antialiased}a{color:inherit;text-decoration:none}button,input{font:inherit}button{cursor:pointer}button:focus-visible,a:focus-visible,input:focus-visible{outline:3px solid var(--acid);outline-offset:3px}::selection{background:var(--acid);color:#000}.sitebar{display:flex;min-height:56px;align-items:stretch;border-bottom:1px solid var(--line);position:sticky;top:0;background:#080808;z-index:20}.mark{display:flex;align-items:center;padding:0 18px;font-style:italic;font-weight:900;font-size:29px;letter-spacing:-2px;color:#000;background:#fff}.sitebar>a:not(.mark){display:flex;align-items:center;padding:0 17px;border-right:1px solid var(--line);font-size:16px;font-weight:700}.sitebar .active{background:var(--acid);color:#000}.sitebar .spacer{flex:1;border-left:1px solid var(--line)}.tiny{font:11px/1.6 var(--mono);letter-spacing:.03em;text-transform:uppercase}.index{padding:12px 20px;display:flex;justify-content:space-between;gap:15px;color:#b7b7b7;border-bottom:1px solid var(--line)}.mast{display:grid;grid-template-columns:1.2fr .8fr;border-bottom:1px solid var(--line)}.mast-title{padding:34px 24px 26px;min-height:318px;position:relative;overflow:hidden;display:flex;flex-direction:column;justify-content:space-between}.mast-title h1{margin:16px 0 0;font-size:clamp(86px,13vw,230px);font-weight:900;font-style:italic;line-height:.73;letter-spacing:-.075em;transform:translateX(-.035em)}.mast-title h1 span{color:var(--acid)}.mast-title .desc{color:var(--grey);font:12px/1.65 var(--mono);max-width:570px;margin-top:26px}.mast-graphic{border-left:1px solid var(--line);background:radial-gradient(ellipse at 50% 49%,#323525 0,#10120c 45%,#090909 73%);display:grid;place-items:center;position:relative;overflow:hidden;min-height:320px}.vinyl{width:min(66%,285px);aspect-ratio:1;border-radius:50%;background:repeating-radial-gradient(circle,#080908 0 1.2px,#242520 1.7px 2.9px);border:1px solid #454740;box-shadow:0 0 0 1px #171717,0 18px 65px #000b;animation:spin 17s linear infinite;display:grid;place-items:center}.vinyl:before{content:"";position:absolute;inset:26%;background:var(--acid);border-radius:50%;border:5px solid #151515}.vinyl:after{content:"";position:absolute;width:14px;height:14px;background:#111;border-radius:50%;z-index:1}.vinyltext{position:absolute;bottom:16px;left:18px;color:#9e9e9e}.arc{position:absolute;width:520px;height:520px;border:1px dashed #46483b;border-radius:50%;transform:rotate(-13deg)}.arc.two{width:410px;height:410px}.section-head{display:flex;align-items:baseline;justify-content:space-between;gap:16px;border-bottom:1px solid var(--line);padding:14px 21px}.section-head h2{font-size:33px;font-weight:900;text-transform:uppercase;letter-spacing:-.025em;margin:0}.section-head .tiny{color:#aaa}.content-grid{display:grid;grid-template-columns:1fr 1fr}.module{border-right:1px solid var(--line);border-bottom:1px solid var(--line);padding:23px 23px 28px;min-height:300px}.module:nth-child(even){border-right:0}.module-head{display:flex;justify-content:space-between;align-items:center;color:#aaa;margin-bottom:30px}.module h3{font-size:clamp(36px,4.8vw,69px);font-weight:900;font-style:italic;line-height:.87;letter-spacing:-.03em;text-transform:uppercase;margin:0 0 22px}.module p{font:12px/1.8 var(--mono);color:#aaa;max-width:550px;margin:0 0 22px}.btn{border:1px solid #8b8b8b;color:#f0f0f0;background:transparent;display:inline-flex;gap:22px;align-items:center;justify-content:space-between;padding:13px 17px;text-transform:uppercase;font-size:16px;font-weight:800;letter-spacing:.015em;min-height:45px}.btn:hover{background:#f3f3f3;color:#101010}.btn.acid{background:var(--acid);border-color:var(--acid);color:#080808}.btn.acid:hover{background:#fff;border-color:#fff}.actions{display:flex;flex-wrap:wrap;gap:10px}.field{display:flex;gap:9px;align-items:stretch;margin:0 0 10px}.field input{min-width:0;flex:1;border:1px solid #777;background:#111;color:white;outline:0;padding:0 14px;font:12px var(--mono)}.field input:focus{border-color:var(--acid)}.field button{flex:none}.feedback{font:11px/1.7 var(--mono);min-height:20px;color:#ccc;margin:8px 0 0}.feedback.error{color:#ff9d95}.embed-wrap{display:none;padding:22px;border-bottom:1px solid var(--line)}.embed-wrap.visible{display:block}.embed-wrap iframe{display:block;width:100%;height:352px;border:0;border-radius:12px;background:#171717}.embed-meta{display:flex;justify-content:space-between;gap:15px;align-items:center;margin:0 0 14px}.embed-meta .tiny{color:var(--acid)}.share-bar{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}.note{color:#a8a8a8;padding:18px 22px;font:11px/1.9 var(--mono);border-bottom:1px solid var(--line)}.note b{color:white}.footer{padding:23px;display:flex;justify-content:space-between;gap:16px;color:#aaa}.footer strong{color:#fff;font-size:19px}.blink{width:6px;height:6px;background:var(--acid);display:inline-block;margin-right:8px;border-radius:50%}@keyframes spin{to{transform:rotate(360deg)}}@media(max-width:930px){.mast{grid-template-columns:1fr}.mast-graphic{border-left:0;border-top:1px solid var(--line);height:270px;min-height:270px}.mast-title{min-height:255px}.mast-title h1{font-size:clamp(75px,20vw,155px)}.content-grid{grid-template-columns:1fr}.module{border-right:0;min-height:260px}.module:nth-child(even){border-right:0}.sitebar .spacer{display:none}.sitebar>a:not(.mark){padding:0 11px}.section-head h2{font-size:28px}}@media(max-width:480px){.sitebar{min-height:48px}.mark{font-size:22px;padding:0 10px}.sitebar>a:not(.mark){font-size:13px;padding:0 8px}.mast-title{padding:28px 16px}.mast-title h1{font-size:clamp(62px,18vw,100px)}.index{padding:9px 13px;font-size:9px}.module{padding:20px 15px}.module h3{font-size:41px}.field{flex-direction:column}.field input{height:48px}.field button{min-height:45px}.section-head{padding:12px 15px}.footer{flex-direction:column}.embed-wrap{padding:13px}}
+@media(prefers-reduced-motion:reduce){.vinyl{animation:none}html{scroll-behavior:auto}}
+</style>
+</head>
+<body>
+<header class="sitebar">
+ <a class="mark" href="./index.html" aria-label="Inicio">T/M</a>
+ <a href="./index.html">INICIO</a>
+ <a class="active" href="./musica.html" aria-current="page">MI MÚSICA</a>
+ <span class="spacer"></span>
+ <a href="https://open.spotify.com/user/31irk65dnljb6i3jfg57lkixtgqu" target="_blank" rel="noopener noreferrer">SPOTIFY ↗</a>
+</header>
+<div class="index tiny"><span>TRANSMISSION / SELECCIÓN PERSONAL</span><span>01 — MUSIC ROOM</span></div>
+<main>
+  <section class="mast">
+    <div class="mast-title">
+       <div class="tiny"><span class="blink"></span> ABIERTO PARA AMIGOS / SIN REGISTRO PROPIO</div>
+       <h1>MI<br><span>MÚSICA.</span></h1>
+       <div class="desc">Una puerta a mi música de Spotify. Escucha desde tu propia cuenta, explora una selección o comparte una canción que merece quedarse.</div>
+    </div>
+    <div class="mast-graphic" aria-hidden="true"><div class="arc"></div><div class="arc two"></div><div class="vinyl"></div><span class="vinyltext tiny">SIDE A / SIDE B — PERSONAL FREQUENCIES</span></div>
+  </section>
+
+  <div class="section-head"><h2>ACCESO / EXPLORAR</h2><span class="tiny">2 ENTRADAS · 0 CONTRASEÑAS</span></div>
+  <section class="content-grid" aria-label="Espacio musical">
+    <article class="module">
+      <div class="module-head tiny"><span>01 / MI PERFIL</span><span>SPOTIFY ↗</span></div>
+      <h3>ENTRA A MI<br>COLECCIÓN.</h3>
+      <p>Abre mi perfil original en Spotify. Desde allí puedes consultar las listas que tenga públicas y escucharlas con tu propia cuenta.</p>
+      <div class="actions">
+        <a class="btn acid" href="https://open.spotify.com/user/31irk65dnljb6i3jfg57lkixtgqu" target="_blank" rel="noopener noreferrer">VER MI SPOTIFY <span aria-hidden="true">↗</span></a>
+        <button class="btn" id="copy-profile" type="button">COPIAR PERFIL <span aria-hidden="true">⧉</span></button>
+      </div>
+    </article>
+    <article class="module">
+      <div class="module-head tiny"><span>02 / REPRODUCTOR</span><span>SPOTIFY EMBED</span></div>
+      <h3>COMPARTE<br>UNA SESIÓN.</h3>
+      <p>Pega el enlace público de una playlist, canción o álbum de Spotify. Aparecerá aquí su reproductor oficial y podrás compartir esta página con esa selección cargada.</p>
+      <form class="field" id="spotify-form">
+        <input id="spotify-url" aria-label="Enlace de Spotify" autocomplete="off" spellcheck="false" placeholder="https://open.spotify.com/playlist/..." required>
+        <button class="btn acid" type="submit">CARGAR ↗</button>
+      </form>
+      <div class="feedback" id="message" role="status" aria-live="polite">Sin descargas ni archivos de audio alojados aquí.</div>
+    </article>
+  </section>
+  <section class="embed-wrap" id="embed-wrap" aria-label="Reproductor Spotify" aria-live="polite">
+     <div class="embed-meta"><span class="tiny">NOW LOADED / SPOTIFY</span><span id="loaded-kind" class="tiny">PLAYLIST</span></div>
+     <div id="embed-host"></div>
+     <div class="share-bar">
+       <button class="btn acid" type="button" id="share-selection">COPIAR ENLACE PARA COMPARTIR <span aria-hidden="true">⧉</span></button>
+       <a class="btn" href="#" target="_blank" rel="noopener noreferrer" id="open-selection">ABRIR EN SPOTIFY ↗</a>
+     </div>
+     <p class="feedback" id="share-feedback" role="status"></p>
+  </section>
+  <p class="note"><b>UN DETALLE:</b> Spotify controla la reproducción y las autorizaciones dentro de su reproductor. Las listas privadas y las canciones que solo guardaste en «Me gusta» no aparecen automáticamente aquí. Para incorporarlas como una selección compartida hace falta crear o compartir una playlist. El reproductor personalizado con inicio de sesión es una segunda integración, aún no conectada.</p>
+</main>
+<footer class="footer"><strong>TRANSMISSION / PERSONAL ARCHIVE</strong><span class="tiny">MÚSICA ALOJADA Y REPRODUCIDA POR SPOTIFY · NO AFILIADO CON SPOTIFY</span></footer>
+<script>
+(() => {
+  'use strict';
+  const profile='https://open.spotify.com/user/31irk65dnljb6i3jfg57lkixtgqu';
+  const $=id=>document.getElementById(id);
+  const allowed=new Set(['playlist','track','album','episode','show']);
+  function parseSpotify(input){
+    let url;
+    try{url=new URL(input.trim())}catch{return null}
+    if(url.hostname!=='open.spotify.com'||url.protocol!=='https:')return null;
+    const parts=url.pathname.split('/').filter(Boolean);
+    if(parts.length>=3&&/^intl-[a-z]{2}$/i.test(parts[0]))parts.shift();
+    if(parts.length!==2||!allowed.has(parts[0])||!/^[A-Za-z0-9]{22}$/.test(parts[1]))return null;
+    return {type:parts[0],id:parts[1]};
+  }
+  function render(type,id,saveUrl=true){
+    if(!allowed.has(type)||!/^[A-Za-z0-9]{22}$/.test(id))return;
+    const frame=document.createElement('iframe');
+    frame.src='https://open.spotify.com/embed/'+type+'/'+id+'?utm_source=generator&theme=0';
+    frame.title='Reproductor oficial de Spotify';
+    frame.loading='lazy';
+    frame.allow='autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture';
+    frame.allowFullscreen=true;
+    $('embed-host').replaceChildren(frame);
+    $('embed-wrap').classList.add('visible');
+    $('loaded-kind').textContent=type.toUpperCase();
+    const spotifyUrl='https://open.spotify.com/'+type+'/'+id;
+    $('open-selection').href=spotifyUrl;
+    $('spotify-url').value=spotifyUrl;
+    $('message').textContent='Selección cargada. Puedes reproducirla o compartir el enlace.';
+    $('message').classList.remove('error');
+    if(saveUrl){
+      const next=new URL(window.location.href);
+      next.searchParams.set('tipo',type);
+      next.searchParams.set('id',id);
+      history.replaceState(null,'',next.pathname+next.search+next.hash);
+    }
+  }
+  $('spotify-form').addEventListener('submit',e=>{
+    e.preventDefault();
+    const parsed=parseSpotify($('spotify-url').value);
+    if(!parsed){$('message').textContent='Necesito un enlace público de playlist, canción, álbum, episodio o podcast de open.spotify.com.';$('message').classList.add('error');return}
+    render(parsed.type,parsed.id);
+    $('embed-wrap').scrollIntoView({behavior:'smooth',block:'start'});
+  });
+  async function copy(value,output){
+    try{await navigator.clipboard.writeText(value);$(output).textContent='Enlace copiado.'}
+    catch{$(output).textContent='No se pudo copiar automáticamente. Copia el enlace desde la barra del navegador.'}
+  }
+  $('copy-profile').addEventListener('click',()=>copy(profile,'message'));
+  $('share-selection').addEventListener('click',()=>copy(window.location.href,'share-feedback'));
+  const params=new URLSearchParams(location.search);
+  const kind=params.get('tipo'),id=params.get('id');
+  if(allowed.has(kind)&&id&&/^[A-Za-z0-9]{22}$/.test(id))render(kind,id,false);
+})();
+</script>
+</body>
+</html>
