@@ -126,10 +126,13 @@
 </style>
 <link rel="stylesheet" href="./spotify-controls.css?v=20261011master10">
 <link rel="stylesheet" href="./spotify-taste.css?v=20261011final3">
+<link rel="stylesheet" href="./spotify-polish.css?v=20261011p1">
 <script defer src="./spotify-auth.js?v=20261011master10"></script>
 <script defer src="./spotify-editorial.js?v=20261011final3"></script>
 <script defer src="./spotify-controls.js?v=20261011master10"></script>
 <script defer src="./spotify-taste.js?v=20261011final4"></script>
+<script defer src="./spotify-library.js?v=20261011p1"></script>
+<script defer src="./spotify-polish.js?v=20261011p1"></script>
 </head>
 <body>
   <a class="skip-link" href="#main">Saltar al contenido</a>
@@ -188,7 +191,7 @@
   <aside class="mixtape-rail" id="mixtapes" aria-label="Playlists personales">
     <div class="rail-head"><div class="rail-heading">MIS<br>LISTAS</div><span class="rail-heading-arrows">↗</span><p>Elegidas para volver a escuchar.</p><button id="tm-station-play" class="tm-station-button" type="button" aria-label="Escuchar mi estación musical">▶ MI ROTACIÓN <span>↗</span></button><button id="tm-now-play" class="tm-now-button" type="button" aria-label="Escuchar según mis gustos recientes"><span>▶ PARA AHORA</span><small id="tm-now-caption">Mi escucha reciente</small></button></div>
     <button class="rail-item" type="button" id="rail-placeholder"><span class="rail-item-cover art-focus">♫</span><span class="rail-item-label">MIS LISTAS <small>COLECCIÓN PERSONAL</small></span><span class="rail-item-arrow">↗</span></button>
-    <button class="rail-all" id="rail-all" type="button">EXPLORE THE COLLECTION <span>↗</span></button>
+    <button class="rail-all" id="rail-all" type="button">VER TODAS MIS LISTAS <span>↗</span></button>
   </aside>
 </section>
 <section class="tm-audio-panel" id="player" aria-label="Reproductor integrado de Spotify">
@@ -242,7 +245,7 @@
     <section class="catalog-section" id="latest">
   <div class="section-heading">
     <div><span class="eyebrow" id="pick-period">ÚLTIMAS SEMANAS</span><h2>EN ROTACIÓN <span class="heading-indicator">✳</span></h2></div>
-    <button class="view-all" data-view="all" id="top-refresh" type="button" onclick="document.querySelector('#latest').scrollIntoView({behavior:'smooth'})">ACTUALIZAR <span>↗</span></button>
+    <button class="view-all" id="top-refresh" type="button">OTRAS CANCIONES <span>↗</span></button>
   </div>
   <div class="picks-grid" id="picks-grid" aria-label="Canciones más escuchadas"></div>
 </section>
@@ -305,7 +308,7 @@
   <div class="support-flex">
     <h2>LISTEN<br>TOGETHER.</h2>
     <div class="tm-share">
-      <p>Una selección para escuchar y compartir.</p>
+      
       <form id="shared-form" class="tm-form">
         <input id="shared-link" type="url" placeholder="https://open.spotify.com/playlist/..." aria-label="URL de playlist" required>
         <button class="light-cta tm-submit" type="submit">CARGAR PLAYLIST ↗</button>
