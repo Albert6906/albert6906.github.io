@@ -1,0 +1,172 @@
+/* TRANSMISSION / Audio controls. Uses live state and documented Web API & Playback SDK. */
+(function(){
+'use strict';
+const rt=window.TransmissionRuntime,sp=window.TransmissionSpotify;
+if(!rt||!sp)return;
+const $=id=>document.getElementById(id);
+const ns='http://www.w3.org/2000/svg';
+const shapes={
+  play:'<path d="m9 5 12 7-12 7V5Z" fill="currentColor" stroke="none"/>',
+  pause:'<rect x="7" y="5" width="3.5" height="14" rx=".6" fill="currentColor" stroke="none"/><rect x="14" y="5" width="3.5" height="14" rx=".6" fill="currentColor" stroke="none"/>'
+};
+let playback=null,seenAt=0,userSeeking=false,volumeTimer=null,loading=false;
+function glyph(name){const svg=document.createElementNS(ns,'svg');svg.setAttribute('viewBox','0 0 24 24');svg.setAttribute('width','21');svg.setAttribute('height','21');svg.setAttribute('aria-hidden','true');svg.innerHTML=shapes[name];return svg}
+function toggleGlyph(playing){
+ const p=$('tm-play');p.replaceChildren(glyph(playing?'pause':'play'));p.setAttribute('aria-label',playing?'Pausar':'Reproducir');p.title=playing?'Pausar':'Reproducir';
+ // Original radio strip and carousel controls have true iconography, not roman numerals.
+ const strip=$('audio-toggle');strip.replaceChildren(glyph(playing?'pause':'play'));strip.title=playing?'Pausar':'Reproducir';
+}
+function fmt(n){const s=Math.floor(Math.max(0,n)/1000);return Math.floor(s/60)+':'+String(s%60).padStart(2,'0')}
+function updateUi(state){
+ if(!state)return;
+ const oldId=playback?.trackId;playback={...state};seenAt=Date.now();
+ toggleGlyph(!!state.playing);
+ if(Number.isFinite(state.volume) && !loading) $('tm-volume').value=Math.max(0,Math.min(100,state.volume));
+ if(!userSeeking)positionUi();
+ for(const buttonId of ['tm-seek','tm-volume'])$(buttonId).disabled=false;
+ const repeat=$('tm-repeat'),shuffle=$('tm-shuffle');
+ const repeatOn=!!state.repeat&&state.repeat!=='off',shuffleOn=!!state.shuffle;
+ repeat.setAttribute('aria-pressed',String(repeatOn));
+ shuffle.setAttribute('aria-pressed',String(shuffleOn));
+ repeat.dataset.state=state.repeat||'off';
+ repeat.lastChild&&null;
+ if(oldId!==state.trackId && $('tm-options').hidden===false && $('tm-popover-content').dataset.mode==='lyrics')showLyrics();
+}
+function positionUi(){
+ if(!playback)return;
+ const max=playback.duration||0;
+ const elapsed=playback.playing?Date.now()-seenAt:0;
+ const pos=Math.max(0,Math.min(max,(playback.position||0)+elapsed));
+ $('tm-elapsed').textContent=fmt(pos);
+ $('tm-duration').textContent=fmt(max);
+ if(!userSeeking&&max>0)$('tm-seek').value=String(Math.round(pos/max*1000));
+}
+function warn(error){rt.status(error?.message||String(error),true)}
+async function cmd(fn){try{return await fn()}catch(err){warn(err);throw err}}
+function busy(button,fn){
+ if(loading)return;
+ loading=true;const old=button.disabled;button.disabled=true;
+ Promise.resolve().then(fn).catch(warn).finally(()=>{loading=false;button.disabled=old});
+}
+$('tm-play').addEventListener('click',e=>{
+ rt.player?.activateElement?.();
+ busy(e.currentTarget,async()=>rt.toggle());
+});
+$('tm-prev').addEventListener('click',e=>busy(e.currentTarget,()=>rt.action(()=>sp.api('/me/player/previous',{method:'POST'}))));
+$('tm-next').addEventListener('click',e=>busy(e.currentTarget,()=>rt.action(()=>sp.api('/me/player/next',{method:'POST'}))));
+$('tm-seek').addEventListener('pointerdown',()=>{userSeeking=true});
+$('tm-seek').addEventListener('input',e=>{
+ const d=playback?.duration||0;
+ $('tm-elapsed').textContent=fmt(Number(e.target.value)/1000*d);
+});
+$('tm-seek').addEventListener('change',e=>{
+ userSeeking=false;
+ const duration=playback?.duration||0;
+ if(!duration||!rt.account)return;
+ const ms=Math.round(Number(e.target.value)/1000*duration);
+ busy(e.currentTarget,async()=>{
+   await rt.action(()=>sp.api('/me/player/seek?position_ms='+ms,{method:'PUT'}));
+   if(playback){playback.position=ms;seenAt=Date.now();positionUi()}
+ });
+});
+$('tm-volume').addEventListener('input',e=>{
+ const value=Number(e.target.value);
+ clearTimeout(volumeTimer);
+ volumeTimer=setTimeout(async()=>{
+   if(!rt.account)return;
+   try{
+     const local=rt.player && (rt.state?.deviceId===rt.device||!rt.state?.deviceId);
+     if(local&&rt.player?.setVolume){
+       await rt.player.setVolume(value/100);
+     }else{
+       await sp.api('/me/player/volume?volume_percent='+value,{method:'PUT'});
+     }
+   }catch(err){warn(err)}
+ },130);
+});
+function openPopup(open){
+ $('tm-options').hidden=!open;$('tm-more').setAttribute('aria-expanded',String(open));
+}
+$('tm-more').onclick=()=>openPopup($('tm-options').hidden);
+document.addEventListener('pointerdown',e=>{
+ if(!$('tm-options').hidden&&!$('tm-options').contains(e.target)&&e.target!==$('tm-more')&&!$('tm-more').contains(e.target))openPopup(false);
+});
+document.addEventListener('keydown',e=>{if(e.key==='Escape')openPopup(false)});
+const c=$('tm-popover-content');
+function showText(message){c.dataset.mode='message';c.replaceChildren(document.createTextNode(message))}
+$('tm-shuffle').onclick=e=>busy(e.currentTarget,async()=>{
+ if(!rt.account)throw Error('Conecta Spotify para usar aleatorio.');
+ const state=$('tm-shuffle').getAttribute('aria-pressed')!=='true';
+ await sp.api('/me/player/shuffle?state='+state,{method:'PUT'});
+ $('tm-shuffle').setAttribute('aria-pressed',String(state));
+ showText(state?'Aleatorio activado en tu dispositivo.':'Aleatorio desactivado.');
+});
+$('tm-repeat').onclick=e=>busy(e.currentTarget,async()=>{
+ if(!rt.account)throw Error('Conecta Spotify para usar repetición.');
+ const before=$('tm-repeat').dataset.state||'off';
+ const next=before==='off'?'context':before==='context'?'track':'off';
+ await sp.api('/me/player/repeat?state='+next,{method:'PUT'});
+ $('tm-repeat').dataset.state=next;
+ $('tm-repeat').setAttribute('aria-pressed',String(next!=='off'));
+ showText(next==='off'?'Repetición desactivada.':next==='context'?'Se repite la lista o el álbum.':'Se repite esta canción.');
+});
+$('tm-queue-button').onclick=async()=>{
+ c.dataset.mode='queue';c.replaceChildren(document.createTextNode('Consultando cola de Spotify…'));
+ if(!rt.account){showText('Conecta Spotify para consultar tu cola.');return}
+ try{
+   const data=await sp.api('/me/player/queue');
+   if(c.dataset.mode!=='queue')return;
+   c.replaceChildren();
+   for(const [i,t] of (data.queue||[]).slice(0,18).entries()){
+     const row=document.createElement('div');row.className='tm-queue-row';
+     const name=document.createElement('span');name.textContent=(i+1)+'. '+(t.name||'Sin título');
+     const by=document.createElement('small');by.textContent=(t.artists||[]).map(x=>x.name).join(', ');
+     row.append(name,by);c.append(row);
+   }
+   if(!c.childElementCount)showText('La cola no tiene canciones disponibles.');
+ }catch(err){showText(err.message)}
+};
+$('tm-devices-button').onclick=async()=>{
+ c.dataset.mode='devices';c.replaceChildren(document.createTextNode('Buscando dispositivos…'));
+ if(!rt.account){showText('Conecta Spotify para elegir un dispositivo.');return}
+ try{
+   const data=await sp.api('/me/player/devices');
+   if(c.dataset.mode!=='devices')return;
+   c.replaceChildren();
+   for(const device of data.devices||[]){
+     const btn=document.createElement('button');btn.className='tm-device-option';btn.type='button';
+     btn.textContent=device.name+' · '+device.type;btn.setAttribute('aria-current',String(!!device.is_active));
+     btn.onclick=async()=>{
+       try{
+         await sp.api('/me/player',{method:'PUT',body:JSON.stringify({device_ids:[device.id],play:false})});
+         showText('Dispositivo seleccionado: '+device.name);
+         rt.status('Reproducción transferida a '+device.name+'.');
+       }catch(e){showText(e.message)}
+     };c.append(btn);
+   }
+   if(!c.childElementCount)showText('No hay dispositivos disponibles. Abre Spotify en un dispositivo e inténtalo nuevamente.');
+ }catch(err){showText(err.message)}
+};
+function showLyrics(){
+ c.dataset.mode='lyrics';c.replaceChildren();
+ const intro=document.createElement('div');intro.textContent='Spotify no permite consultar letras completas desde su Web API. Puedes abrir la canción en Spotify y usar su función oficial de letras.';c.append(intro);
+ const track=rt.currentTrack;
+ if(track?.id){
+   const a=document.createElement('a');
+   a.href='https://open.spotify.com/track/'+encodeURIComponent(track.id);
+   a.target='_blank';a.rel='noopener noreferrer';a.textContent='ABRIR CANCIÓN EN SPOTIFY ↗';
+   a.style.display='inline-block';a.style.marginTop='10px';c.append(a);
+ }
+}
+$('tm-lyrics-button').onclick=showLyrics;
+window.addEventListener('tm:playback',e=>updateUi(e.detail));
+window.addEventListener('tm:track',e=>{
+ const track=e.detail?.track;
+ if(c.dataset.mode==='lyrics'&&!$('tm-options').hidden)showLyrics();
+ if(track?.duration_ms&&playback&&playback.trackId!==track.id){
+   updateUi({...playback,trackId:track.id,duration:track.duration_ms,position:0});
+ }
+});
+toggleGlyph(false);
+setInterval(()=>{positionUi();if(rt.account&&rt.player)$('tm-volume').disabled=false},1000);
+})();
