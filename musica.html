@@ -1,126 +1,88 @@
 <!doctype html>
 <html lang="es">
 <head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="theme-color" content="#0b0b0b">
-<meta name="description" content="Un espacio personal para escuchar y compartir música en Spotify.">
-<title>MI MÚSICA / TRANSMISSION</title>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#090909">
+<meta name="description" content="TRANSMISSION — Archivo personal y reproductor Spotify Premium en el navegador.">
+<title>MY FREQUENCY / TRANSMISSION</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;500;600;700;800;900&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,800;1,900&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
-:root{--black:#0b0b0b;--line:#575757;--acid:#e6ff60;--grey:#b1b1b1;--font:'Barlow Condensed','Arial Narrow',Arial,sans-serif;--mono:'DM Mono',monospace}*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--black);color:#f5f5f1;font-family:var(--font);-webkit-font-smoothing:antialiased}a{color:inherit;text-decoration:none}button,input{font:inherit}button{cursor:pointer}button:focus-visible,a:focus-visible,input:focus-visible{outline:3px solid var(--acid);outline-offset:3px}::selection{background:var(--acid);color:#000}.sitebar{display:flex;min-height:56px;align-items:stretch;border-bottom:1px solid var(--line);position:sticky;top:0;background:#080808;z-index:20}.mark{display:flex;align-items:center;padding:0 18px;font-style:italic;font-weight:900;font-size:29px;letter-spacing:-2px;color:#000;background:#fff}.sitebar>a:not(.mark){display:flex;align-items:center;padding:0 17px;border-right:1px solid var(--line);font-size:16px;font-weight:700}.sitebar .active{background:var(--acid);color:#000}.sitebar .spacer{flex:1;border-left:1px solid var(--line)}.tiny{font:11px/1.6 var(--mono);letter-spacing:.03em;text-transform:uppercase}.index{padding:12px 20px;display:flex;justify-content:space-between;gap:15px;color:#b7b7b7;border-bottom:1px solid var(--line)}.mast{display:grid;grid-template-columns:1.2fr .8fr;border-bottom:1px solid var(--line)}.mast-title{padding:34px 24px 26px;min-height:318px;position:relative;overflow:hidden;display:flex;flex-direction:column;justify-content:space-between}.mast-title h1{margin:16px 0 0;font-size:clamp(86px,13vw,230px);font-weight:900;font-style:italic;line-height:.73;letter-spacing:-.075em;transform:translateX(-.035em)}.mast-title h1 span{color:var(--acid)}.mast-title .desc{color:var(--grey);font:12px/1.65 var(--mono);max-width:570px;margin-top:26px}.mast-graphic{border-left:1px solid var(--line);background:radial-gradient(ellipse at 50% 49%,#323525 0,#10120c 45%,#090909 73%);display:grid;place-items:center;position:relative;overflow:hidden;min-height:320px}.vinyl{width:min(66%,285px);aspect-ratio:1;border-radius:50%;background:repeating-radial-gradient(circle,#080908 0 1.2px,#242520 1.7px 2.9px);border:1px solid #454740;box-shadow:0 0 0 1px #171717,0 18px 65px #000b;animation:spin 17s linear infinite;display:grid;place-items:center}.vinyl:before{content:"";position:absolute;inset:26%;background:var(--acid);border-radius:50%;border:5px solid #151515}.vinyl:after{content:"";position:absolute;width:14px;height:14px;background:#111;border-radius:50%;z-index:1}.vinyltext{position:absolute;bottom:16px;left:18px;color:#9e9e9e}.arc{position:absolute;width:520px;height:520px;border:1px dashed #46483b;border-radius:50%;transform:rotate(-13deg)}.arc.two{width:410px;height:410px}.section-head{display:flex;align-items:baseline;justify-content:space-between;gap:16px;border-bottom:1px solid var(--line);padding:14px 21px}.section-head h2{font-size:33px;font-weight:900;text-transform:uppercase;letter-spacing:-.025em;margin:0}.section-head .tiny{color:#aaa}.content-grid{display:grid;grid-template-columns:1fr 1fr}.module{border-right:1px solid var(--line);border-bottom:1px solid var(--line);padding:23px 23px 28px;min-height:300px}.module:nth-child(even){border-right:0}.module-head{display:flex;justify-content:space-between;align-items:center;color:#aaa;margin-bottom:30px}.module h3{font-size:clamp(36px,4.8vw,69px);font-weight:900;font-style:italic;line-height:.87;letter-spacing:-.03em;text-transform:uppercase;margin:0 0 22px}.module p{font:12px/1.8 var(--mono);color:#aaa;max-width:550px;margin:0 0 22px}.btn{border:1px solid #8b8b8b;color:#f0f0f0;background:transparent;display:inline-flex;gap:22px;align-items:center;justify-content:space-between;padding:13px 17px;text-transform:uppercase;font-size:16px;font-weight:800;letter-spacing:.015em;min-height:45px}.btn:hover{background:#f3f3f3;color:#101010}.btn.acid{background:var(--acid);border-color:var(--acid);color:#080808}.btn.acid:hover{background:#fff;border-color:#fff}.actions{display:flex;flex-wrap:wrap;gap:10px}.field{display:flex;gap:9px;align-items:stretch;margin:0 0 10px}.field input{min-width:0;flex:1;border:1px solid #777;background:#111;color:white;outline:0;padding:0 14px;font:12px var(--mono)}.field input:focus{border-color:var(--acid)}.field button{flex:none}.feedback{font:11px/1.7 var(--mono);min-height:20px;color:#ccc;margin:8px 0 0}.feedback.error{color:#ff9d95}.embed-wrap{display:none;padding:22px;border-bottom:1px solid var(--line)}.embed-wrap.visible{display:block}.embed-wrap iframe{display:block;width:100%;height:352px;border:0;border-radius:12px;background:#171717}.embed-meta{display:flex;justify-content:space-between;gap:15px;align-items:center;margin:0 0 14px}.embed-meta .tiny{color:var(--acid)}.share-bar{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}.note{color:#a8a8a8;padding:18px 22px;font:11px/1.9 var(--mono);border-bottom:1px solid var(--line)}.note b{color:white}.footer{padding:23px;display:flex;justify-content:space-between;gap:16px;color:#aaa}.footer strong{color:#fff;font-size:19px}.blink{width:6px;height:6px;background:var(--acid);display:inline-block;margin-right:8px;border-radius:50%}@keyframes spin{to{transform:rotate(360deg)}}@media(max-width:930px){.mast{grid-template-columns:1fr}.mast-graphic{border-left:0;border-top:1px solid var(--line);height:270px;min-height:270px}.mast-title{min-height:255px}.mast-title h1{font-size:clamp(75px,20vw,155px)}.content-grid{grid-template-columns:1fr}.module{border-right:0;min-height:260px}.module:nth-child(even){border-right:0}.sitebar .spacer{display:none}.sitebar>a:not(.mark){padding:0 11px}.section-head h2{font-size:28px}}@media(max-width:480px){.sitebar{min-height:48px}.mark{font-size:22px;padding:0 10px}.sitebar>a:not(.mark){font-size:13px;padding:0 8px}.mast-title{padding:28px 16px}.mast-title h1{font-size:clamp(62px,18vw,100px)}.index{padding:9px 13px;font-size:9px}.module{padding:20px 15px}.module h3{font-size:41px}.field{flex-direction:column}.field input{height:48px}.field button{min-height:45px}.section-head{padding:12px 15px}.footer{flex-direction:column}.embed-wrap{padding:13px}}
-@media(prefers-reduced-motion:reduce){.vinyl{animation:none}html{scroll-behavior:auto}}
+:root{--acid:#e6ff60;--black:#090909;--panel:#101010;--edge:#424242;--muted:#a2a2a2;--display:'Barlow Condensed','Arial Narrow',Arial,sans-serif;--mono:'DM Mono',monospace;--white:#f7f7f3}*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;color:var(--white);background:var(--black);font:600 16px var(--display);-webkit-font-smoothing:antialiased}button,input{font:inherit}button{cursor:pointer}button:disabled{opacity:.4;cursor:not-allowed}a{color:inherit;text-decoration:none}button:focus-visible,a:focus-visible,input:focus-visible{outline:2px solid var(--acid);outline-offset:3px}img{max-width:100%;display:block}::selection{background:var(--acid);color:#000}.tiny{font:10px/1.5 var(--mono);letter-spacing:.065em}.muted{color:var(--muted);font:12px/1.7 var(--mono)}.header{height:50px;display:flex;align-items:stretch;position:sticky;top:0;background:#090909;z-index:50;border-bottom:1px solid var(--edge)}.logo{padding:0 15px;background:white;color:#000;font-style:italic;font-size:31px;font-weight:900;letter-spacing:-2px;display:grid;place-items:center}.header>a:not(.logo){padding:0 17px;display:flex;align-items:center;border-right:1px solid var(--edge);font-size:16px;font-weight:700}.header>a.is-active{background:var(--acid);color:#070707}.header .sep{flex:1;border-right:1px solid var(--edge)}.header .header-number{font:11px var(--mono);padding:0 16px;color:#aaa;display:flex;align-items:center}.overline{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 17px;border-bottom:1px solid var(--edge);color:#999}.overline strong{color:var(--acid);font-weight:500}.hero{display:grid;grid-template-columns:55% 45%;min-height:430px;border-bottom:1px solid var(--edge)}.hero-copy{padding:27px 30px 30px;display:flex;flex-direction:column;justify-content:space-between;position:relative;overflow:hidden}.mastlabel{color:var(--acid);display:flex;gap:12px}.green-dot{width:7px;height:7px;border-radius:50%;background:var(--acid);display:inline-block;flex:none;margin-top:4px}.headline{font-size:clamp(100px,15vw,255px);font-weight:900;font-style:italic;line-height:.65;letter-spacing:-.085em;margin:34px 0 40px;padding-right:15px}.headline span{color:var(--acid)}.hero-copy p{font:12px/1.75 var(--mono);max-width:420px;color:#c2c2c2;margin:0}.hero-cover{border-left:1px solid var(--edge);position:relative;background:radial-gradient(ellipse at center,#2c3421 0,#11140e 45%,#080808 76%);display:grid;place-items:center;overflow:hidden}.hero-cover .ring{width:66%;aspect-ratio:1;max-width:320px;border-radius:50%;border:1px dashed #788552;display:grid;place-items:center;box-shadow:0 0 0 35px #101410,0 0 0 36px #43493a,0 0 0 77px #0b0d09,0 0 0 78px #292d25;transform:rotate(-15deg)}.hero-cover .ring span{font-size:clamp(60px,9vw,170px);font-weight:900;letter-spacing:-.13em;color:var(--acid);font-style:italic}.hero-cover .tiny{position:absolute;bottom:16px;left:17px;color:#aaa}.access{display:grid;grid-template-columns:1fr 1fr;border-bottom:1px solid var(--edge)}.access-col{padding:22px 28px 28px;min-height:242px}.access-col+.access-col{border-left:1px solid var(--edge)}.access-col h2{font-size:clamp(30px,4.1vw,59px);font-weight:900;letter-spacing:-.04em;font-style:italic;line-height:.87;margin:24px 0 16px;text-transform:uppercase}.access-col p{font:11px/1.8 var(--mono);color:#aaa;margin:0 0 18px;max-width:500px}.button{appearance:none;display:inline-flex;align-items:center;justify-content:space-between;gap:16px;padding:10px 14px;border:1px solid #767676;color:white;background:none;font-weight:800;line-height:1;text-transform:uppercase;font-size:17px;min-height:43px}.button:hover:not(:disabled){background:#fff;color:#050505}.button.acid{background:var(--acid);border-color:var(--acid);color:#050505}.button.acid:hover{background:#fff;border-color:#fff}.button.small{font-size:15px;padding:9px 12px;min-height:36px}.button.selected{background:var(--acid);color:#111;border-color:var(--acid)}.statusline{display:flex;align-items:center;gap:12px;min-height:40px;border-bottom:1px solid var(--edge);padding:9px 18px;color:#b7b7b7;font:11px/1.55 var(--mono)}.statusline .dot{width:6px;height:6px;border-radius:50%;background:var(--acid);flex:none}.statusline[data-error=true]{color:#ff9696}.intro{padding:22px 27px;border-bottom:1px solid var(--edge)}.intro h2{font-size:clamp(45px,8vw,95px);font-style:italic;text-transform:uppercase;line-height:.8;margin:10px 0 18px;letter-spacing:-.05em}.intro p{font:11px/1.7 var(--mono);color:#a9a9a9;max-width:650px}.member-head{display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--edge);padding:14px 24px;gap:12px}.member-head strong{font-size:20px;font-weight:800}.member-head span[data-owner=true]{color:var(--acid)}.member-head .tiny{color:#aaa}.now-layout{display:grid;grid-template-columns:minmax(280px,39%) 1fr;min-height:395px;border-bottom:1px solid var(--edge)}.now-art{background:#1d1f18;padding:24px;display:grid;place-items:center;position:relative;border-right:1px solid var(--edge)}.cover-holder{width:min(100%,355px);aspect-ratio:1;box-shadow:0 18px 70px #0008;position:relative;background:repeating-linear-gradient(135deg,#2d3422 0 16px,#1c211a 16px 32px);display:grid;place-items:center;overflow:hidden}.cover-holder .cover-big{width:100%;height:100%;object-fit:cover}.cover-holder.is-empty:before{content:'T/M';font-size:80px;font-style:italic;font-weight:900;letter-spacing:-.1em;color:var(--acid)}.cover-holder.is-playing:after{content:'▶';position:absolute;right:10px;bottom:10px;padding:7px 11px;color:#000;background:var(--acid)}.now-meta{padding:26px 30px;display:flex;flex-direction:column;justify-content:space-between;gap:16px}.now-meta .upper{color:#aaa}.now-meta h2{font-size:clamp(54px,6.4vw,112px);letter-spacing:-.05em;line-height:.83;text-transform:uppercase;margin:10px 0 18px;font-weight:900;font-style:italic;overflow-wrap:anywhere}.now-meta p{font:14px/1.5 var(--mono);color:#aaa;margin:0}.now-meta .album{color:#747474;font-size:11px;margin-top:6px}.device-info{margin:10px 0;color:#b7b7b7;font:10px/1.6 var(--mono)}.now-actions{display:flex;flex-wrap:wrap;align-items:center;gap:9px;margin:14px 0}.player-progress{display:grid;grid-template-columns:35px 1fr 35px;gap:9px;align-items:center;font:10px var(--mono);color:#aaa;margin-top:16px}input[type=range]{accent-color:var(--acid);width:100%;cursor:pointer}.section-header{display:flex;align-items:end;justify-content:space-between;gap:15px;border-bottom:1px solid var(--edge);padding:18px 23px;flex-wrap:wrap}.section-header h2{font-weight:900;font-size:clamp(29px,4vw,55px);line-height:1;text-transform:uppercase;font-style:italic;margin:0}.section-header .tiny{color:#aaa}.toggles{display:flex;gap:7px;flex-wrap:wrap}.track-grid{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:1px;background:var(--edge);border-bottom:1px solid var(--edge)}.track-card{min-width:0;background:var(--black);padding:10px 10px 15px;display:flex;flex-direction:column}.track-art{background:linear-gradient(135deg,#343b23,#13150f);border:0;width:100%;aspect-ratio:1;position:relative;padding:0;display:block;overflow:hidden}.track-art img,.playlist-image img,.result-art img{width:100%;height:100%;object-fit:cover}.over-play{position:absolute;right:8px;bottom:8px;width:32px;height:32px;background:var(--acid);color:#000;display:grid;place-items:center;opacity:0;transform:translateY(8px);transition:.2s}.track-art:hover .over-play,.track-art:focus-visible .over-play{opacity:1;transform:none}.track-caption{display:grid;grid-template-columns:24px minmax(0,1fr);gap:3px 5px;padding-top:10px}.track-index{font:10px var(--mono);color:#797979;grid-row:1 / 3}.track-title{font-size:16px;font-weight:800;line-height:1.05;overflow:hidden;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2}.track-by{font:10px/1.45 var(--mono);color:#a5a5a5;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}.track-grid>.muted{grid-column:1/-1;padding:18px}.lists-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:1px;background:var(--edge);border-bottom:1px solid var(--edge)}.list-card{min-width:0;padding:14px;background:var(--black)}.playlist-image{border:0;background:#171c12;width:100%;aspect-ratio:1;display:grid;place-items:center;padding:0}.list-name{font-size:24px;line-height:1;text-transform:uppercase;margin:12px 0 6px;overflow-wrap:anywhere}.list-count{font:10px var(--mono);color:#858585}.list-actions{display:flex;gap:14px;margin-top:17px}.text-link{font:11px var(--mono);color:var(--acid);padding:0;border:0;background:none}.text-link:hover{text-decoration:underline}.lists-grid>.muted{grid-column:1/-1;padding:18px}.search-block{padding:22px 25px;border-bottom:1px solid var(--edge);background:#111}.search-form{display:flex;gap:8px;margin-top:18px}.search-form input{flex:1;min-width:0;background:#070707;border:1px solid #696969;color:white;padding:11px 14px;font:14px var(--mono)}.search-form input:focus{border-color:var(--acid);outline:none}.results{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--edge)}.result-row{display:grid;grid-template-columns:46px 1fr 25px;gap:12px;align-items:center;text-align:left;background:var(--black);border:0;color:white;padding:11px 14px;min-width:0}.result-row:hover{background:#212121}.result-art{display:block;width:46px;height:46px;background:#373a30}.result-info{min-width:0;display:flex;flex-direction:column}.result-info b{font-weight:800;font-size:18px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}.result-info small{font:10px var(--mono);color:#aaa;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.result-play{color:var(--acid)}.results .muted{padding:13px}.editorial-note{padding:20px 25px;background:#202316;color:#bec0af;border-bottom:1px solid var(--edge);font:11px/1.7 var(--mono)}.editorial-note b{color:var(--acid)}.footer{display:flex;justify-content:space-between;gap:15px;align-items:center;padding:26px;border-top:1px solid var(--edge);font:10px/1.6 var(--mono);color:#999}.footer strong{font:800 21px var(--display);color:white}.playerbar{position:sticky;bottom:0;z-index:80;display:none;align-items:center;gap:13px;background:var(--acid);color:#080808;padding:8px 14px;border-top:2px solid #080808}.playerbar.visible{display:flex}.playerbar-art{height:42px;width:42px;background:#050505;flex:none}.playerbar-art img{width:100%;height:100%;object-fit:cover}.playerbar-info{min-width:0;flex:1;display:flex;flex-direction:column}.playerbar-info b{font-size:19px;line-height:1;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}.playerbar-info small{font:10px var(--mono);overflow:hidden;white-space:nowrap;text-overflow:ellipsis}.playerbar button{background:#0a0a0a;border:0;color:var(--acid);width:40px;height:36px;font:800 19px var(--display)}[hidden]{display:none!important}@media(max-width:1050px){.track-grid{grid-template-columns:repeat(4,1fr)}.lists-grid{grid-template-columns:repeat(3,1fr)}}@media(max-width:740px){.hero{grid-template-columns:1fr}.hero-copy{min-height:305px}.headline{font-size:clamp(85px,20vw,164px)}.hero-cover{border-left:0;border-top:1px solid var(--edge);min-height:235px}.hero-cover .ring{max-width:150px}.access{grid-template-columns:1fr}.access-col+.access-col{border-left:0;border-top:1px solid var(--edge)}.now-layout{grid-template-columns:1fr}.now-art{border-right:0;border-bottom:1px solid var(--edge)}.now-art .cover-holder{max-width:275px}.now-meta{padding:24px 19px}.track-grid{grid-template-columns:repeat(3,minmax(0,1fr))}.lists-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.results{grid-template-columns:1fr}.header-number{display:none!important}}@media(max-width:480px){.header{height:47px}.logo{font-size:24px;padding:0 11px}.header>a:not(.logo){font-size:13px;padding:0 10px}.hero-copy{padding:22px 16px}.headline{font-size:clamp(75px,19vw,115px)}.access-col{padding:20px 16px}.overline{padding:8px 10px;font-size:9px}.track-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.lists-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.section-header{padding:16px 12px}.search-block{padding:17px 12px}.now-meta h2{font-size:59px}.button{font-size:15px}.footer{flex-direction:column;align-items:start;padding:18px}.playerbar-info b{font-size:16px}}@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}.over-play{transition:none}}
 </style>
+<script defer src="./spotify-auth.js"></script>
+<script defer src="./spotify-room.js"></script>
 </head>
 <body>
-<header class="sitebar">
- <a class="mark" href="./index.html" aria-label="Inicio">T/M</a>
- <a href="./index.html">INICIO</a>
- <a class="active" href="./musica.html" aria-current="page">MI MÚSICA</a>
- <span class="spacer"></span>
- <a href="https://open.spotify.com/user/31irk65dnljb6i3jfg57lkixtgqu" target="_blank" rel="noopener noreferrer">SPOTIFY ↗</a>
+<header class="header" aria-label="Navegación">
+ <a class="logo" href="./index.html" title="Inicio">T/M</a>
+ <a href="./index.html">HOME</a>
+ <a href="./musica.html" class="is-active" aria-current="page">MY FREQUENCY</a>
+ <span class="sep"></span><span class="header-number">TRANSMISSION / PRIVATE FREQUENCIES</span>
 </header>
-<div class="index tiny"><span>TRANSMISSION / SELECCIÓN PERSONAL</span><span>01 — MUSIC ROOM</span></div>
+<div class="overline tiny"><span>PERSONAL SIGNAL — SPOTIFY PREMIUM</span><span><strong>NO. 002</strong> / MUSIC ROOM</span></div>
 <main>
-  <section class="mast">
-    <div class="mast-title">
-       <div class="tiny"><span class="blink"></span> ABIERTO PARA AMIGOS / SIN REGISTRO PROPIO</div>
-       <h1>MI<br><span>MÚSICA.</span></h1>
-       <div class="desc">Una puerta a mi música de Spotify. Escucha desde tu propia cuenta, explora una selección o comparte una canción que merece quedarse.</div>
-    </div>
-    <div class="mast-graphic" aria-hidden="true"><div class="arc"></div><div class="arc two"></div><div class="vinyl"></div><span class="vinyltext tiny">SIDE A / SIDE B — PERSONAL FREQUENCIES</span></div>
-  </section>
-
-  <div class="section-head"><h2>ACCESO / EXPLORAR</h2><span class="tiny">2 ENTRADAS · 0 CONTRASEÑAS</span></div>
-  <section class="content-grid" aria-label="Espacio musical">
-    <article class="module">
-      <div class="module-head tiny"><span>01 / MI PERFIL</span><span>SPOTIFY ↗</span></div>
-      <h3>ENTRA A MI<br>COLECCIÓN.</h3>
-      <p>Abre mi perfil original en Spotify. Desde allí puedes consultar las listas que tenga públicas y escucharlas con tu propia cuenta.</p>
-      <div class="actions">
-        <a class="btn acid" href="https://open.spotify.com/user/31irk65dnljb6i3jfg57lkixtgqu" target="_blank" rel="noopener noreferrer">VER MI SPOTIFY <span aria-hidden="true">↗</span></a>
-        <button class="btn" id="copy-profile" type="button">COPIAR PERFIL <span aria-hidden="true">⧉</span></button>
+<section class="hero">
+ <div class="hero-copy">
+   <div class="mastlabel tiny"><i class="green-dot"></i> TRANSMISSION / YOUR OWN FREQUENCY</div>
+   <h1 class="headline">MY<br><span>FREQ.</span></h1>
+   <p>Una sala para escuchar música de Spotify directamente desde la web. Cada persona conecta su propia cuenta Premium. Los álbumes, artistas y canciones se cargan desde Spotify, no son imágenes de demostración.</p>
+ </div>
+ <div class="hero-cover" aria-hidden="true"><div class="ring"><span>T/M</span></div><span class="tiny">STEREO / PERSONAL LISTENING SYSTEM</span></div>
+</section>
+<div class="statusline" id="music-status" role="status" aria-live="polite"><i class="dot"></i> PREPARANDO SESIÓN...</div>
+<section id="connect-view" class="access" aria-label="Conectar con Spotify">
+ <div class="access-col">
+   <div class="tiny" style="color:#aaa">01 / YOUR SPOTIFY ACCOUNT</div>
+   <h2>TU MÚSICA,<br> AQUÍ.</h2>
+   <p>Conecta tu cuenta de Spotify Premium. Se abrirá la autorización oficial de Spotify y regresarás aquí con acceso a tu música.</p>
+   <button type="button" class="button acid" id="connect-button">CONECTAR SPOTIFY <span aria-hidden="true">↗</span></button>
+ </div>
+ <div class="access-col">
+   <div class="tiny" style="color:#aaa">02 / WHAT IS INSIDE</div>
+   <h2>ESCUCHA.<br> EXPLORA.</h2>
+   <p>Reproductor propio en el navegador, carátulas actualizadas, controles, tus canciones más escuchadas, playlists y búsqueda del catálogo. La música siempre se transmite desde Spotify.</p>
+   <div class="tiny" style="color:var(--acid)">HTTPS / OAUTH PKCE / WEB PLAYBACK SDK</div>
+ </div>
+</section>
+<div id="connected-view" hidden>
+ <div class="member-head"><div><div class="tiny" style="color:#999">CUENTA CONECTADA</div><strong id="account-name">SPOTIFY</strong></div><div style="text-align:right"><span class="tiny" id="owner-tag">CUENTA PREMIUM</span><div style="margin-top:7px"><button type="button" class="text-link" id="disconnect-button">DESCONECTAR ↗</button></div></div></div>
+ <section class="now-layout" aria-label="Reproducción actual">
+   <div class="now-art"><div id="current-cover-wrap" class="cover-holder is-empty"><div id="current-cover"></div></div></div>
+   <div class="now-meta">
+      <div><div class="tiny upper" id="source-label">NOW PLAYING / SPOTIFY CONNECT</div><h2 id="current-name">YOUR<br> FREQUENCY</h2><p id="current-artist">Selecciona una canción para comenzar</p><p class="album" id="current-album"></p></div>
+      <div><div class="tiny upper" id="now-indicator">ESPERANDO REPRODUCCIÓN</div><div class="device-info" id="current-device">DISPOSITIVO / AÚN SIN ELEGIR</div><div class="device-info" id="device-label">WEB PLAYER / INICIANDO</div>
+        <div class="now-actions">
+         <button type="button" class="button acid" id="listen-here" disabled>▶ ESCUCHAR AQUÍ</button>
+         <button type="button" class="button" id="previous" title="Anterior">⏮</button>
+         <button type="button" class="button" id="toggle-button">REPRODUCIR</button>
+         <button type="button" class="button" id="next" title="Siguiente">⏭</button>
+         <button type="button" class="button" id="current-share" disabled>COMPARTIR ↗</button>
+        </div>
+        <div class="player-progress"><span id="position">0:00</span><input type="range" id="track-progress" min="0" max="1" value="0" aria-label="Posición de reproducción"><span id="duration">0:00</span></div>
       </div>
-    </article>
-    <article class="module">
-      <div class="module-head tiny"><span>02 / REPRODUCTOR</span><span>SPOTIFY EMBED</span></div>
-      <h3>COMPARTE<br>UNA SESIÓN.</h3>
-      <p>Pega el enlace público de una playlist, canción o álbum de Spotify. Aparecerá aquí su reproductor oficial y podrás compartir esta página con esa selección cargada.</p>
-      <form class="field" id="spotify-form">
-        <input id="spotify-url" aria-label="Enlace de Spotify" autocomplete="off" spellcheck="false" placeholder="https://open.spotify.com/playlist/..." required>
-        <button class="btn acid" type="submit">CARGAR ↗</button>
-      </form>
-      <div class="feedback" id="message" role="status" aria-live="polite">Sin descargas ni archivos de audio alojados aquí.</div>
-    </article>
-  </section>
-  <section class="embed-wrap" id="embed-wrap" aria-label="Reproductor Spotify" aria-live="polite">
-     <div class="embed-meta"><span class="tiny">NOW LOADED / SPOTIFY</span><span id="loaded-kind" class="tiny">PLAYLIST</span></div>
-     <div id="embed-host"></div>
-     <div class="share-bar">
-       <button class="btn acid" type="button" id="share-selection">COPIAR ENLACE PARA COMPARTIR <span aria-hidden="true">⧉</span></button>
-       <a class="btn" href="#" target="_blank" rel="noopener noreferrer" id="open-selection">ABRIR EN SPOTIFY ↗</a>
-     </div>
-     <p class="feedback" id="share-feedback" role="status"></p>
-  </section>
-  <p class="note"><b>UN DETALLE:</b> Spotify controla la reproducción y las autorizaciones dentro de su reproductor. Las listas privadas y las canciones que solo guardaste en «Me gusta» no aparecen automáticamente aquí. Para incorporarlas como una selección compartida hace falta crear o compartir una playlist. El reproductor personalizado con inicio de sesión es una segunda integración, aún no conectada.</p>
+   </div>
+ </section>
+ <div class="section-header"><div><div class="tiny" style="color:#aaa" id="collection-label">LAST 4 WEEKS</div><h2>EN ROTACIÓN / TOP TRACKS</h2></div><div class="toggles"><button type="button" class="button small selected" id="top-short">4 SEMANAS</button><button type="button" class="button small" id="top-medium">6 MESES</button><button type="button" class="button small" id="top-long">1 AÑO</button></div></div>
+ <section id="tracks-grid" class="track-grid" aria-label="Canciones destacadas"><p class="muted">Inicia sesión para ver tus canciones.</p></section>
+ <div class="section-header"><div><div class="tiny" style="color:#aaa">PERSONAL LIBRARY</div><h2>PLAYLISTS / LISTAS</h2></div><button class="button small" type="button" id="refresh-data">ACTUALIZAR ↺</button></div>
+ <section class="lists-grid" id="playlists-grid" aria-label="Mis playlists"></section>
+ <div class="section-header"><div><div class="tiny" style="color:#aaa">LISTENING HISTORY</div><h2>ÚLTIMAS ESCUCHAS</h2></div><span class="tiny" style="color:#aaa">RECENT / 08</span></div>
+ <section id="recent-grid" class="track-grid" aria-label="Escuchado recientemente"></section>
+ <section class="search-block" aria-label="Buscar canciones">
+   <div class="tiny" style="color:var(--acid)">DISCOVER / THE CATALOGUE</div>
+   <div class="section-header" style="padding:13px 0;border:0"><h2>BUSCA / REPRODUCE</h2><span class="tiny" style="color:#aaa">SPOTIFY SEARCH</span></div>
+   <form id="search-form" class="search-form">
+      <input id="search-query" type="search" placeholder="Artista, canción, álbum..." minlength="2" required autocomplete="off" aria-label="Buscar canciones">
+      <button class="button acid" type="submit">BUSCAR ↗</button>
+   </form>
+ </section>
+ <div id="search-results" class="results" aria-live="polite"></div>
+ <p id="editorial-note" class="editorial-note"><b>LA PORTADA CAMBIA CON TU MÚSICA.</b> Al conectar tu cuenta se actualizarán tus carátulas y canciones destacadas. Para reflejar tu selección ante otros visitantes mientras no tienes abierta la página, necesitaremos sincronización segura en un servidor.</p>
+</div>
 </main>
-<footer class="footer"><strong>TRANSMISSION / PERSONAL ARCHIVE</strong><span class="tiny">MÚSICA ALOJADA Y REPRODUCIDA POR SPOTIFY · NO AFILIADO CON SPOTIFY</span></footer>
-<script>
-(() => {
-  'use strict';
-  const profile='https://open.spotify.com/user/31irk65dnljb6i3jfg57lkixtgqu';
-  const $=id=>document.getElementById(id);
-  const allowed=new Set(['playlist','track','album','episode','show']);
-  function parseSpotify(input){
-    let url;
-    try{url=new URL(input.trim())}catch{return null}
-    if(url.hostname!=='open.spotify.com'||url.protocol!=='https:')return null;
-    const parts=url.pathname.split('/').filter(Boolean);
-    if(parts.length>=3&&/^intl-[a-z]{2}$/i.test(parts[0]))parts.shift();
-    if(parts.length!==2||!allowed.has(parts[0])||!/^[A-Za-z0-9]{22}$/.test(parts[1]))return null;
-    return {type:parts[0],id:parts[1]};
-  }
-  function render(type,id,saveUrl=true){
-    if(!allowed.has(type)||!/^[A-Za-z0-9]{22}$/.test(id))return;
-    const frame=document.createElement('iframe');
-    frame.src='https://open.spotify.com/embed/'+type+'/'+id+'?utm_source=generator&theme=0';
-    frame.title='Reproductor oficial de Spotify';
-    frame.loading='lazy';
-    frame.allow='autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture';
-    frame.allowFullscreen=true;
-    $('embed-host').replaceChildren(frame);
-    $('embed-wrap').classList.add('visible');
-    $('loaded-kind').textContent=type.toUpperCase();
-    const spotifyUrl='https://open.spotify.com/'+type+'/'+id;
-    $('open-selection').href=spotifyUrl;
-    $('spotify-url').value=spotifyUrl;
-    $('message').textContent='Selección cargada. Puedes reproducirla o compartir el enlace.';
-    $('message').classList.remove('error');
-    if(saveUrl){
-      const next=new URL(window.location.href);
-      next.searchParams.set('tipo',type);
-      next.searchParams.set('id',id);
-      history.replaceState(null,'',next.pathname+next.search+next.hash);
-    }
-  }
-  $('spotify-form').addEventListener('submit',e=>{
-    e.preventDefault();
-    const parsed=parseSpotify($('spotify-url').value);
-    if(!parsed){$('message').textContent='Necesito un enlace público de playlist, canción, álbum, episodio o podcast de open.spotify.com.';$('message').classList.add('error');return}
-    render(parsed.type,parsed.id);
-    $('embed-wrap').scrollIntoView({behavior:'smooth',block:'start'});
-  });
-  async function copy(value,output){
-    try{await navigator.clipboard.writeText(value);$(output).textContent='Enlace copiado.'}
-    catch{$(output).textContent='No se pudo copiar automáticamente. Copia el enlace desde la barra del navegador.'}
-  }
-  $('copy-profile').addEventListener('click',()=>copy(profile,'message'));
-  $('share-selection').addEventListener('click',()=>copy(window.location.href,'share-feedback'));
-  const params=new URLSearchParams(location.search);
-  const kind=params.get('tipo'),id=params.get('id');
-  if(allowed.has(kind)&&id&&/^[A-Za-z0-9]{22}$/.test(id))render(kind,id,false);
-})();
-</script>
+<footer class="footer"><strong>TRANSMISSION / PERSONAL FREQUENCY</strong><span>SPOTIFY STREAMING / LISTENED VIA YOUR ACCOUNT · NO AFFILIATION</span></footer>
+<div class="playerbar" id="playerbar" aria-live="polite"><div class="playerbar-art" id="playerbar-art"></div><div class="playerbar-info"><b id="playerbar-track">CANCION</b><small id="playerbar-artist">ARTISTA</small></div><button id="bar-play" type="button" title="Pausar o reproducir">▶</button></div>
 </body>
 </html>
