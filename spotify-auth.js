@@ -119,7 +119,7 @@
       const detail=await res.json().catch(()=>({}));
       const reason=detail?.error?.reason||detail?.error?.message||'';
       const message=res.status===403?'Spotify no permitió esta función. Comprueba Premium, permisos y usuarios autorizados en Developer Dashboard.':
-        res.status===429?'Demasiadas solicitudes a Spotify. Espera unos segundos.':
+        res.status===429?(reason==='QUOTA_EXCEEDED'?'Se alcanzó la cuota compartida de Spotify para esta aplicación. Vuelve a intentarlo más tarde.':'Spotify está limitando temporalmente las peticiones. Espera y vuelve a intentarlo.') :
         'Spotify respondió '+res.status+(reason?': '+String(reason):'');
       throw new SpotifyError(res.status,message);
     }
