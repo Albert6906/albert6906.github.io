@@ -167,7 +167,7 @@
   <div class="hero-slider" id="hero-slider">
     <div class="hero-visual" id="hero-visual">
       <div class="hero-image" id="hero-image"></div><div class="hero-grain" aria-hidden="true"></div>
-      <div class="hero-topline"><span>EN PORTADA</span><span class="hero-onair"><i></i> MI SELECCIÓN</span></div>
+      <div class="hero-topline"><span></span><span class="hero-onair" hidden><i></i> ESCUCHANDO</span></div>
       <div class="hero-caption">
         <button class="hero-play" id="hero-play" aria-label="Reproducir canción destacada" disabled><svg viewBox="0 0 40 40" aria-hidden="true"><path d="M10 5v30L34 20z"/></svg></button>
         <p class="hero-kicker" id="hero-kicker">EN ROTACIÓN</p>
@@ -231,12 +231,12 @@
     <button id="connect-button" class="tm-button" type="button">CONECTAR</button>
   </div>
 </section>
-<div class="tm-status" id="spotify-status" role="status" aria-live="polite" hidden></div>
+<div id="spotify-status" hidden aria-hidden="true"></div>
 <section id="tm-spotify-embed" class="tm-spotify-embed" hidden aria-label="Reproductor oficial de Spotify">
-  <div class="tm-embed-heading"><span class="eyebrow">SPOTIFY / REPRODUCTOR OFICIAL</span>
+  <div class="tm-embed-heading"><span class="eyebrow">REPRODUCTOR</span>
     <button id="tm-embed-close" type="button" aria-label="Cerrar reproductor oficial">✕</button></div>
   <div id="tm-embed-frame"></div>
-  <p>Esta reproducción utiliza directamente el reproductor oficial de Spotify.</p>
+  
 </section>
 
     <section class="catalog-section" id="latest">
@@ -249,27 +249,27 @@
 
     <section class="discover-panel" id="explore">
   <div class="discover-copy">
-    <span class="eyebrow">ARCHIVO PERSONAL</span>
+    
     <h2>EVERY<br>FREQUENCY<br>HAS A STORY<span class="heading-period">.</span></h2>
     <p>Artistas que regresan. Canciones que permanecen. Lo que escucho y lo que descubro.</p>
-    <div id="taste-artists" class="tm-taste-artists" hidden><span class="eyebrow">ARTISTAS</span><div id="taste-artist-names"></div></div>
+    <div id="taste-artists" class="tm-taste-artists" hidden><div id="taste-artist-names"></div></div>
     <a class="outline-cta" href="#liked">EXPLORAR MIS FAVORITAS <span>↗</span></a>
   </div>
   <div class="discover-art" role="img" aria-label="Composición abstracta de discos y ondas">
     <div class="circles circle-a"></div><div class="circles circle-b"></div><div class="circles circle-c"></div>
-    <div class="disc-mark">T/M</div><div class="sideprint">EVERYTHING IS CONNECTED</div><div class="crosshair">✳</div>
+    <div class="disc-mark">T/M</div><div class="crosshair">✳</div>
   </div>
 </section>
 
     <section class="catalog-section tm-liked-section" id="liked" aria-label="Canciones guardadas">
   <div class="section-heading">
-    <div><span class="eyebrow" id="liked-kicker">CANCIONES GUARDADAS</span><h2>ME GUSTA <span class="heading-indicator">↗</span></h2></div>
+    <div><span class="eyebrow" id="liked-kicker" hidden></span><h2>ME GUSTA <span class="heading-indicator">↗</span></h2></div>
     <div class="tm-liked-actions"><button class="view-all" id="tm-liked-play" type="button" disabled>▶ ESCUCHAR</button><button class="view-all" id="tm-liked-more" type="button" hidden>VER MÁS ↗</button></div>
   </div>
   <div class="tm-liked-grid" id="tm-liked-grid" aria-live="polite"></div>
 </section>
 <section class="catalog-section collection-section" id="collections">
-  <div class="section-heading"><div><span class="eyebrow">MI ARCHIVO</span><h2>COLECCIONES <span class="heading-indicator">↗</span></h2></div><button class="view-all" id="random-discovery" type="button">SORPRÉNDEME <span>↗</span></button></div>
+  <div class="section-heading"><div><h2>COLECCIONES <span class="heading-indicator">↗</span></h2></div><button class="view-all" id="random-discovery" type="button">SORPRÉNDEME <span>↗</span></button></div>
   <div class="collection-grid">
     <button class="collection-tile" id="collection-top" type="button">
       <span class="collection-art collection-art-one"><span class="distortion-title">TOP<br>TRACKS</span><span class="distortion-coord">ESTAS SEMANAS</span></span>
@@ -295,17 +295,17 @@
     <span class="tm-recent-art-title">AFTER<br>HOURS<span>✳</span></span>
   </div>
   <div class="studio-content tm-history">
-    <span class="eyebrow" id="recent-label">ÚLTIMAS ESCUCHAS</span><h2>DESPUÉS<br>DE<br>SONAR.</h2>
+    <span class="eyebrow" id="recent-label" hidden></span><h2>DESPUÉS<br>DE<br>SONAR.</h2>
     <div id="recent-items" class="tm-recent-items" aria-label="Tus últimas reproducciones"></div>
   </div>
 </section>
 
     <section class="support-section" id="support">
-  <span class="eyebrow">PARA COMPARTIR</span>
+  
   <div class="support-flex">
     <h2>LISTEN<br>TOGETHER.</h2>
     <div class="tm-share">
-      <p>Pega una playlist de Spotify. La abriremos desde esta misma página y podrás compartir el enlace con tu novia o tus amigos.</p>
+      <p>Una selección para escuchar y compartir.</p>
       <form id="shared-form" class="tm-form">
         <input id="shared-link" type="url" placeholder="https://open.spotify.com/playlist/..." aria-label="URL de playlist" required>
         <button class="light-cta tm-submit" type="submit">CARGAR PLAYLIST ↗</button>
@@ -336,7 +336,7 @@
     <div><div class="footer-logo">T/M<span>✳</span></div><p>AN OPEN CHANNEL<br>FOR PERSONAL MUSIC.</p></div>
     <div><span class="footer-title">LISTEN</span><a href="#radio">SPOTIFY PLAYER</a><a href="#latest">IN ROTATION</a><a href="#mixtapes">PLAYLISTS</a><a href="#recent">RECENT LISTENS</a></div>
     <div><span class="footer-title">COLLECTIONS</span><a href="#collections">THE ARCHIVE</a><a href="#support">SHARE A PLAYLIST</a><a href="#top">BACK TO TOP</a><span class="footer-note">INDEPENDENT / NON-AFFILIATED</span></div>
-    <div class="footer-news"><span class="footer-title">EN EL AIRE</span><p>Un archivo de escuchas, no un género.</p></div>
+    <div class="footer-news" aria-hidden="true"></div>
   </div>
   <div class="footer-bottom"><span>© 2026 TRANSMISSION</span><span>HECHO PARA ESCUCHAR <span class="pulse-dot"></span></span></div>
 </footer>
@@ -351,6 +351,17 @@
   </div>
 </div>
 
+<div class="tm-library-screen" id="tm-library-screen" hidden aria-hidden="true">
+ <div class="tm-library-dialog" role="dialog" aria-modal="true" aria-labelledby="tm-library-title">
+   <header class="tm-library-header"><div><h2 id="tm-library-title">MIS LISTAS</h2><p id="tm-library-count"></p></div><button id="tm-library-close" type="button" aria-label="Cerrar listas">✕</button></header>
+   <div class="tm-library-bar">
+     <input id="tm-library-search" type="search" aria-label="Filtrar playlists" placeholder="Buscar en mis listas" autocomplete="off">
+     <div class="tm-library-filters" role="group" aria-label="Filtrar listas"><button type="button" data-filter="all" aria-pressed="true">TODAS</button><button type="button" data-filter="radios" aria-pressed="false">RADIOS / MIXES</button></div>
+   </div>
+   <div class="tm-library-grid" id="tm-library-grid"></div>
+   <div class="tm-library-bottom"><button id="tm-library-more" type="button" hidden>CARGAR MÁS ↗</button><p id="tm-library-feedback" role="status"></p></div>
+ </div>
+</div>
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
 </body>
