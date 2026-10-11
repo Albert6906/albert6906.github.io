@@ -168,30 +168,76 @@ async function startSongs(tracks){
    await rt.playTrack(first);
  }
 }
-let discoveryCache=null,discoveryTime=0;
-async function lightDiscovery(known){
+let discoveryCache=[],discoveryTime=0,discoveryTurn=0;
+try{discoveryTurn=Math.max(0,Number(localStorage.getItem('tm_discovery_turn'))||0)}catch{}
+function previousDiscoveries(){
+ try{return new Set(JSON.parse(localStorage.getItem('tm_discovery_seen')||'[]'))}
+ catch{return new Set()}
+}
+function rememberDiscoveries(tracks){
+ try{
+   const seen=[...previousDiscoveries(),...tracks.map(t=>t.id)];
+   localStorage.setItem('tm_discovery_seen',JSON.stringify(seen.slice(-160)));
+ }catch{}
+}
+async function lightDiscovery(known,force=false){
  if(!rt?.account)return [];
- if(discoveryCache&&Date.now()-discoveryTime<1200000)return discoveryCache;
- const names=ownerConnected?
-   unique([...recentEvents.map(e=>e.track),...ownerTop]).slice(0,15).flatMap(t=>(t.artists||[]).map(x=>x.name)):
-   (rt.publicSnapshot?.artists||[]).map(a=>a.name);
- const picked=[...new Set(names.filter(Boolean))].slice(0,2);
- const inCollection=new Set([...known,...liked].map(t=>t.id));
- const found=[];
- for(const name of picked){
-   try{
-     const q=new URLSearchParams({q:'artist:"'+name.replace(/"/g,'')+'"',type:'track',limit:'10'});
-     const data=await sp.api('/search?'+q.toString());
-     for(const song of data?.tracks?.items||[]){
-       if(!valid(song)||inCollection.has(song.id))continue;
-       if(!(song.artists||[]).some(a=>a.name?.toLocaleLowerCase()===name.toLocaleLowerCase()))continue;
-       found.push(song);inCollection.add(song.id);
-       if(found.length>=8)break
-     }
-   }catch(e){console.warn('Discovery search unavailable:',e.message)}
+ if(!force&&discoveryCache.length&&Date.now()-discoveryTime<300000)return [...discoveryCache];
+ const previous=previousDiscoveries();
+ const owned=unique([...known,...liked,...(rt.ownerTracks||[]),...(rt.recent||[])]);
+ const knownIds=new Set(owned.map(t=>t.id));
+ // Use actual artists appearing in recent listening, top tracks and saved songs.
+ const artists=[];
+ const seenArtist=new Set();
+ for(const t of [...recentEvents.map(x=>x.track),...ownerTop,...liked]){
+   for(const a of t?.artists||[]){
+     if(!a.name||seenArtist.has(a.name.toLocaleLowerCase()))continue;
+     seenArtist.add(a.name.toLocaleLowerCase());artists.push(a);
+   }
  }
- discoveryCache=found;discoveryTime=Date.now();
- return found;
+ if(!artists.length){
+   for(const a of rt.publicSnapshot?.artists||[])if(a?.name)artists.push(a)
+ }
+ if(!artists.length)return [];
+ discoveryTurn++;
+ try{localStorage.setItem('tm_discovery_turn',String(discoveryTurn))}catch{}
+ const fresh=[],later=[];
+ const consider=track=>{
+   if(!valid(track)||knownIds.has(track.id))return;
+   const list=previous.has(track.id)?later:fresh;
+   if(!fresh.some(x=>x.id===track.id)&&!later.some(x=>x.id===track.id))list.push(track);
+ };
+ // Move across different artists and result pages at each explicit request.
+ const picked=[artists[(discoveryTurn*2)%artists.length],artists[(discoveryTurn*2+1)%artists.length]];
+ for(let i=0;i<picked.length;i++){
+   const a=picked[i];if(!a?.name)continue;
+   try{
+     const query=new URLSearchParams({
+       q:'artist:"'+a.name.replace(/"/g,'')+'"',
+       type:'track',limit:'10',
+       offset:String(((discoveryTurn+i)%5)*10)
+     });
+     const data=await sp.api('/search?'+query);
+     for(const t of data?.tracks?.items||[])consider(t);
+   }catch(e){console.warn('Catalog search:',e?.message)}
+ }
+ // Deep cuts from an actual artist's album, where this API is available.
+ const seed=picked.find(a=>a?.id&&/^[a-zA-Z0-9]{22}$/.test(a.id));
+ if(seed && fresh.length<10){
+   try{
+     const albums=await sp.api('/artists/'+seed.id+'/albums?include_groups=album,single&limit=10&offset='+((discoveryTurn%4)*10));
+     const album=(albums?.items||[]).find(a=>a?.id&&a.album_type!=='compilation');
+     if(album?.id){
+       const response=await sp.api('/albums/'+album.id+'/tracks?limit=30');
+       for(const item of response?.items||[]){
+         consider({...item,album:{id:album.id,name:album.name,images:album.images||[]}})
+       }
+     }
+   }catch(e){console.warn('Album discovery:',e?.message)}
+ }
+ discoveryCache=[...fresh,...later].slice(0,18);
+ discoveryTime=Date.now();
+ return [...discoveryCache]
 }
 async function playNow(){
  const button=el('tm-now-play'),caption=el('tm-now-caption');
@@ -250,13 +296,32 @@ async function prepare(){
  const station=el('tm-station-play');
  if(station&&!hasSelection && !(rt?.ownerTracks?.length||rt?.playlists?.length))station.hidden=true;
 }
+async function refreshRotation(){
+ const button=el('top-refresh');
+ if(!rt?.setRotation||!button)return;
+ const prev=button.textContent;
+ button.disabled=true;button.textContent='BUSCANDO…';
+ try{
+   const familiar=recentWeight(recentEvents);
+   const discovered=await lightDiscovery(familiar,true);
+   const merged=unique([...discovered,...familiar]);
+   if(!merged.length){status('Todavía no hay canciones para renovar la vista.',true);return}
+   const shift=discoveryTurn%Math.max(1,merged.length);
+   const rotated=[...merged.slice(shift),...merged.slice(0,shift)];
+   rt.setRotation(rotated);
+   rememberDiscoveries(discovered.slice(0,8));
+ }catch(e){status('No pude renovar la selección: '+e.message,true)}
+ finally{button.disabled=false;button.textContent=prev}
+}
 el('tm-now-play').onclick=()=>void playNow();
+el('top-refresh').onclick=()=>void refreshRotation();
 play.onclick=()=>void playLiked();
 more.onclick=()=>void loadNext();
 window.TransmissionTaste={
  getOwnerLiked:()=>ownerConnected?unique(liked).slice(0,40):[],
  getPublicLiked:()=>unique(liked).slice(0,40),
  getNowSongs:()=>recentWeight(recentEvents),
+ refreshRotation,
  getLiked:()=>unique(liked)
 };
 await prepare();
