@@ -86,7 +86,12 @@ function arrangeForDisplay(items){
   // Preserve a range of artists and albums between neighbouring cards where possible.
   while(queue.length){
     const past=out.slice(-2);
-    let idx=queue.findIndex(t=>past.every(p=>p.album?.id!==t.album?.id&&artist(p)!==artist(t)));
+    let idx=queue.findIndex(t=>past.every(p=>{
+      const sameAlbum=!!(p.album?.id&&t.album?.id&&p.album.id===t.album.id);
+      const sameArtist=!!(artist(p)&&artist(t)&&artist(p)===artist(t));
+      const sameImage=!!(img(p)&&img(t)&&img(p)===img(t));
+      return !sameAlbum&&!sameArtist&&!sameImage;
+    }));
     if(idx<0)idx=0;
     out.push(queue.splice(idx,1)[0]);
   }
@@ -396,9 +401,10 @@ async function readPlaying(){
   }catch(e){if(e.status===403||e.status===401)status(e.message,true)}
 }
 function renderHighlighted(t){
-  if(!t?.id||lastOnAirId===t.id)return;
-  lastOnAirId=t.id;
+  if(!t?.id)return;
   if(Date.now()<manualUntil)return;
+  if(lastOnAirId===t.id && featured?.id===t.id)return;
+  lastOnAirId=t.id;
   featured={...t,uri:t.uri||'spotify:track:'+t.id};
   $('hero-kicker').textContent='ESCUCHANDO AHORA / SPOTIFY';
   $('hero-title').textContent=title(t);
