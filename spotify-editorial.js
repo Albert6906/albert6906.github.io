@@ -57,7 +57,26 @@ function updatePlayerSong(t){
 }
 function renderTiles(tracks){
   const grid=$('picks-grid');grid.replaceChildren();
-  if(!tracks.length){grid.append(create('p','tm-empty','No hay canciones disponibles en esta cuenta.'));return}
+  if(!tracks.length){
+    const kinds=[
+      ['ROTATION','YOUR TOP','Lo que más escuchas','graphic-one'],
+      ['FREQUENCIES','MY RECORDS','Carátulas desde Spotify','graphic-two'],
+      ['PERSONAL','MY SOUND','Canciones auténticas','graphic-three'],
+      ['SPOTIFY','LISTEN IN','Conecta para escuchar','art-focus']
+    ];
+    kinds.forEach((item,i)=>{
+      const card=create('article','record-card');
+      const button=create('button','record-image');button.type='button';
+      const art=create('span','record-art tm-placeholder '+item[3]);
+      const title=create('span','tm-placeholder-title',item[1]);
+      art.append(title);button.append(art,create('span','card-play','↗'),create('span','record-index',String(i+1).padStart(3,'0')+' / TRANSMISSION'));
+      button.onclick=()=>account?banner('Spotify todavía no devolvió canciones disponibles.'):void sp.login();
+      const info=create('div','record-info');const caption=create('div');
+      caption.append(create('span','record-type',item[0]),create('h3','',item[1]),create('p','',item[2]));info.append(caption);
+      card.append(button,info);grid.append(card);
+    });
+    return;
+  }
   tracks.slice(0,8).forEach((t,i)=>{
     const card=create('article','record-card');
     const button=create('button','record-image');button.type='button';button.title='Reproducir '+title(t);
@@ -77,11 +96,21 @@ function renderRail(items){
   const rail=$('mixtapes'),anchor=$('rail-all');
   rail.querySelectorAll('.rail-item').forEach(x=>x.remove());
   if(!items.length){
-    const one=create('button','rail-item');
-    one.type='button';
-    one.innerHTML='<span class="rail-item-cover art-pool">♫</span><span class="rail-item-label">TUS PLAYLISTS<small>CONÉCTATE PARA EXPLORAR</small></span><span class="rail-item-arrow">↗</span>';
-    one.onclick=()=>account?banner('Todavía no hay playlists disponibles.'):void sp.login();
-    rail.insertBefore(one,anchor);return
+    const prompts=[
+      ['♫','TUS PLAYLISTS','CONECTA TU CUENTA','art-pool'],
+      ['◌','TUS FAVORITAS','TU BIBLIOTECA','art-focus'],
+      ['⌁','TU HISTORIAL','RECIENTLY PLAYED','art-low'],
+      ['✳','COMPARTIR','CON AMIGOS','art-feel']
+    ];
+    prompts.forEach((p,i)=>{
+      const button=create('button','rail-item');button.type='button';
+      const cover=create('span','rail-item-cover '+p[3],p[0]);
+      const label=create('span','rail-item-label');label.append(document.createTextNode(p[1]),create('small','',p[2]));
+      button.append(cover,label,create('span','rail-item-arrow','↗'));
+      button.onclick=()=>i===3?$('support').scrollIntoView({behavior:'smooth'}):account?
+        $('latest').scrollIntoView({behavior:'smooth'}):void sp.login();
+      rail.insertBefore(button,anchor);
+    });return;
   }
   items.slice(0,5).forEach((pl,i)=>{
     const button=create('button','rail-item');button.type='button';
@@ -217,11 +246,13 @@ async function readPlaying(){
 }
 function renderHighlighted(t){
   if(!t?.id)return;
-  // Only update the spotlight while authenticated as the owner.
-  const titleText=$('owner-now-title'),by=$('owner-now-by');
-  if(titleText)titleText.textContent=title(t);
-  if(by)by.textContent=artist(t);
-  const target=$('owner-now-art');if(target)applyTrackArt(target,t);
+  const incoming={...t,uri:t.uri||'spotify:track:'+t.id};
+  const existing=list.tracks.findIndex(item=>item.id===incoming.id);
+  if(existing>=0)list.tracks.splice(existing,1);
+  list.tracks.unshift(incoming);
+  if(list.tracks.length>8)list.tracks.length=8;
+  renderHero(0);
+  $('hero-kicker').textContent='ESTOY ESCUCHANDO / SPOTIFY';
 }
 async function loadHome(){
   let current=null;
@@ -324,7 +355,7 @@ function bind(){
     const v=event.target.value.trim();if(v.length<2){$('search-results').replaceChildren();return}
     window.__tmSearchTimer=setTimeout(()=>void searchTracks(v),350);
   };
-  $('[data-close]')?.addEventListener('click',closeOverlay);
+  document.querySelectorAll('[data-close]').forEach(button=>button.addEventListener('click',closeOverlay));
   $('search-overlay').addEventListener('click',e=>{if(e.target===$('search-overlay'))closeOverlay()});
   document.addEventListener('keydown',e=>{if(e.key==='Escape')closeOverlay()});
   const auth=()=>account?(sp.logout(),location.reload()):void sp.login().catch(e=>status(e.message,true));
