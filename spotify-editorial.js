@@ -8,7 +8,7 @@ const $=id=>document.getElementById(id);
 const list={tracks:[],playlists:[],recent:[],shared:null},owner=sp.CONFIG.ownerId;
 let account=null,player=null,device=null,deviceSelected=false,hero=0,featured=null;
 let selected=null,lastPlayerState=null,poll=null,sdkPromise=null,lastOnAirId=null;
-let lastPlayback=null,publicSnapshot=null,ownerTracks=[],manualUntil=0;
+let lastPlayback=null,publicSnapshot=null,ownerTracks=[],ownerSaved=[],ownerArtists=[],manualUntil=0;
 const safeArt=u=>typeof u==='string'&&/^https:\/\/(i\.scdn\.co|mosaic\.scdn\.co|image-cdn-ak\.spotifycdn\.com|seeded-session-images\.scdn\.co)\//.test(u)?u:'';
 const title=t=>t?.name||'';
 const artist=t=>(t?.artists||[]).map(x=>x.name).filter(Boolean).join(', ')||'';
@@ -75,7 +75,9 @@ async function getPublicSnapshot(){
     const tracks=uniqueTracks(Array.isArray(data.tracks)?data.tracks:(data.track?[data.track]:[]));
     const playlists=(Array.isArray(data.playlists)?data.playlists:[]).slice(0,14).map(publicPlaylist).filter(Boolean);
     const recent=uniqueTracks(Array.isArray(data.recent)?data.recent:[]);
-    return {status:'ready',updated_at:data.updated_at,tracks,playlists,recent,
+    const artists=(Array.isArray(data.artists)?data.artists:[]).slice(0,8)
+      .map(a=>({name:String(a?.name||'').slice(0,120)})).filter(a=>a.name);
+    return {status:'ready',updated_at:data.updated_at,tracks,playlists,recent,artists,
       track:publicTrack(data.track)||tracks[0]||null};
   }catch(e){console.warn('Public catalogue unavailable:',e?.message||e);return null}
 }
@@ -106,6 +108,7 @@ function publicExport(){
     updated_at:new Date().toISOString(),
     track:top[0],
     tracks:top,
+    artists:ownerArtists.map(a=>({name:String(a.name||'').slice(0,120)})).slice(0,8),
     playlists,recent
   };
   const blob=new Blob([JSON.stringify(data,null,2)+'\n'],{type:'application/json'});
@@ -126,7 +129,7 @@ function installOwnerExport(){
 async function playStation(){
   if(!account){status('Conecta tu Spotify Premium para escuchar la estación.',true);return}
   const tracks=arrangeForDisplay(uniqueTracks([
-    ...list.tracks,...(account.id===owner?ownerTracks:[]),
+    ...list.tracks,...(account.id===owner?[...ownerTracks,...ownerSaved]:[]),
     ...list.recent
   ])).slice(0,40);
   if(!tracks.length){status('Necesitamos primero una selección musical real para esta estación.',true);return}
@@ -378,6 +381,30 @@ function renderHighlighted(t){
   applyTrackArt($('hero-image'),t);
   $('hero-play').disabled=false;
 }
+function renderArtistOrbit(items){
+  const wrap=$('taste-artists'),line=$('taste-artist-names');
+  if(!wrap||!line)return;
+  const artists=(items||[]).slice(0,6).map(x=>String(x?.name||'').trim()).filter(Boolean);
+  if(!artists.length){wrap.hidden=true;line.replaceChildren();return}
+  line.replaceChildren();
+  artists.forEach(name=>line.append(create('span','',name)));
+  wrap.hidden=false;
+}
+async function loadOwnerExtras(){
+  if(account?.id!==owner){renderArtistOrbit(publicSnapshot?.artists||[]);return}
+  const values=await Promise.allSettled([
+    sp.api('/me/top/artists?limit=10&time_range=short_term'),
+    sp.api('/me/tracks?limit=50')
+  ]);
+  if(values[0].status==='fulfilled'){
+    ownerArtists=(values[0].value.items||[]).filter(x=>x?.name).slice(0,10);
+    renderArtistOrbit(ownerArtists);
+  }
+  if(values[1].status==='fulfilled'){
+    ownerSaved=(values[1].value.items||[]).map(x=>x.track).filter(x=>x?.uri&&x.id);
+  }
+}
+
 async function loadHome(){
   const isOwner=account?.id===owner;
   let own=null;
@@ -527,7 +554,7 @@ try{
       account=await sp.api('/me');
       status('Conectado como '+(account.display_name||account.id)+'. Cargando canciones y playlists...');
       renderOtherDetails();
-      const results=await Promise.allSettled([loadHome(),loadPlaylists(),loadRecent(),sdk()]);
+      const results=await Promise.allSettled([loadHome(),loadPlaylists(),loadRecent(),sdk(),loadOwnerExtras()]);
       installOwnerExport();
       const playerFailed=results[3].status==='rejected';
       await readPlaying();
@@ -544,6 +571,7 @@ try{
     await loadHome();
     await loadPlaylists();
     await loadRecent();
+    renderArtistOrbit(publicSnapshot?.artists||[]);
     status(publicSnapshot?.tracks?.length?'Esta es mi selección musical. Conecta Premium solo para reproducir aquí.':'La selección pública aún no está sincronizada. Puedes conectar Spotify para escuchar.');
   }
 }catch(e){status('Error de conexión: '+e.message,true)}
