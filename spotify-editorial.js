@@ -101,14 +101,14 @@ function arrangeForDisplay(items){
 }
 function publicExport(){
   if(account?.id!==owner){status('Solo el propietario puede publicar esta selección. Comprueba que conectaste tu cuenta principal.',true);return}
-  if(!ownerTracks.length&&!ownerSaved.length){status('Spotify no devolvió canciones para publicar.',true);return}
+  if(!ownerTracks.length&&!ownerSaved.length&&!window.TransmissionTaste?.getOwnerLiked?.().length){status('No se recibieron canciones para publicar.',true);return}
   const includeRecent=!!document.getElementById('tm-share-recent')?.checked;
-  const top=arrangeForDisplay(uniqueTracks(ownerTracks.length?ownerTracks:ownerSaved)).slice(0,24);
+  const top=arrangeForDisplay(uniqueTracks(ownerTracks.length?ownerTracks:(window.TransmissionTaste?.getOwnerLiked?.()||ownerSaved))).slice(0,24);
   // Public snapshot must never accidentally include private playlists.
   const playlists=list.playlists.filter(p=>p?.public===true)
     .map(publicPlaylist).filter(Boolean).slice(0,14);
   const recent=includeRecent?uniqueTracks(list.recent).slice(0,8):[];
-  const liked=$('tm-share-liked')?.checked?uniqueTracks(ownerSaved).slice(0,40):[];
+  const liked=$('tm-share-liked')?.checked?uniqueTracks(window.TransmissionTaste?.getOwnerLiked?.()||ownerSaved).slice(0,40):[];
   const data={
     status:'ready',
     owner_id:owner,
