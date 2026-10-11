@@ -16,9 +16,15 @@ const artist=t=>(t?.artists||[]).map(x=>x.name).filter(Boolean).join(', ')||'';
 const img=t=>safeArt(t?.album?.images?.[0]?.url||t?.images?.[0]?.url);
 const first=(sel,root=document)=>root.querySelector(sel);
 const create=(tag,cls,text)=>{const el=document.createElement(tag);if(cls)el.className=cls;if(text!==undefined)el.textContent=text;return el};
+const diagLog=[];
 function status(message,error=false){
+  const entry={at:new Date().toLocaleTimeString('es-PE'),message:String(message||''),error:!!error};
+  if(entry.error)diagLog.unshift(entry);
+  if(diagLog.length>15)diagLog.length=15;
+  // All technical feedback belongs in the diagnostics menu, not under the player.
   const el=$('spotify-status');
-  if(el){el.textContent=message;el.hidden=!error;el.classList.toggle('is-error',error)}
+  if(el){el.hidden=true;el.textContent='';el.setAttribute('aria-hidden','true')}
+  if(error)console.warn('TRANSMISSION:',entry.message);
 }
 function banner(message){status(message);const toast=$('toast');if(!toast)return;toast.textContent=message;toast.classList.add('show');setTimeout(()=>toast.classList.remove('show'),3200)}
 function applyTrackArt(target,t){
@@ -652,6 +658,7 @@ window.TransmissionRuntime={
   sdk,activatePlayer,toggle,readPlaying,playTrack,playPlaylist,
   action,status,
   get ready(){return ready},
+  get diagnostics(){return [...diagLog]},
   get account(){return account},
   get player(){return player},
   get device(){return device},
