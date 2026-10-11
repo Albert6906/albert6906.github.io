@@ -8,7 +8,7 @@ const $=id=>document.getElementById(id);
 const list={tracks:[],playlists:[],recent:[],shared:null},owner=sp.CONFIG.ownerId;
 let account=null,player=null,device=null,deviceSelected=false,hero=0,featured=null;
 let selected=null,lastPlayerState=null,poll=null,sdkPromise=null,lastOnAirId=null;
-let lastPlayback=null,publicSnapshot=null,ownerTracks=[],ownerSaved=[],ownerArtists=[],manualUntil=0;
+let lastPlayback=null,publicSnapshot=null,ownerTracks=[],ownerSaved=[],ownerArtists=[],manualUntil=0,station=null;
 const safeArt=u=>typeof u==='string'&&/^https:\/\/(i\.scdn\.co|mosaic\.scdn\.co|image-cdn-ak\.spotifycdn\.com|seeded-session-images\.scdn\.co)\//.test(u)?u:'';
 const title=t=>t?.name||'';
 const artist=t=>(t?.artists||[]).map(x=>x.name).filter(Boolean).join(', ')||'';
@@ -139,7 +139,8 @@ async function playStation(){
     await sp.api('/me/player/play?device_id='+encodeURIComponent(device),{
       method:'PUT',body:JSON.stringify({uris:tracks.map(t=>t.uri)})
     });
-    status('Mi rotación: '+tracks.length+' canciones cargadas en Spotify.');
+    station={tracks,index:0,loop:false,queuedFor:null,busy:false};
+    status('Mi rotación: '+tracks.length+' canciones en tu sesión. La web intentará mantener la secuencia mientras permanezca abierta.');
   });
 }
 
@@ -324,6 +325,7 @@ async function action(fn){
 }
 async function playTrack(t){
   if(!t?.uri)return;
+  station=null;
   updatePlayerSong(t);player?.activateElement?.();
   await action(async()=>{
     await activatePlayer();
@@ -334,6 +336,7 @@ async function playTrack(t){
 }
 async function playPlaylist(p){
   if(!p?.uri)return;
+  station=null;
   player?.activateElement?.();
   await action(async()=>{
     await activatePlayer();
@@ -355,6 +358,25 @@ async function toggle(){
     await sp.api('/me/player/play?device_id='+encodeURIComponent(device),{method:'PUT'})
   })
 }
+async function maintainStation(item){
+  if(!station||station.busy||!item?.id)return;
+  const current=station.tracks.findIndex(t=>t.id===item.id);
+  if(current<0){station=null;return}
+  if(!station.loop && current!==station.tracks.length-1)return;
+  if(station.queuedFor===item.id)return;
+  station.busy=true;
+  try{
+    const next=station.tracks[(current+1)%station.tracks.length];
+    if(!next?.uri)return;
+    await sp.api('/me/player/queue?uri='+encodeURIComponent(next.uri),{method:'POST'});
+    station.loop=true;
+    station.queuedFor=item.id;
+  }catch(e){
+    status('La estación no pudo prolongar la cola automáticamente: '+e.message,true);
+    if(station)station.queuedFor=item.id;
+  }finally{if(station)station.busy=false}
+}
+
 async function readPlaying(){
   if(!account||document.hidden)return;
   try{
@@ -369,6 +391,7 @@ async function readPlaying(){
       $('player-device').textContent='DEVICE / '+(data.device?.name||'SPOTIFY');
       $('live-label').textContent=data.is_playing?'NOW PLAYING':'PAUSED';
       if(account.id===owner && data.is_playing){renderHighlighted(data.item)}
+      if(data.is_playing&&station)void maintainStation(data.item)
     }else $('live-label').textContent='READY';
   }catch(e){if(e.status===403||e.status===401)status(e.message,true)}
 }
