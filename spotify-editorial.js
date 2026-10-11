@@ -472,10 +472,18 @@ async function readPlaying(){
       window.dispatchEvent(new CustomEvent('tm:playback',{detail:lastPlayback}));
       $('player-device').textContent='DEVICE / '+(data.device?.name||'SPOTIFY');
       $('live-label').textContent=data.is_playing?'NOW PLAYING':'PAUSED';
-      if(account.id===owner && data.is_playing){renderHighlighted(data.item)}
+      if(account.id===owner && data.is_playing){noteOwnerPlay(data.item);renderHighlighted(data.item)}
       if(data.is_playing&&station)void maintainStation(data.item)
     }else $('live-label').textContent='READY';
   }catch(e){if(e.status===403||e.status===401)status(e.message,true)}
+}
+let lastOwnerRecentId=null;
+function noteOwnerPlay(t){
+  if(account?.id!==owner||!t?.id||lastOwnerRecentId===t.id)return;
+  lastOwnerRecentId=t.id;
+  list.recent=[t,...list.recent.filter(x=>x?.id!==t.id)].slice(0,30);
+  renderRecent(list.recent);
+  window.dispatchEvent(new CustomEvent('tm:owner-track',{detail:{track:t}}));
 }
 function renderHighlighted(t){
   if(!t?.id)return;
