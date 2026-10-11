@@ -208,6 +208,8 @@ async function playNow(){
      queue.push(songs[i]);
      if((i+1)%4===0 && discoveries.length)queue.push(discoveries.shift());
    }
+   // Con un archivo pequeño también deben entrar canciones descubiertas.
+   while(discoveries.length&&queue.length<40)queue.push(discoveries.shift());
    await startSongs(queue);
  }finally{
    button.disabled=false;caption.textContent=original;
