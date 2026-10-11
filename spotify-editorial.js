@@ -26,6 +26,119 @@ function applyTrackArt(target,t){
   target.style.backgroundImage=u?'url("'+u+'")':'';
   target.classList.toggle('no-cover',!u);
 }
+
+/* A public snapshot is deliberately different from the signed-in visitor's private Spotify session.
+   It is generated only after the page owner explicitly approves the public data. */
+function validId(id){return typeof id==='string'&&/^[A-Za-z0-9]{22}$/.test(id)}
+function publicTrack(raw){
+  if(!raw||!validId(raw.id))return null;
+  const a=Array.isArray(raw.artists)?raw.artists.slice(0,4):[];
+  const artists=a.map(x=>({name:String(x?.name||'').slice(0,110)})).filter(x=>x.name);
+  return {
+    id:raw.id,uri:'spotify:track:'+raw.id,type:'track',name:String(raw.name||'').slice(0,220),
+    artists:artists.length?artists:[{name:String(raw.artist||'Artista').slice(0,130)}],
+    album:{id:raw.album?.id,name:String(raw.album?.name||'').slice(0,180),
+      images:[{url:safeArt(raw.album?.images?.[0]?.url||raw.image)||''}]},
+    duration_ms:Number(raw.duration_ms)||0,
+    external_urls:{spotify:'https://open.spotify.com/track/'+raw.id}
+  }
+}
+function publicPlaylist(raw){
+  if(!raw||!validId(raw.id))return null;
+  return {
+    id:raw.id,uri:'spotify:playlist:'+raw.id,
+    name:String(raw.name||'Playlist').slice(0,150),
+    images:[{url:safeArt(raw.images?.[0]?.url||raw.image)||''}],
+    owner:{display_name:String(raw.owner?.display_name||raw.ownerName||'TRANSMISSION').slice(0,100)},
+    items:{total:Math.max(0,Number(raw.items?.total??raw.total)||0)},
+    external_urls:{spotify:'https://open.spotify.com/playlist/'+raw.id}
+  }
+}
+function uniqueTracks(items){
+  const seen=new Set();
+  const out=[];
+  for(const t of items||[]){
+    const track=publicTrack(t);
+    if(!track||seen.has(track.id))continue;
+    seen.add(track.id);out.push(track);
+    if(out.length>=40)break;
+  }
+  return out
+}
+async function getPublicSnapshot(){
+  try{
+    const res=await fetch('./featured.json?version='+Math.floor(Date.now()/900000),{cache:'no-store'});
+    if(!res.ok)return null;
+    const data=await res.json();
+    if(data?.status!=='ready')return null;
+    if(data.owner_id && data.owner_id!==owner)return null;
+    const tracks=uniqueTracks(Array.isArray(data.tracks)?data.tracks:(data.track?[data.track]:[]));
+    const playlists=(Array.isArray(data.playlists)?data.playlists:[]).slice(0,14).map(publicPlaylist).filter(Boolean);
+    const recent=uniqueTracks(Array.isArray(data.recent)?data.recent:[]);
+    return {status:'ready',updated_at:data.updated_at,tracks,playlists,recent,
+      track:publicTrack(data.track)||tracks[0]||null};
+  }catch(e){console.warn('Public catalogue unavailable:',e?.message||e);return null}
+}
+function arrangeForDisplay(items){
+  const queue=[...items],out=[];
+  // Preserve a range of artists and albums between neighbouring cards where possible.
+  while(queue.length){
+    const past=out.slice(-2);
+    let idx=queue.findIndex(t=>past.every(p=>p.album?.id!==t.album?.id&&artist(p)!==artist(t)));
+    if(idx<0)idx=0;
+    out.push(queue.splice(idx,1)[0]);
+  }
+  return out
+}
+function publicExport(){
+  if(account?.id!==owner){status('Solo el propietario puede publicar esta selección. Comprueba que conectaste tu cuenta principal.',true);return}
+  if(!ownerTracks.length){status('No recibí tus canciones de Spotify. Aún no hay datos que publicar.',true);return}
+  const includeRecent=!!document.getElementById('tm-share-recent')?.checked;
+  const top=arrangeForDisplay(uniqueTracks(ownerTracks)).slice(0,24);
+  const playlists=list.playlists.filter(p=>p?.public===true||p?.public===undefined)
+    .map(publicPlaylist).filter(Boolean).slice(0,14);
+  const recent=includeRecent?uniqueTracks(list.recent).slice(0,8):[];
+  const data={
+    status:'ready',
+    owner_id:owner,
+    source:'owner_authorized_export',
+    updated_at:new Date().toISOString(),
+    track:top[0],
+    tracks:top,
+    playlists,recent
+  };
+  const blob=new Blob([JSON.stringify(data,null,2)+'\n'],{type:'application/json'});
+  const url=URL.createObjectURL(blob);
+  const link=document.createElement('a');
+  link.href=url;link.download='featured.json';
+  document.body.append(link);link.click();link.remove();
+  setTimeout(()=>URL.revokeObjectURL(url),30000);
+  status('Se preparó featured.json con tu selección pública. Adjunta el archivo en el chat para publicarlo en GitHub.');
+}
+function installOwnerExport(){
+  if(account?.id!==owner)return;
+  const panel=$('owner-public-export');
+  if(!panel)return;
+  panel.hidden=false;
+  $('tm-export-public').onclick=publicExport;
+}
+async function playStation(){
+  if(!account){status('Conecta tu Spotify Premium para escuchar la estación.',true);return}
+  const tracks=arrangeForDisplay(uniqueTracks([
+    ...list.tracks,...(account.id===owner?ownerTracks:[]),
+    ...list.recent
+  ])).slice(0,40);
+  if(!tracks.length){status('Necesitamos primero una selección musical real para esta estación.',true);return}
+  player?.activateElement?.();
+  await action(async()=>{
+    await activatePlayer();
+    await sp.api('/me/player/play?device_id='+encodeURIComponent(device),{
+      method:'PUT',body:JSON.stringify({uris:tracks.map(t=>t.uri)})
+    });
+    status('Mi rotación: '+tracks.length+' canciones cargadas en Spotify.');
+  });
+}
+
 function renderHero(index){
   const arr=list.tracks;
   if(!arr.length)return;
@@ -265,28 +378,26 @@ function renderHighlighted(t){
   $('hero-play').disabled=false;
 }
 async function loadHome(){
-  let current=null;
-  if(account)try{current=await sp.api('/me/top/tracks?limit=8&time_range=short_term')}catch(e){status('Spotify Top Tracks: '+e.message,true)}
-  list.tracks=(current?.items||[]).filter(t=>t?.uri);
-  if(!list.tracks.length){
-    try{
-      const r=await fetch('./featured.json',{cache:'no-store'});
-      const data=await r.json();
-      if(data?.status==='ready'&&data.track?.id){
-        const t=data.track;
-        list.tracks=[{id:t.id,uri:'spotify:track:'+t.id,name:t.name,
-          artists:[{name:t.artist}],album:{images:[{url:t.image}],name:'Destacada'},
-          external_urls:{spotify:'https://open.spotify.com/track/'+t.id}}];
-      }
-    }catch{}
+  const isOwner=account?.id===owner;
+  let own=null;
+  if(isOwner){
+    try{own=await sp.api('/me/top/tracks?limit=30&time_range=short_term')}
+    catch(e){status('Spotify Top Tracks: '+e.message,true)}
+    ownerTracks=(own?.items||[]).filter(t=>t?.id&&t?.uri);
   }
+  const incoming=isOwner&&ownerTracks.length?ownerTracks:(publicSnapshot?.tracks||[]);
+  list.tracks=arrangeForDisplay(uniqueTracks(incoming)).slice(0,24);
   if(list.tracks.length){
     renderHero(0);renderTiles(list.tracks);
-    if(account?.id===owner)renderHighlighted(list.tracks[0]);
+    if(isOwner&&!lastOnAirId){
+      $('hero-kicker').textContent='MI ROTACIÓN / 4 SEMANAS';
+    }else if(!isOwner){
+      $('hero-kicker').textContent='TRANSMISSION / SELECCIÓN PÚBLICA';
+    }
   }else{
     $('hero-kicker').textContent='TRANSMISSION / SPOTIFY';
     $('hero-title').textContent='YOUR FREQUENCY';
-    $('hero-description').textContent='Conecta Spotify para cargar carátulas y canciones reales.';
+    $('hero-description').textContent='Una biblioteca musical personal. Su primera selección pública estará disponible pronto.';
     $('slider-count').textContent='00 / 00';
     $('hero-play').disabled=true;
     $('pause-slide').disabled=true;
@@ -295,16 +406,20 @@ async function loadHome(){
   renderOtherDetails();
 }
 async function loadPlaylists(){
-  let result=null;
-  try{result=await sp.api('/me/playlists?limit=20')}catch(e){status('Playlists: '+e.message,true)}
-  list.playlists=(result?.items||[]).filter(Boolean);
+  if(account?.id===owner){
+    let result=null;
+    try{result=await sp.api('/me/playlists?limit=20')}catch(e){status('Playlists: '+e.message,true)}
+    list.playlists=(result?.items||[]).filter(Boolean);
+  }else list.playlists=publicSnapshot?.playlists||[];
   renderRail(list.playlists);
   renderOtherDetails();
 }
 async function loadRecent(){
-  let recent=null;
-  try{recent=await sp.api('/me/player/recently-played?limit=8')}catch(e){status('Historial: '+e.message,true)}
-  list.recent=(recent?.items||[]).map(x=>x.track).filter(Boolean);
+  if(account?.id===owner){
+    let recent=null;
+    try{recent=await sp.api('/me/player/recently-played?limit=8')}catch(e){status('Historial: '+e.message,true)}
+    list.recent=(recent?.items||[]).map(x=>x.track).filter(Boolean);
+  }else list.recent=publicSnapshot?.recent||[];
   renderRecent(list.recent);
   renderOtherDetails();
 }
@@ -375,7 +490,8 @@ function bind(){
   $('collection-top').onclick=()=>document.getElementById('latest').scrollIntoView({behavior:'smooth'});
   $('collection-playlists').onclick=()=>document.getElementById('mixtapes').scrollIntoView({behavior:'smooth'});
   $('collection-recent').onclick=()=>document.getElementById('recent').scrollIntoView({behavior:'smooth'});
-  $('random-discovery').onclick=()=>list.tracks.length?renderHero(Math.floor(Math.random()*list.tracks.length)):banner('Conecta Spotify para explorar música.');
+  $('random-discovery').onclick=()=>list.tracks.length?renderHero(Math.floor(Math.random()*list.tracks.length)):banner('La colección pública aún no está preparada.');
+  $('tm-station-play').onclick=()=>void playStation();
   $('shared-form').onsubmit=e=>{e.preventDefault();const id=parsePlaylist($('shared-link').value);if(!id){status('Introduce el enlace real de una playlist de Spotify.',true);return}void loadShared(id).catch(err=>status(err.message,true))}
   $('shared-button').onclick=()=>{if(list.shared)void playPlaylist(list.shared)};
   $('shared-share').onclick=()=>void copyLink(location.href);
@@ -403,6 +519,7 @@ window.TransmissionRuntime={
 };
 try{
   bind();
+  publicSnapshot=await getPublicSnapshot();
   await sp.processRedirect();
   if(sp.isLogged()){
     try{
@@ -410,6 +527,7 @@ try{
       status('Conectado como '+(account.display_name||account.id)+'. Cargando canciones y playlists...');
       renderOtherDetails();
       const results=await Promise.allSettled([loadHome(),loadPlaylists(),loadRecent(),sdk()]);
+      installOwnerExport();
       const playerFailed=results[3].status==='rejected';
       await readPlaying();
       const requested=new URLSearchParams(location.search).get('playlist');
@@ -422,8 +540,10 @@ try{
       }
     }catch(e){status(e.message,true)}
   }else{
-    renderRail([]);renderTiles([]);renderRecent([]);renderOtherDetails();await loadHome();
-    status('Conecta tu cuenta Spotify Premium para cargar música y reproducir en esta página.');
+    await loadHome();
+    await loadPlaylists();
+    await loadRecent();
+    status(publicSnapshot?.tracks?.length?'Esta es mi selección musical. Conecta Premium solo para reproducir aquí.':'La selección pública aún no está sincronizada. Puedes conectar Spotify para escuchar.');
   }
 }catch(e){status('Error de conexión: '+e.message,true)}
 })();
