@@ -324,32 +324,82 @@ async function activatePlayer(){
     await new Promise(r=>setTimeout(r,500));
   }
 }
+/* Official Spotify Embed fallback; no token needed to display compatible media. */
+function showOfficialEmbed(type,id){
+  if(!['track','playlist','album'].includes(type)||!/^[A-Za-z0-9]{22}$/.test(id))return false;
+  const host=$('tm-embed-frame'),wrap=$('tm-spotify-embed');
+  if(!host||!wrap)return false;
+  const frame=create('iframe');
+  frame.src='https://open.spotify.com/embed/'+type+'/'+id+'?theme=0';
+  frame.title='Reproductor oficial Spotify — '+type;
+  frame.loading='lazy';
+  frame.setAttribute('allow','autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture');
+  frame.setAttribute('allowfullscreen','');
+  frame.style.height=type==='track'?'152px':'352px';
+  host.replaceChildren(frame);wrap.hidden=false;
+  return true;
+}
+function closeOfficialEmbed(){
+  const wrap=$('tm-spotify-embed'),host=$('tm-embed-frame');
+  if(host)host.replaceChildren();
+  if(wrap)wrap.hidden=true;
+}
+
 async function action(fn){
-  if(!account){status('Conecta Spotify Premium antes de escuchar.',true);return}
-  try{await fn();status('Orden enviada a Spotify. Comprueba la salida de audio del navegador.');setTimeout(readPlaying,1100)}
-  catch(e){if(e.status===404)deviceSelected=false;status(e.message||String(e),true)}
+  if(!account){status('Conecta Spotify Premium para controlar el Web Player. Puedes usar la reproducción oficial incrustada.',true);return false}
+  try{
+    await fn();
+    status('Spotify recibió la orden. Reproduciendo en el dispositivo seleccionado.');
+    setTimeout(readPlaying,1100);
+    return true;
+  }catch(e){
+    if(e.status===404)deviceSelected=false;
+    status(e.message||String(e),true);
+    return false;
+  }
 }
 async function playTrack(t){
   if(!t?.uri)return;
   station=null;
-  updatePlayerSong(t);player?.activateElement?.();
-  await action(async()=>{
+  updatePlayerSong(t);
+  if(!account){
+    showOfficialEmbed('track',t.id);
+    status('Reproductor oficial disponible. Para el reproductor avanzado, conecta Spotify Premium.');
+    return;
+  }
+  player?.activateElement?.();
+  const ok=await action(async()=>{
     await activatePlayer();
     await sp.api('/me/player/play?device_id='+encodeURIComponent(device),{
       method:'PUT',body:JSON.stringify({uris:[t.uri]})
     });
-  })
+  });
+  if(ok)closeOfficialEmbed();
+  else{
+    showOfficialEmbed('track',t.id);
+    status('No se pudo iniciar el Web Player; abrí el reproductor oficial aquí mismo.',true);
+  }
 }
 async function playPlaylist(p){
   if(!p?.uri)return;
   station=null;
+  if(!account){
+    showOfficialEmbed('playlist',p.id);
+    status('Playlist disponible en el reproductor oficial incrustado. Conecta Premium para usar controles avanzados.');
+    return;
+  }
   player?.activateElement?.();
-  await action(async()=>{
+  const ok=await action(async()=>{
     await activatePlayer();
     await sp.api('/me/player/play?device_id='+encodeURIComponent(device),{
       method:'PUT',body:JSON.stringify({context_uri:p.uri})
-    })
-  })
+    });
+  });
+  if(ok)closeOfficialEmbed();
+  else{
+    showOfficialEmbed('playlist',p.id);
+    status('No se pudo iniciar el Web Player; abrí el reproductor oficial en nuestra página.',true);
+  }
 }
 async function toggle(){
   player?.activateElement?.();
@@ -568,6 +618,7 @@ function bind(){
     $('player').scrollIntoView({behavior:'smooth',block:'center'});
     $('tm-more').focus();
   };
+  $('tm-embed-close').onclick=closeOfficialEmbed;
   $('connect-button').onclick=openMyPlayer;
   $('saved-trigger').onclick=openMyPlayer;
   $('rail-all').onclick=()=>document.getElementById('collections').scrollIntoView({behavior:'smooth'});
