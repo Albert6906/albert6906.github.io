@@ -626,7 +626,7 @@ function bind(){
   $('rail-all').onclick=()=>document.getElementById('collections').scrollIntoView({behavior:'smooth'});
   $('collection-top').onclick=()=>document.getElementById('latest').scrollIntoView({behavior:'smooth'});
   $('collection-playlists').onclick=()=>document.getElementById('mixtapes').scrollIntoView({behavior:'smooth'});
-  $('collection-recent').onclick=()=>document.getElementById('recent').scrollIntoView({behavior:'smooth'});
+  $('collection-liked').onclick=()=>document.getElementById('liked').scrollIntoView({behavior:'smooth'});
   $('top-refresh').onclick=()=>void loadHome();
   $('random-discovery').onclick=()=>list.tracks.length?renderHero(Math.floor(Math.random()*list.tracks.length)):banner('La colección pública aún no está preparada.');
   $('tm-station-play').onclick=()=>void playStation();
