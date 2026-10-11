@@ -241,7 +241,12 @@ async function prepare(){
  }
  await Promise.allSettled([loadFirst(),fetchRecent()]);
  const hasRecent=ownerConnected?recentEvents.length:rt.publicSnapshot?.recent?.length||0;
+ const hasSelection=recentWeight(recentEvents).length>0;
+ el('tm-now-play').hidden=!hasSelection;
+ el('tm-now-play').disabled=!hasSelection;
  el('tm-now-caption').textContent=hasRecent?'Lo que más escuchas últimamente':'Basada en tu colección';
+ const station=el('tm-station-play');
+ if(station&&!hasSelection && !(rt?.ownerTracks?.length||rt?.playlists?.length))station.hidden=true;
 }
 el('tm-now-play').onclick=()=>void playNow();
 play.onclick=()=>void playLiked();
