@@ -8,6 +8,7 @@ const $=id=>document.getElementById(id);
 const list={tracks:[],playlists:[],recent:[],shared:null},owner=sp.CONFIG.ownerId;
 let account=null,player=null,device=null,deviceSelected=false,hero=0,featured=null;
 let selected=null,lastPlayerState=null,poll=null,sdkPromise=null,lastOnAirId=null;
+let lastPlayback=null,publicSnapshot=null,ownerTracks=[],manualUntil=0;
 const safeArt=u=>typeof u==='string'&&/^https:\/\/(i\.scdn\.co|mosaic\.scdn\.co|image-cdn-ak\.spotifycdn\.com|seeded-session-images\.scdn\.co)\//.test(u)?u:'';
 const title=t=>t?.name||'';
 const artist=t=>(t?.artists||[]).map(x=>x.name).filter(Boolean).join(', ')||'';
@@ -54,6 +55,7 @@ function updatePlayerSong(t){
   $('strip-song').textContent=title(t)||'LISTENING';
   $('strip-artist').textContent=artist(t)||'SPOTIFY';
   renderCoverArt($('player-art'),t);
+  window.dispatchEvent(new CustomEvent('tm:track',{detail:{track:t}}));
 }
 function renderTiles(tracks){
   const grid=$('picks-grid');grid.replaceChildren();
@@ -171,8 +173,11 @@ async function sdk(){
         album:{name:t.album?.name||'',images:t.album?.images||[]},
         external_urls:{spotify:'https://open.spotify.com/track/'+t.id}});
     }
-    $('audio-toggle').textContent=state.paused?'▶':'Ⅱ';
-    $('audio-toggle').setAttribute('aria-label',state.paused?'Reproducir':'Pausar');
+    const isPlaying=!state.paused;
+    lastPlayback={trackId:t?.id||null,playing:isPlaying,position:state.position||0,duration:t?.duration_ms||0,
+      shuffle:state.shuffle,repeat:state.repeat_mode,deviceId:device};
+    window.dispatchEvent(new CustomEvent('tm:playback',{detail:lastPlayback}));
+    $('audio-toggle').setAttribute('aria-label',isPlaying?'Pausar':'Reproducir');
   });
   p.addListener('autoplay_failed',()=>status('Spotify necesita un clic para iniciar audio. Pulsa ▶ sobre una canción.',true));
   ['authentication_error','account_error','playback_error','initialization_error'].forEach(ev=>p.addListener(ev,({message})=>status('Spotify: '+message,true)));
@@ -237,7 +242,11 @@ async function readPlaying(){
     const data=await sp.api('/me/player');
     if(data?.item){
       updatePlayerSong(data.item);
-      $('audio-toggle').textContent=data.is_playing?'Ⅱ':'▶';
+      const isPlaying=!!data.is_playing;
+      lastPlayback={trackId:data.item.id,playing:isPlaying,position:data.progress_ms||0,
+        duration:data.item.duration_ms||0,shuffle:data.shuffle_state,repeat:data.repeat_state,
+        deviceId:data.device?.id,deviceName:data.device?.name,volume:data.device?.volume_percent};
+      window.dispatchEvent(new CustomEvent('tm:playback',{detail:lastPlayback}));
       $('player-device').textContent='DEVICE / '+(data.device?.name||'SPOTIFY');
       $('live-label').textContent=data.is_playing?'NOW PLAYING':'PAUSED';
       if(account.id===owner && data.is_playing){renderHighlighted(data.item)}
@@ -247,13 +256,13 @@ async function readPlaying(){
 function renderHighlighted(t){
   if(!t?.id||lastOnAirId===t.id)return;
   lastOnAirId=t.id;
-  const incoming={...t,uri:t.uri||'spotify:track:'+t.id};
-  const existing=list.tracks.findIndex(item=>item.id===incoming.id);
-  if(existing>=0)list.tracks.splice(existing,1);
-  list.tracks.unshift(incoming);
-  if(list.tracks.length>8)list.tracks.length=8;
-  renderHero(0);
-  $('hero-kicker').textContent='ESTOY ESCUCHANDO / SPOTIFY';
+  if(Date.now()<manualUntil)return;
+  featured={...t,uri:t.uri||'spotify:track:'+t.id};
+  $('hero-kicker').textContent='ESCUCHANDO AHORA / SPOTIFY';
+  $('hero-title').textContent=title(t);
+  $('hero-description').textContent=artist(t)+' — '+(t.album?.name||'');
+  applyTrackArt($('hero-image'),t);
+  $('hero-play').disabled=false;
 }
 async function loadHome(){
   let current=null;
@@ -343,8 +352,8 @@ function parsePlaylist(s){
   return null;
 }
 function bind(){
-  $('prev-slide').onclick=()=>renderHero(hero-1);
-  $('next-slide').onclick=()=>renderHero(hero+1);
+  $('prev-slide').onclick=()=>{manualUntil=Date.now()+90000;renderHero(hero-1)};
+  $('next-slide').onclick=()=>{manualUntil=Date.now()+90000;renderHero(hero+1)};
   $('pause-slide').onclick=()=>featured?void playTrack(featured):void toggle();
   $('hero-play').onclick=()=>featured?void playTrack(featured):void toggle();
   $('audio-toggle').onclick=()=>void toggle();
@@ -376,6 +385,22 @@ function bind(){
   nav.querySelectorAll('a').forEach(a=>a.addEventListener('click',()=>nav.classList.remove('is-open')));
   document.addEventListener('visibilitychange',()=>{if(!document.hidden&&account)void readPlaying()});
 }
+window.TransmissionRuntime={
+  sdk,activatePlayer,toggle,readPlaying,playTrack,playPlaylist,
+  action,status,
+  get account(){return account},
+  get player(){return player},
+  get device(){return device},
+  get currentTrack(){return selected||featured},
+  get featured(){return featured},
+  get state(){return lastPlayback},
+  get owner(){return owner},
+  get publicSnapshot(){return publicSnapshot},
+  get ownerTracks(){return [...ownerTracks]},
+  get playlists(){return [...list.playlists]},
+  get recent(){return [...list.recent]},
+  refreshPublic:loadHome
+};
 try{
   bind();
   await sp.processRedirect();
