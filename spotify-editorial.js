@@ -8,7 +8,7 @@ const $=id=>document.getElementById(id);
 const list={tracks:[],playlists:[],recent:[],liked:[],shared:null},owner=sp.CONFIG.ownerId;
 let account=null,player=null,device=null,deviceSelected=false,hero=0,featured=null;
 let selected=null,lastPlayerState=null,poll=null,sdkPromise=null,lastOnAirId=null;
-let lastPlayback=null,publicSnapshot=null,ownerTracks=[],ownerSaved=[],ownerArtists=[],manualUntil=0,station=null;
+let lastPlayback=null,publicSnapshot=null,ownerTracks=[],ownerSaved=[],ownerArtists=[],manualUntil=0,station=null,ready=false;
 let recentEvents=[],likedVisible=12,likedTotal=0,likedLoadMore=false,likedLoading=false;
 const safeArt=u=>typeof u==='string'&&/^https:\/\/(i\.scdn\.co|mosaic\.scdn\.co|image-cdn-ak\.spotifycdn\.com|seeded-session-images\.scdn\.co)\//.test(u)?u:'';
 const title=t=>t?.name||'';
@@ -642,6 +642,7 @@ function bind(){
 window.TransmissionRuntime={
   sdk,activatePlayer,toggle,readPlaying,playTrack,playPlaylist,
   action,status,
+  get ready(){return ready},
   get account(){return account},
   get player(){return player},
   get device(){return device},
@@ -665,6 +666,7 @@ try{
       status('Conectado como '+(account.display_name||account.id)+'. Cargando canciones y playlists...');
       renderOtherDetails();
       const results=await Promise.allSettled([loadHome(),loadPlaylists(),loadRecent(),sdk(),loadOwnerExtras()]);
+      ready=true;
       installOwnerExport();
       const playerFailed=results[3].status==='rejected';
       await readPlaying();
@@ -682,6 +684,7 @@ try{
     await loadPlaylists();
     await loadRecent();
     renderArtistOrbit(publicSnapshot?.artists||[]);
+    ready=true;
     const requested=new URLSearchParams(location.search).get('playlist');
     if(requested&&/^[a-zA-Z0-9]{22}$/.test(requested)){
       await loadShared(requested);
