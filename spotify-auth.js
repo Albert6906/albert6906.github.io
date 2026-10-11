@@ -1,20 +1,29 @@
 /* TRANSMISSION — Spotify auth, Authorization Code + PKCE.
-   Tokens are stored in this browser tab's session only. Never place a client secret here. */
+   Session persistence on this static site uses browser-local storage (same-origin; exposed to XSS). Never place a client secret here. */
 (function () {
   'use strict';
   const CONFIG = Object.freeze({
     clientId: '9dca144b3c2c42889f8d3f58705a85d0',
     redirectUri: 'https://salempro123a-sudo.github.io/musica.html',
     ownerId: '31irk65dnljb6i3jfg57lkixtgqu',
-    scopes: ['streaming','user-read-email','user-read-private','user-read-playback-state','user-modify-playback-state','user-read-currently-playing','user-top-read','playlist-read-private','user-read-recently-played']
+    scopes: ['streaming','user-read-private','user-read-playback-state','user-modify-playback-state','user-read-currently-playing','user-top-read','user-library-read','playlist-read-private','user-read-recently-played']
   });
-  const KEY='transmission_spotify_v2';
+  const KEY='transmission_spotify_v3';
   const PKCE='transmission_spotify_pkce_v1';
   let refreshing=null;
   const tokenStore={
-    read(){ try {return JSON.parse(sessionStorage.getItem(KEY)||'null')}catch{return null} },
-    write(x){sessionStorage.setItem(KEY,JSON.stringify(x))},
-    clear(){sessionStorage.removeItem(KEY)}
+    read(){
+      try{
+        let value=localStorage.getItem(KEY);
+        if(!value){
+          value=sessionStorage.getItem('transmission_spotify_v2');
+          if(value){localStorage.setItem(KEY,value);sessionStorage.removeItem('transmission_spotify_v2')}
+        }
+        return value?JSON.parse(value):null
+      }catch{return null}
+    },
+    write(x){localStorage.setItem(KEY,JSON.stringify(x))},
+    clear(){localStorage.removeItem(KEY);sessionStorage.removeItem('transmission_spotify_v2')}
   };
   function base64url(bytes){
     return btoa(String.fromCharCode(...bytes)).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');
@@ -83,7 +92,7 @@
         body:new URLSearchParams({client_id:CONFIG.clientId,grant_type:'refresh_token',refresh_token:saved.refresh})
       });
       const result=await res.json().catch(()=>({}));
-      if(!res.ok){tokenStore.clear();throw new Error('Spotify cerró la autorización. Vuelve a conectar tu cuenta.')}
+      if(!res.ok){tokenStore.clear();throw new Error('Spotify terminó tu sesión. Conecta de nuevo tu cuenta para continuar.')}
       return saveToken(result,saved.refresh).access;
     })();
     try{return await refreshing}finally{refreshing=null}
@@ -116,6 +125,6 @@
     }
     return res.status===204?null:res.json();
   }
-  function logout(){tokenStore.clear();sessionStorage.removeItem(PKCE)}
+  function logout(){tokenStore.clear();sessionStorage.removeItem(PKCE);sessionStorage.removeItem('tm_return_to')}
   window.TransmissionSpotify={CONFIG,login,processRedirect,getToken,api,logout,isLogged:()=>!!tokenStore.read()?.access};
 })();
