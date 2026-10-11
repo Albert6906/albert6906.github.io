@@ -6,6 +6,7 @@ const el=id=>document.getElementById(id);
 const $=(tag,className,text)=>{const e=document.createElement(tag);if(className)e.className=className;if(text!==undefined)e.textContent=text;return e};
 let sdkPlayer=null,deviceId=null,playing=false,currentTrack=null,profile=null;
 let sdkPending=null,lastTrackId=null,activeMode='top',pollHandle=null;
+let browserDeviceTransferred=false;let featureTrack=null;
 const musicStatus=el('music-status');
 const ownerId=sp.CONFIG.ownerId;
 function status(text,bad=false){musicStatus.textContent=text;musicStatus.dataset.error=bad?'true':'false'}
@@ -21,6 +22,25 @@ function addImage(container,url,alt,cls='cover'){
 function person(track){return (track?.artists||[]).map(x=>x.name).filter(Boolean).join(', ')||'Artista sin información'}
 function cover(track){return track?.album?.images?.[0]?.url||track?.images?.[0]?.url||''}
 function fmt(n){return Math.floor((n||0)/60000)+':'+String(Math.floor((n||0)%60000/1000)).padStart(2,'0')}
+function renderOwnerFeature(track,label){
+  if(!track?.id)return;
+  featureTrack=track;
+  const img=track.album?.images?.[0]?.url||track.images?.[0]?.url||'';
+  const figure=el('owner-feature-image');
+  if(figure && safeImage(img)){
+    figure.src=img;figure.alt='Carátula de '+track.name;figure.hidden=false;
+    el('owner-feature-empty').hidden=true;
+  }
+  const labelEl=el('owner-feature-label');
+  if(labelEl)labelEl.textContent=label;
+  const title=el('owner-feature-title');
+  if(title)title.textContent=track.name||'';
+  const artist=el('owner-feature-artist');
+  if(artist)artist.textContent=person(track);
+  const button=el('owner-feature-play');
+  if(button)button.disabled=!track.uri;
+}
+
 function displayTrack(track,{playingState=false}={}){
   if(!track?.id&&!track?.uri)return;
   currentTrack=track;lastTrackId=track.id||null;
@@ -128,7 +148,7 @@ el('shared-form').onsubmit=e=>{
 el('play-shared').onclick=()=>{if(sharedPlaylistId)playContext('spotify:playlist:'+sharedPlaylistId)};
 el('copy-shared').onclick=async()=>{
   if(!sharedPlaylistId)return;
-  const u=new URL(sp.CONFIG.redirectUri);
+  const u=new URL('/',location.origin);
   u.searchParams.set('playlist',sharedPlaylistId);
   try{await navigator.clipboard.writeText(u.href);el('shared-feedback').textContent='Enlace a nuestra web copiado para compartir.'}
   catch{el('shared-feedback').textContent='No se pudo copiar. Copia la URL de esta página.'}
@@ -149,6 +169,7 @@ async function loadTop(range='short_term'){
       range==='medium_term'?'MÁS ESCUCHADAS / ÚLTIMOS 6 MESES':'MÁS ESCUCHADAS / ÚLTIMO AÑO');
     if(profile?.id===ownerId && (data.items||[])[0]) {
       const first=data.items[0];
+      renderOwnerFeature(first,'MÁS ESCUCHADA / ÚLTIMAS 4 SEMANAS');
       el('editorial-note').textContent='Tu canción destacada del período: '+first.name+' — '+person(first)+'. Se actualiza al consultar Spotify mientras estás conectado.';
       // The public home page is not automatically updated for other users: that needs a backend.
       sessionStorage.setItem('tm_owner_feature',JSON.stringify({
@@ -187,6 +208,7 @@ async function updatePlayback(){
       updateState(data.is_playing,data.progress_ms||0,data.item.duration_ms||0);
       el('current-device').textContent=data.device?.name?('DISPOSITIVO / '+data.device.name.toUpperCase()):'SPOTIFY CONNECT';
       if(profile?.id===ownerId){
+        renderOwnerFeature(data.item,data.is_playing?'ESCUCHANDO AHORA':'ÚLTIMA REPRODUCCIÓN');
         sessionStorage.setItem('tm_owner_now',JSON.stringify({
           name:data.item.name,artist:person(data.item),image:safeImage(cover(data.item)),track:data.item.id,
           playing:data.is_playing,timestamp:Date.now(),owner:ownerId
@@ -224,9 +246,9 @@ async function initializePlayer(){
     deviceId=device_id;
     el('device-label').textContent='WEB PLAYER / LISTO';
     el('listen-here').disabled=false;
-    status('Reproductor conectado. Pulsa «Escuchar aquí» para enviar el audio a esta página.');
+    status('Reproductor listo. Elige una canción o pulsa «Escuchar aquí».');
   });
-  player.addListener('not_ready',()=>{deviceId=null;el('device-label').textContent='WEB PLAYER / SIN CONEXIÓN';el('listen-here').disabled=true});
+  player.addListener('not_ready',()=>{browserDeviceTransferred=false;deviceId=null;el('device-label').textContent='WEB PLAYER / SIN CONEXIÓN';el('listen-here').disabled=true});
   player.addListener('player_state_changed',state=>{
     if(!state)return;
     const t=state.track_window?.current_track;
@@ -241,6 +263,7 @@ async function initializePlayer(){
       updateState(!state.paused,state.position,t.duration_ms);
     }
   });
+  player.addListener('autoplay_failed',()=>status('El navegador bloqueó la reproducción automática. Pulsa ▶ directamente sobre una canción.',true));
   ['initialization_error','authentication_error','account_error','playback_error'].forEach(evt=>{
     player.addListener(evt,({message})=>status('Reproductor Spotify: '+message,true));
   });
@@ -248,37 +271,47 @@ async function initializePlayer(){
   if(!connected){player.disconnect();throw new Error('No se pudo abrir el reproductor de Spotify en este navegador.')}
   sdkPlayer=player;return player;
 }
-async function useBrowserDevice(){
+async function useBrowserDevice(force=false){
   if(!sdkPlayer)await initializePlayer();
-  if(!deviceId) {
-    const deadline=Date.now()+9000;
+  if(!deviceId){
+    const deadline=Date.now()+8500;
     while(!deviceId&&Date.now()<deadline)await new Promise(resolve=>setTimeout(resolve,120));
   }
-  if(!deviceId)throw new Error('Spotify todavía no reconoce este navegador como dispositivo. Inténtalo nuevamente.');
-  await sp.api('/me/player',{method:'PUT',body:JSON.stringify({device_ids:[deviceId],play:false})});
+  if(!deviceId)throw new Error('El reproductor todavía no está listo: comprueba que tu cuenta es Premium y que Chrome permite audio protegido.');
+  if(force||!browserDeviceTransferred){
+    await sp.api('/me/player',{method:'PUT',body:JSON.stringify({device_ids:[deviceId],play:false})});
+    browserDeviceTransferred=true;
+    await new Promise(resolve=>setTimeout(resolve,650));
+  }
   el('current-device').textContent='DISPOSITIVO / TRANSMISSION WEB';
 }
 async function runAction(label,fn){
-  status(label);
-  try{await fn();status('Listo. El audio se reproduce mediante Spotify Premium dentro de esta página.');setTimeout(updatePlayback,1300)}
-  catch(e){status(e.message,true)}
+  status(label);musicStatus.dataset.error='false';
+  try{
+    await fn();
+    status('Orden enviada a Spotify. Si no escuchas audio, comprueba el volumen de la pestaña y el dispositivo activo.');
+    setTimeout(updatePlayback,1400);
+  }catch(e){
+    if(e.status===404)browserDeviceTransferred=false;
+    status(e.message,true);
+  }
+}
+async function startUri(uri){
+  await useBrowserDevice();
+  await sp.api('/me/player/play?device_id='+encodeURIComponent(deviceId),{
+    method:'PUT',body:JSON.stringify({uris:[uri]})
+  });
 }
 async function playTrack(track){
   if(!track?.uri)return;
   displayTrack(track);
-  if(!sp.isLogged()){status('Conecta tu cuenta Premium antes de reproducir.',true);return}
-  // Browser audio activation may require a direct user click on iOS/Safari.
-  const activation=sdkPlayer?.activateElement?.();void activation;
-  await runAction('Preparando canción...',async()=>{
-    await useBrowserDevice();
-    await sp.api('/me/player/play?device_id='+encodeURIComponent(deviceId),{
-      method:'PUT',body:JSON.stringify({uris:[track.uri]})
-    });
-  });
+  if(!sp.isLogged()){status('Conecta tu cuenta Premium para escuchar.',true);return}
+  sdkPlayer?.activateElement?.();
+  await runAction('Preparando canción en este navegador...',()=>startUri(track.uri));
 }
 async function playContext(uri){
   if(!uri)return;
-  const activation=sdkPlayer?.activateElement?.();void activation;
+  sdkPlayer?.activateElement?.();
   await runAction('Preparando playlist...',async()=>{
     await useBrowserDevice();
     await sp.api('/me/player/play?device_id='+encodeURIComponent(deviceId),{
@@ -323,29 +356,36 @@ async function afterLogin(){
   await updatePlayback();
   clearInterval(pollHandle);
   pollHandle=setInterval(updatePlayback,18000);
-  if(musicStatus.dataset.error!=='true')status('Conectado. Selecciona una canción o escucha tu Spotify actual dentro de esta página.');
+  if(musicStatus.dataset.error!=='true')status('Conectado. Elige una canción o activa el reproductor web.');
 }
 el('connect-button').onclick=()=>sp.login().catch(e=>status(e.message,true));
 el('disconnect-button').onclick=()=>{
-  clearInterval(pollHandle);sdkPlayer?.disconnect();sp.logout();location.replace(sp.CONFIG.redirectUri);
+  clearInterval(pollHandle);sdkPlayer?.disconnect();sp.logout();location.replace('/');
 };
 el('listen-here').onclick=()=>{
-  const activation=sdkPlayer?.activateElement?.();void activation;
-  runAction('Trasladando audio a este navegador...',async()=>{await useBrowserDevice();});
+  sdkPlayer?.activateElement?.();
+  runAction('Activando este navegador como dispositivo...',async()=>{
+    await useBrowserDevice(true);
+    const state=await sdkPlayer?.getCurrentState();
+    if(state?.paused)await sdkPlayer.resume();
+  });
 };
 el('toggle-button').onclick=()=>{
-  const activation=sdkPlayer?.activateElement?.();void activation;
+  sdkPlayer?.activateElement?.();
   runAction('Actualizando reproducción...',async()=>{
     if(!sdkPlayer)await initializePlayer();
     const state=await sdkPlayer.getCurrentState();
-    if(!state&&!deviceId)throw new Error('Todavía no hay un dispositivo activo.');
-    if(!state)await useBrowserDevice();
-    await sdkPlayer.togglePlay();
+    if(state){await sdkPlayer.togglePlay();return}
+    if(currentTrack?.uri){await startUri(currentTrack.uri);return}
+    if(featureTrack?.uri){await startUri(featureTrack.uri);return}
+    await useBrowserDevice(true);
+    await sp.api('/me/player/play?device_id='+encodeURIComponent(deviceId),{method:'PUT'});
   });
 };
 el('bar-play').onclick=()=>el('toggle-button').click();
 el('previous').onclick=()=>runAction('Canción anterior...',async()=>{await sp.api('/me/player/previous',{method:'POST'})});
 el('next').onclick=()=>runAction('Siguiente canción...',async()=>{await sp.api('/me/player/next',{method:'POST'})});
+el('owner-feature-play').onclick=()=>{if(featureTrack?.uri)playTrack(featureTrack)};
 el('current-share').onclick=async()=>{
   const url=el('current-share').dataset.url;
   if(!url)return;
