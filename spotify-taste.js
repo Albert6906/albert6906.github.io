@@ -51,6 +51,28 @@ function render(){
    label.textContent='SELECCIÓN PÚBLICA';
  }
 }
+function fillPlaylistRail(){
+ if(!rt||rt.playlists?.length)return;
+ const source=unique(liked.length?liked:(rt.ownerTracks?.length?rt.ownerTracks:rt.publicSnapshot?.tracks||[]));
+ if(!source.length)return;
+ const rail=el('mixtapes'),anchor=el('rail-all');
+ if(!rail||!anchor)return;
+ rail.querySelectorAll('.rail-item').forEach(x=>x.remove());
+ const heading=rail.querySelector('.rail-heading');
+ if(heading)heading.textContent='FAVORITAS';
+ for(const track of source.slice(0,4)){
+   const button=create('button','rail-item');
+   button.type='button';button.title=track.name;
+   const cover=create('span','rail-item-cover tm-rail-image');
+   if(image(track))cover.style.backgroundImage='url("'+image(track)+'")';
+   const label=create('span','rail-item-label');
+   label.append(document.createTextNode(track.name),create('small','',artists(track)));
+   button.append(cover,label,create('span','rail-item-arrow','▶'));
+   button.onclick=()=>void rt.playTrack(track);
+   rail.insertBefore(button,anchor);
+ }
+}
+
 async function loadFirst(){
  if(ownerConnected){
    try{
@@ -64,6 +86,7 @@ async function loadFirst(){
    likesTotal=liked.length;
  }
  render();
+ fillPlaylistRail();
  const holder=el('recent-items');
  if(ownerConnected && liked.length && holder && !holder.querySelector('button')){
    // Another section can fall back to saved songs, without inventing play history.
