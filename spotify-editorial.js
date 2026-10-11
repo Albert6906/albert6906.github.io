@@ -95,7 +95,8 @@ function publicExport(){
   if(!ownerTracks.length){status('No recibí tus canciones de Spotify. Aún no hay datos que publicar.',true);return}
   const includeRecent=!!document.getElementById('tm-share-recent')?.checked;
   const top=arrangeForDisplay(uniqueTracks(ownerTracks)).slice(0,24);
-  const playlists=list.playlists.filter(p=>p?.public===true||p?.public===undefined)
+  // Public snapshot must never accidentally include private playlists.
+  const playlists=list.playlists.filter(p=>p?.public===true)
     .map(publicPlaylist).filter(Boolean).slice(0,14);
   const recent=includeRecent?uniqueTracks(list.recent).slice(0,8):[];
   const data={
