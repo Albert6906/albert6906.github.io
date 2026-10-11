@@ -568,7 +568,7 @@ try{
       await readPlaying();
       const requested=new URLSearchParams(location.search).get('playlist');
       if(requested&&/^[a-zA-Z0-9]{22}$/.test(requested))await loadShared(requested);
-      clearInterval(poll);poll=setInterval(readPlaying,18000);
+      clearInterval(poll);poll=setInterval(readPlaying,30000);
       if(playerFailed){
         status('Spotify conectó la cuenta, pero falló el reproductor web: '+String(results[3].reason?.message||results[3].reason),true);
       }else{
