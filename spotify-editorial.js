@@ -18,7 +18,7 @@ const first=(sel,root=document)=>root.querySelector(sel);
 const create=(tag,cls,text)=>{const el=document.createElement(tag);if(cls)el.className=cls;if(text!==undefined)el.textContent=text;return el};
 function status(message,error=false){
   const el=$('spotify-status');
-  if(el){el.textContent=message;el.classList.toggle('is-error',error)}
+  if(el){el.textContent=message;el.hidden=!error;el.classList.toggle('is-error',error)}
 }
 function banner(message){status(message);const toast=$('toast');if(!toast)return;toast.textContent=message;toast.classList.add('show');setTimeout(()=>toast.classList.remove('show'),3200)}
 function applyTrackArt(target,t){
