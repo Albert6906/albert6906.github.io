@@ -46,7 +46,7 @@ function render(){
  label.textContent=active.length?'FAVORITAS':'ARCHIVO';
  play.disabled=!active.length;
  more.hidden=!(active.length>visible||ownerConnected&&canFetchMore);
- el('collection-count-3').textContent=active.length?(likesTotal||active.length)+' CANCIONES ↗':'';
+ el('collection-count-3').textContent=active.length?(likesTotal||active.length)+' '+((likesTotal||active.length)===1?'CANCIÓN':'CANCIONES')+' ↗':'';
  if(!ownerConnected && rt?.publicSnapshot?.status==='ready' && !active.length){
    label.textContent='SELECCIÓN PÚBLICA';
  }
