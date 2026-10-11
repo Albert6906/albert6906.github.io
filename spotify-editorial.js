@@ -485,14 +485,32 @@ async function loadRecent(){
 }
 async function loadShared(id){
   if(!/^[a-zA-Z0-9]{22}$/.test(id))throw Error('Enlace de playlist no válido.');
-  if(!account)throw Error('Conecta Spotify primero para escuchar.');
-  const data=await sp.api('/playlists/'+id);
-  list.shared=data;
-  $('shared-name').textContent=data.name||'Playlist';
-  $('shared-button').disabled=false;
-  $('shared-info').textContent='PLAYLIST LISTA / '+(data.owner?.display_name||'SPOTIFY');
-  const u=new URL(location.href);u.searchParams.set('playlist',id);history.replaceState(null,'',u.pathname+u.search+u.hash);
-  status('Playlist cargada: '+data.name);
+  // Spotify embeds can display public playlist content without authorizing our Web API app.
+  const host=$('tm-public-embed');
+  const iframe=document.createElement('iframe');
+  iframe.src='https://open.spotify.com/embed/playlist/'+id+'?utm_source=generator&theme=0';
+  iframe.title='Playlist compartida de Spotify';
+  iframe.loading='lazy';
+  iframe.allow='autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture';
+  iframe.setAttribute('allowfullscreen','');
+  host.replaceChildren(iframe);
+  host.hidden=false;
+  $('shared-link').value='https://open.spotify.com/playlist/'+id;
+  $('shared-name').textContent='PLAYLIST COMPARTIDA';
+  $('shared-info').textContent='SELECCIÓN DE SPOTIFY / ACCESO PÚBLICO';
+  $('shared-button').disabled=!account;
+  list.shared={id,uri:'spotify:playlist:'+id};
+  const u=new URL(location.href);u.searchParams.set('playlist',id);
+  history.replaceState(null,'',u.pathname+u.search+u.hash);
+  if(account){
+    try{
+      const data=await sp.api('/playlists/'+id);
+      $('shared-name').textContent=data?.name||'PLAYLIST COMPARTIDA';
+      $('shared-info').textContent='SPOTIFY / '+(data?.owner?.display_name||'PLAYLIST');
+      if(data?.uri)list.shared.uri=data.uri;
+    }catch(e){status('El reproductor oficial está disponible; la API no pudo leer los detalles de esta lista.',true)}
+  }
+  status('Playlist compartida cargada dentro de TRANSMISSION.');
 }
 async function searchTracks(value){
   if(!account){banner('Conecta Spotify primero.');return}
@@ -610,7 +628,12 @@ try{
     await loadPlaylists();
     await loadRecent();
     renderArtistOrbit(publicSnapshot?.artists||[]);
-    status(publicSnapshot?.tracks?.length?'Esta es mi selección musical. Conecta Premium solo para reproducir aquí.':'La selección pública aún no está sincronizada. Puedes conectar Spotify para escuchar.');
+    const requested=new URLSearchParams(location.search).get('playlist');
+    if(requested&&/^[a-zA-Z0-9]{22}$/.test(requested)){
+      await loadShared(requested);
+    }else{
+      status(publicSnapshot?.tracks?.length?'Esta es mi selección musical. Conecta Premium solo para reproducir aquí.':'La selección pública aún no está sincronizada. Puedes conectar Spotify para escuchar.');
+    }
   }
 }catch(e){status('Error de conexión: '+e.message,true)}
 })();
