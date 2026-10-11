@@ -168,9 +168,50 @@ async function startSongs(tracks){
    await rt.playTrack(first);
  }
 }
+let discoveryCache=null,discoveryTime=0;
+async function lightDiscovery(known){
+ if(!rt?.account)return [];
+ if(discoveryCache&&Date.now()-discoveryTime<1200000)return discoveryCache;
+ const names=ownerConnected?
+   unique([...recentEvents.map(e=>e.track),...ownerTop]).slice(0,15).flatMap(t=>(t.artists||[]).map(x=>x.name)):
+   (rt.publicSnapshot?.artists||[]).map(a=>a.name);
+ const picked=[...new Set(names.filter(Boolean))].slice(0,2);
+ const inCollection=new Set([...known,...liked].map(t=>t.id));
+ const found=[];
+ for(const name of picked){
+   try{
+     const q=new URLSearchParams({q:'artist:"'+name.replace(/"/g,'')+'"',type:'track',limit:'10'});
+     const data=await sp.api('/search?'+q.toString());
+     for(const song of data?.tracks?.items||[]){
+       if(!valid(song)||inCollection.has(song.id))continue;
+       if(!(song.artists||[]).some(a=>a.name?.toLocaleLowerCase()===name.toLocaleLowerCase()))continue;
+       found.push(song);inCollection.add(song.id);
+       if(found.length>=8)break
+     }
+   }catch(e){console.warn('Discovery search unavailable:',e.message)}
+ }
+ discoveryCache=found;discoveryTime=Date.now();
+ return found;
+}
 async function playNow(){
+ const button=el('tm-now-play'),caption=el('tm-now-caption');
  const songs=recentWeight(recentEvents);
- await startSongs(songs);
+ if(!songs.length){status('La selección reciente aún no tiene canciones.',true);return}
+ button.disabled=true;
+ const original=caption.textContent;
+ caption.textContent='Buscando canciones afines…';
+ try{
+   // Spotify Search supplies artist catalog tracks, not personalized Recommendation API results.
+   const discoveries=await lightDiscovery(songs);
+   const queue=[];
+   for(let i=0;i<songs.length;i++){
+     queue.push(songs[i]);
+     if((i+1)%4===0 && discoveries.length)queue.push(discoveries.shift());
+   }
+   await startSongs(queue);
+ }finally{
+   button.disabled=false;caption.textContent=original;
+ }
 }
 async function playLiked(){await startSongs(liked)}
 async function fetchRecent(){
