@@ -202,7 +202,7 @@ async function playNow(){
  caption.textContent='Buscando canciones afines…';
  try{
    // Spotify Search supplies artist catalog tracks, not personalized Recommendation API results.
-   const discoveries=await lightDiscovery(songs);
+   const discoveries=[...await lightDiscovery(songs)];
    const queue=[];
    for(let i=0;i<songs.length;i++){
      queue.push(songs[i]);
