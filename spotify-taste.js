@@ -174,6 +174,11 @@ async function playNow(){
 async function playLiked(){await startSongs(liked)}
 async function fetchRecent(){
  if(!ownerConnected)return;
+ if(rt.recent?.length){
+   recentEvents=rt.recent.filter(valid).map(track=>({track}));
+   return;
+ }
+ // If the main player could not read history, retry just once.
  try{
    const data=await sp.api('/me/player/recently-played?limit=50');
    recentEvents=(data.items||[]).filter(x=>valid(x.track));
@@ -182,7 +187,7 @@ async function fetchRecent(){
 async function prepare(){
  for(let i=0;i<38;i++){
    rt=window.TransmissionRuntime;
-   if(rt && (rt.account || !sp.isLogged()))break;
+   if(rt?.ready)break;
    await new Promise(done=>setTimeout(done,300));
  }
  if(!rt)return;
@@ -190,7 +195,7 @@ async function prepare(){
  accountReady=!!rt.account;
  if(ownerConnected){
    ownerTop=rt.ownerTracks||[];
-   if(!ownerTop.length)try{const top=await sp.api('/me/top/tracks?limit=30&time_range=short_term');ownerTop=top.items||[]}catch{}
+   // Reuse the already-loaded top tracks instead of doubling API requests.
  }
  await Promise.allSettled([loadFirst(),fetchRecent()]);
  const hasRecent=ownerConnected?recentEvents.length:rt.publicSnapshot?.recent?.length||0;
