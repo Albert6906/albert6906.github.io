@@ -262,12 +262,13 @@ function renderRecent(tracks){
   });
 }
 function renderOtherDetails(){
-  $('pick-period').textContent=account?'TU ROTACIÓN / ÚLTIMAS 4 SEMANAS':'SELECCIÓN PERSONAL / CONECTAR SPOTIFY';
-  $('collection-count-1').textContent=account?list.tracks.length+' TRACKS DISPONIBLES ↗':'CONECTAR PARA VER ↗';
-  $('collection-count-2').textContent=account?list.playlists.length+' PLAYLISTS ↗':'CONECTAR PARA VER ↗';
-  $('collection-count-3').textContent=account?list.recent.length+' ÚLTIMAS ESCUCHAS ↗':'CONECTAR PARA VER ↗';
-  const user=account?.display_name||'';
-  $('owner-display').textContent=account?.id===owner?'TRANSMISSION / OWNER':account?'VISITOR / PREMIUM':'SPOTIFY PREMIUM';
+  const ownerOnline=account?.id===owner;
+  const published=!!publicSnapshot?.tracks?.length;
+  $('pick-period').textContent=ownerOnline?'MI ROTACIÓN / ÚLTIMAS 4 SEMANAS':published?'SELECCIÓN PÚBLICA / TRANSMISSION':'PERSONAL ARCHIVE / COMING INTO FOCUS';
+  $('collection-count-1').textContent=list.tracks.length?list.tracks.length+' TRACKS ↗':'PENDIENTE DE PUBLICACIÓN ↗';
+  $('collection-count-2').textContent=list.playlists.length?list.playlists.length+' PLAYLISTS ↗':'PENDIENTE DE PUBLICACIÓN ↗';
+  $('collection-count-3').textContent=list.recent.length?list.recent.length+' ESCUCHAS ↗':'HISTORIAL PRIVADO ↗';
+  $('owner-display').textContent=ownerOnline?'TRANSMISSION / OWNER':account?'GUEST / PREMIUM':'PERSONAL ARCHIVE';
   $('connect-button').textContent=account?'CONECTADO ✓':'CONECTAR SPOTIFY';
 }
 function playFeedback(msg,err=false){status(msg,err)}
