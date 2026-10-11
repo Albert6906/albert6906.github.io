@@ -257,6 +257,7 @@ async function playNow(){
    // Con un archivo pequeño también deben entrar canciones descubiertas.
    while(discoveries.length&&queue.length<40)queue.push(discoveries.shift());
    await startSongs(queue);
+   rememberDiscoveries(queue.filter(t=>!songs.some(x=>x.id===t.id)));
  }finally{
    button.disabled=false;caption.textContent=original;
  }
