@@ -7,7 +7,7 @@ if(!sp){console.error('Spotify authorization module missing');return}
 const $=id=>document.getElementById(id);
 const list={tracks:[],playlists:[],recent:[],shared:null},owner=sp.CONFIG.ownerId;
 let account=null,player=null,device=null,deviceSelected=false,hero=0,featured=null;
-let selected=null,lastPlayerState=null,poll=null,sdkPromise=null;
+let selected=null,lastPlayerState=null,poll=null,sdkPromise=null,lastOnAirId=null;
 const safeArt=u=>typeof u==='string'&&/^https:\/\/(i\.scdn\.co|mosaic\.scdn\.co|image-cdn-ak\.spotifycdn\.com|seeded-session-images\.scdn\.co)\//.test(u)?u:'';
 const title=t=>t?.name||'';
 const artist=t=>(t?.artists||[]).map(x=>x.name).filter(Boolean).join(', ')||'';
@@ -245,7 +245,8 @@ async function readPlaying(){
   }catch(e){if(e.status===403||e.status===401)status(e.message,true)}
 }
 function renderHighlighted(t){
-  if(!t?.id)return;
+  if(!t?.id||lastOnAirId===t.id)return;
+  lastOnAirId=t.id;
   const incoming={...t,uri:t.uri||'spotify:track:'+t.id};
   const existing=list.tracks.findIndex(item=>item.id===incoming.id);
   if(existing>=0)list.tracks.splice(existing,1);
