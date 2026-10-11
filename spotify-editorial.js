@@ -533,11 +533,12 @@ async function loadHome(){
 async function loadPlaylists(){
   if(account?.id===owner){
     let result=null;
-    try{result=await sp.api('/me/playlists?limit=20')}catch(e){status('Playlists: '+e.message,true)}
+    try{result=await sp.api('/me/playlists?limit=50&offset=0')}catch(e){status('Playlists: '+e.message,true)}
     list.playlists=(result?.items||[]).filter(Boolean);
   }else list.playlists=publicSnapshot?.playlists||[];
   renderRail(list.playlists);
   renderOtherDetails();
+  window.TransmissionLibrary?.sync?.();
 }
 async function loadRecent(){
   if(account?.id===owner){
@@ -638,7 +639,7 @@ function bind(){
   $('tm-embed-close').onclick=closeOfficialEmbed;
   $('connect-button').onclick=openMyPlayer;
   $('saved-trigger').onclick=openMyPlayer;
-  $('rail-all').onclick=()=>document.getElementById('collections').scrollIntoView({behavior:'smooth'});
+  $('rail-all').onclick=()=>window.TransmissionLibrary?.open?.();
   $('collection-top').onclick=()=>document.getElementById('latest').scrollIntoView({behavior:'smooth'});
   $('collection-playlists').onclick=()=>document.getElementById('mixtapes').scrollIntoView({behavior:'smooth'});
   $('collection-liked').onclick=()=>document.getElementById('liked').scrollIntoView({behavior:'smooth'});
