@@ -259,8 +259,8 @@ function renderOtherDetails(){
   $('collection-count-2').textContent=account?list.playlists.length+' PLAYLISTS ↗':'CONECTAR PARA VER ↗';
   $('collection-count-3').textContent=account?list.recent.length+' ÚLTIMAS ESCUCHAS ↗':'CONECTAR PARA VER ↗';
   const user=account?.display_name||'';
-  $('owner-display').textContent=user?user.toUpperCase():'SPOTIFY PREMIUM';
-  $('connect-button').textContent=account?'DESCONECTAR':'CONECTAR SPOTIFY';
+  $('owner-display').textContent=account?.id===owner?'TRANSMISSION / OWNER':account?'VISITOR / PREMIUM':'SPOTIFY PREMIUM';
+  $('connect-button').textContent=account?'CONECTADO ✓':'CONECTAR SPOTIFY';
 }
 function playFeedback(msg,err=false){status(msg,err)}
 async function sdk(){
@@ -511,9 +511,15 @@ function bind(){
   document.querySelectorAll('[data-close]').forEach(button=>button.addEventListener('click',closeOverlay));
   $('search-overlay').addEventListener('click',e=>{if(e.target===$('search-overlay'))closeOverlay()});
   document.addEventListener('keydown',e=>{if(e.key==='Escape')closeOverlay()});
-  const auth=()=>account?(sp.logout(),location.reload()):void sp.login().catch(e=>status(e.message,true));
-  $('connect-button').onclick=auth;
-  $('saved-trigger').onclick=auth;
+  const login=()=>void sp.login().catch(e=>status(e.message,true));
+  const logout=()=>{sp.logout();location.reload()};
+  const openMyPlayer=()=>{
+    if(!account){login();return}
+    $('player').scrollIntoView({behavior:'smooth',block:'center'});
+    $('tm-more').focus();
+  };
+  $('connect-button').onclick=openMyPlayer;
+  $('saved-trigger').onclick=openMyPlayer;
   $('rail-all').onclick=()=>document.getElementById('collections').scrollIntoView({behavior:'smooth'});
   $('collection-top').onclick=()=>document.getElementById('latest').scrollIntoView({behavior:'smooth'});
   $('collection-playlists').onclick=()=>document.getElementById('mixtapes').scrollIntoView({behavior:'smooth'});
@@ -523,7 +529,7 @@ function bind(){
   $('shared-form').onsubmit=e=>{e.preventDefault();const id=parsePlaylist($('shared-link').value);if(!id){status('Introduce el enlace real de una playlist de Spotify.',true);return}void loadShared(id).catch(err=>status(err.message,true))}
   $('shared-button').onclick=()=>{if(list.shared)void playPlaylist(list.shared)};
   $('shared-share').onclick=()=>void copyLink(location.href);
-  $('reconnect-button').onclick=auth;
+  $('reconnect-button').onclick=()=>account?logout():login();
   const toggle=$('menu-toggle'),nav=$('main-nav');
   toggle.onclick=()=>{const open=nav.classList.toggle('is-open');toggle.setAttribute('aria-expanded',String(open))};
   nav.querySelectorAll('a').forEach(a=>a.addEventListener('click',()=>nav.classList.remove('is-open')));
