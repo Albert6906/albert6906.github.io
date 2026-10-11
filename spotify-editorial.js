@@ -168,6 +168,15 @@ function renderHero(index){
   $('pause-slide').textContent='▶';
   $('pause-slide').title='Reproducir esta canción';
 }
+function fillEmptyHome(items){
+  if(list.tracks.length)return;
+  const prepared=arrangeForDisplay(uniqueTracks(items)).slice(0,24);
+  if(!prepared.length)return;
+  list.tracks=prepared;
+  renderHero(0);
+  renderTiles(prepared);
+  renderOtherDetails();
+}
 function renderCoverArt(node,t){
   if(!node)return;
   node.style.backgroundImage=img(t)?'url("'+img(t)+'")':'';
@@ -651,6 +660,7 @@ window.TransmissionRuntime={
   get state(){return lastPlayback},
   get owner(){return owner},
   get publicSnapshot(){return publicSnapshot},
+  fillEmptyHome,
   get ownerTracks(){return [...ownerTracks]},
   get playlists(){return [...list.playlists]},
   get recent(){return [...list.recent]},
