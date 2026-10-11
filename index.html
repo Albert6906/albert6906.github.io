@@ -88,8 +88,9 @@
 .tm-rail-image{background-size:cover!important;background-position:center!important}
 .toast.show{opacity:1;transform:translateY(0);pointer-events:auto}
 </style>
-<script defer src="./spotify-auth.js?v=20261011e"></script>
-<script defer src="./spotify-editorial.js?v=20261011e"></script>
+<script defer src="./spotify-auth.js?v=20261011f"></script>
+<script defer src="./spotify-editorial.js?v=20261011f"></script>
+<script defer src="./spotify-controls.js?v=20261011f"></script>
 </head>
 <body>
   <a class="skip-link" href="#main">Saltar al contenido</a>
@@ -152,8 +153,42 @@
 </section>
 <section class="tm-audio-panel" id="player" aria-label="Reproductor integrado de Spotify">
   <div class="tm-player-art" id="player-art">T/M</div>
-  <div class="tm-player-copy"><span class="eyebrow">WEB PLAYBACK SDK / STREAMED BY SPOTIFY</span><strong id="player-track">YOUR MUSIC, HERE.</strong><small id="player-artist">Conecta Spotify y selecciona una canción en las carátulas.</small></div>
-  <div class="tm-player-state"><span id="player-device">WEB PLAYER / DESCONECTADO</span><button id="connect-button" class="tm-button" type="button">CONECTAR SPOTIFY</button></div>
+  <div class="tm-player-copy">
+    <span class="eyebrow">TRANSMISSION / NOW PLAYING</span>
+    <strong id="player-track">YOUR MUSIC, HERE.</strong>
+    <small id="player-artist">Conecta Spotify para escuchar.</small>
+    <div class="tm-timeline">
+      <span id="tm-elapsed" aria-label="Posición actual">0:00</span>
+      <input id="tm-seek" type="range" min="0" max="1000" value="0" step="1" aria-label="Avanzar dentro de la canción" disabled>
+      <span id="tm-duration" aria-label="Duración total">0:00</span>
+    </div>
+  </div>
+  <div class="tm-play-controls" aria-label="Controles de reproducción">
+    <button class="tm-control" type="button" id="tm-prev" aria-label="Canción anterior" title="Anterior"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round" aria-hidden="true"><path d="m19 5-9 7 9 7V5ZM5 5v14"/></svg></button>
+    <button class="tm-control tm-control-primary" type="button" id="tm-play" aria-label="Reproducir" title="Reproducir"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round" aria-hidden="true"><path d="m9 5 12 7-12 7V5Z" fill="currentColor" stroke="none"/></svg></button>
+    <button class="tm-control" type="button" id="tm-next" aria-label="Canción siguiente" title="Siguiente"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round" aria-hidden="true"><path d="m5 5 9 7-9 7V5Zm14 0v14"/></svg></button>
+  </div>
+  <div class="tm-play-settings">
+    <label class="tm-volume" title="Volumen del navegador"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9H4Zm12-1a6 6 0 0 1 0 8m3-11a10 10 0 0 1 0 14"/></svg><input id="tm-volume" type="range" min="0" max="100" value="70" step="1" aria-label="Volumen" disabled></label>
+    <button class="tm-control tm-options-trigger" id="tm-more" type="button" aria-label="Más opciones" aria-expanded="false"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round" aria-hidden="true"><circle cx="5" cy="12" r="1.3" fill="currentColor"/><circle cx="12" cy="12" r="1.3" fill="currentColor"/><circle cx="19" cy="12" r="1.3" fill="currentColor"/></svg></button>
+    <div class="tm-player-popover" id="tm-options" hidden>
+      <div class="tm-popover-heading">TRANSMISSION / AUDIO SETTINGS</div>
+      <div class="tm-popover-row">
+        <button id="tm-shuffle" class="tm-opt-button" type="button" aria-pressed="false"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round" aria-hidden="true"><path d="m4 7 3 0c7 0 4 10 13 10m-4-4 4 4-4 4M4 17h3c7 0 4-10 13-10m-4-4 4 4-4 4"/></svg> ALEATORIO</button>
+        <button id="tm-repeat" class="tm-opt-button" type="button" aria-pressed="false"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round" aria-hidden="true"><path d="m17 2 3 3-3 3M4 11V8a3 3 0 0 1 3-3h13M7 22l-3-3 3-3m13-3v3a3 3 0 0 1-3 3H4"/></svg> REPETIR</button>
+      </div>
+      <div class="tm-popover-row">
+        <button id="tm-queue-button" class="tm-opt-button" type="button"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round" aria-hidden="true"><path d="M9 6h12M9 12h12M9 18h12M3 6h2M3 12h2M3 18h2"/></svg> COLA</button>
+        <button id="tm-devices-button" class="tm-opt-button" type="button"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round" aria-hidden="true"><rect x="3" y="4" width="18" height="13" rx="1.4"/><path d="M8 21h8m-4-4v4"/></svg> DISPOSITIVOS</button>
+      </div>
+      <button id="tm-lyrics-button" class="tm-opt-button" type="button">LETRAS / DISPONIBILIDAD ↗</button>
+      <div class="tm-popover-content" id="tm-popover-content" role="status"></div>
+    </div>
+  </div>
+  <div class="tm-player-state">
+    <span id="player-device">WEB PLAYER / DESCONECTADO</span>
+    <button id="connect-button" class="tm-button" type="button">CONECTAR</button>
+  </div>
 </section>
 <div class="tm-status" id="spotify-status" role="status" aria-live="polite">Preparando Spotify…</div>
 
