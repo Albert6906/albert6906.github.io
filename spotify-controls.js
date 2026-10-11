@@ -172,7 +172,12 @@ $('tm-diagnostics').onclick=async()=>{
      checks.push('Dispositivos disponibles: '+(devices?.devices?.length??'—'));
    }catch(e){checks.push('Lista de dispositivos: '+e.message)}
  }
- checks.push('Nota: solo una cuenta Premium autorizada puede reproducir. Algunos navegadores exigen pulsar directamente ▶ antes de permitir el audio.');
+ const logged=rt.diagnostics||[];
+ if(logged.length){
+   checks.push('ERRORES RECIENTES');
+   logged.slice(0,6).forEach(entry=>checks.push(entry.at+' · '+entry.message));
+ }
+ checks.push('Spotify Premium y un gesto de usuario son necesarios para iniciar la reproducción web.');
  if(c.dataset.mode==='diagnostics')c.replaceChildren(...checks.map(line=>{
    const p=document.createElement('div');p.textContent=line;p.style.margin='0 0 8px';return p
  }));
