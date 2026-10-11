@@ -87,6 +87,56 @@ function makePlaylistCard(pl){
   tools.append(play,open);card.append(coverBox,title,details,tools);
   return card;
 }
+
+let sharedPlaylistId=null;
+function parsePlaylist(input){
+  const trimmed=String(input||'').trim();
+  if(/^[A-Za-z0-9]{22}$/.test(trimmed))return trimmed;
+  if(/^spotify:playlist:[A-Za-z0-9]{22}$/.test(trimmed))return trimmed.split(':')[2];
+  let url;try{url=new URL(trimmed)}catch{return null}
+  if(url.protocol!=='https:'||url.hostname!=='open.spotify.com')return null;
+  const parts=url.pathname.split('/').filter(Boolean);
+  if(parts[0]?.startsWith('intl-'))parts.shift();
+  if(parts.length!==2||parts[0]!=='playlist'||!/^[A-Za-z0-9]{22}$/.test(parts[1]))return null;
+  return parts[1];
+}
+async function loadSharedPlaylist(id){
+  if(!/^[A-Za-z0-9]{22}$/.test(id))return;
+  const feedback=el('shared-feedback');
+  feedback.textContent='Buscando playlist compartida...';
+  try{
+    const item=await sp.api('/playlists/'+id);
+    sharedPlaylistId=id;
+    const info=el('shared-info');info.replaceChildren();
+    const img=$('img');img.alt='Portada de '+(item.name||'playlist');
+    if(safeImage(item.images?.[0]?.url))img.src=item.images[0].url;
+    const txt=$('div');txt.append($('strong','',item.name||'Playlist'),$('span','',item.owner?.display_name||'SPOTIFY'));
+    info.append(img,txt);info.hidden=false;
+    el('play-shared').disabled=false;el('copy-shared').disabled=false;
+    el('shared-url').value='https://open.spotify.com/playlist/'+id;
+    const next=new URL(location.href);next.searchParams.set('playlist',id);
+    history.replaceState(null,'',next.pathname+next.search);
+    feedback.textContent='Lista cargada. Reprodúcela aquí o comparte el enlace de esta página.';
+  }catch(e){feedback.textContent=e.message}
+}
+el('shared-form').onsubmit=e=>{
+  e.preventDefault();
+  const id=parsePlaylist(el('shared-url').value);
+  if(!id){el('shared-feedback').textContent='Pega un enlace válido de playlist de Spotify.';return}
+  void loadSharedPlaylist(id);
+};
+el('play-shared').onclick=()=>{if(sharedPlaylistId)playContext('spotify:playlist:'+sharedPlaylistId)};
+el('copy-shared').onclick=async()=>{
+  if(!sharedPlaylistId)return;
+  const u=new URL(sp.CONFIG.redirectUri);
+  u.searchParams.set('playlist',sharedPlaylistId);
+  try{await navigator.clipboard.writeText(u.href);el('shared-feedback').textContent='Enlace a nuestra web copiado para compartir.'}
+  catch{el('shared-feedback').textContent='No se pudo copiar. Copia la URL de esta página.'}
+};
+const requestedPlaylist=new URLSearchParams(location.search).get('playlist');
+if(requestedPlaylist&&/^[A-Za-z0-9]{22}$/.test(requestedPlaylist))
+  sessionStorage.setItem('tm_shared_playlist',requestedPlaylist);
+
 async function loadTop(range='short_term'){
   activeMode=range;
   el('top-short').classList.toggle('selected',range==='short_term');
@@ -268,10 +318,12 @@ async function afterLogin(){
     el('owner-tag').dataset.owner=profile.id===ownerId?'true':'false';
   }catch(e){status(e.message,true)}
   await Promise.allSettled([loadTop(),loadLists(),loadRecent(),initializePlayer()]);
+  const sharedId=sessionStorage.getItem('tm_shared_playlist');
+  if(sharedId)await loadSharedPlaylist(sharedId);
   await updatePlayback();
   clearInterval(pollHandle);
   pollHandle=setInterval(updatePlayback,18000);
-  if(!musicStatus.dataset.error)status('Conectado. Selecciona una canción o escucha tu Spotify actual dentro de esta página.');
+  if(musicStatus.dataset.error!=='true')status('Conectado. Selecciona una canción o escucha tu Spotify actual dentro de esta página.');
 }
 el('connect-button').onclick=()=>sp.login().catch(e=>status(e.message,true));
 el('disconnect-button').onclick=()=>{
