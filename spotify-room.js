@@ -239,6 +239,7 @@ async function updatePlayback(){
     }
   }catch(e){
     if(e.status===429){status('Spotify ha limitado temporalmente las consultas. Vuelve a intentarlo más tarde.',true);clearInterval(pollHandle)}
+    else if(e.status===403||e.status===401)status(e.message,true);
   }
 }
 function sdkReady(){
@@ -369,7 +370,10 @@ async function afterLogin(){
     el('owner-tag').textContent=profile.id===ownerId?'CUENTA PRINCIPAL':'INVITADO/A PREMIUM';
     el('owner-tag').dataset.owner=profile.id===ownerId?'true':'false';
   }catch(e){status(e.message,true)}
-  await Promise.allSettled([loadTop(),loadLists(),loadRecent(),initializePlayer()]);
+  const sections=await Promise.allSettled([loadTop(),loadLists(),loadRecent(),initializePlayer()]);
+  if(sections[3].status==='rejected'){
+    status('No se inició el dispositivo de Spotify: '+String(sections[3].reason?.message||sections[3].reason),true);
+  }
   const sharedId=sessionStorage.getItem('tm_shared_playlist');
   if(sharedId)await loadSharedPlaylist(sharedId);
   await updatePlayback();
