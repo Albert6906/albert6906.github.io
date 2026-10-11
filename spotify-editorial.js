@@ -160,7 +160,7 @@ function renderHero(index){
   const t=featured;
   $('hero-kicker').textContent='EN ROTACIÓN';
   $('hero-title').textContent=title(t);
-  $('hero-description').textContent=artist(t)+' — '+(t.album?.name||'Álbum');
+  $('hero-description').textContent=artist(t);
   applyTrackArt($('hero-image'),t);
   $('slider-count').textContent='';
   $('progress-fill').style.width=((hero+1)/arr.length*100)+'%';
@@ -179,7 +179,7 @@ function updatePlayerSong(t){
   $('player-track').textContent=title(t);
   $('player-artist').textContent=artist(t);
   $('strip-song').textContent=title(t)||'LISTENING';
-  $('strip-artist').textContent=artist(t)||'SPOTIFY';
+  $('strip-artist').textContent=artist(t)||'';
   renderCoverArt($('player-art'),t);
   window.dispatchEvent(new CustomEvent('tm:track',{detail:{track:t}}));
 }
@@ -462,7 +462,7 @@ function renderHighlighted(t){
   featured={...t,uri:t.uri||'spotify:track:'+t.id};
   $('hero-kicker').textContent='ESCUCHANDO AHORA';
   $('hero-title').textContent=title(t);
-  $('hero-description').textContent=artist(t)+' — '+(t.album?.name||'');
+  $('hero-description').textContent=artist(t);
   applyTrackArt($('hero-image'),t);
   $('hero-play').disabled=false;
 }
@@ -508,7 +508,7 @@ async function loadHome(){
       $('hero-kicker').textContent='EN ROTACIÓN';
     }
   }else{
-    $('hero-kicker').textContent='MI SELECCIÓN';
+    $('hero-kicker').textContent='EN PORTADA';
     $('hero-title').textContent='MI MÚSICA';
     $('hero-description').textContent='Canciones, discos y descubrimientos.';
     $('slider-count').textContent='';
