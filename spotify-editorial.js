@@ -206,8 +206,10 @@ function renderTiles(tracks){
     const info=create('div','record-info');
     const text=create('div');
     text.append(create('span','record-type','TRACK / '+(t.album?.release_date?.slice(0,4)||'SPOTIFY')),create('h3','',title(t)),create('p','',artist(t)));
-    const add=create('button','save-button','↗');add.type='button';add.title='Compartir canción';
-    add.onclick=()=>copyLink(t.external_urls?.spotify||'https://open.spotify.com/track/'+t.id);
+    const add=create('a','save-button','↗');
+    add.href=t.external_urls?.spotify||'https://open.spotify.com/track/'+t.id;
+    add.target='_blank';add.rel='noopener noreferrer';
+    add.title='Abrir esta canción en Spotify';
     info.append(text,add);card.append(button,info);grid.append(card);
   });
 }
