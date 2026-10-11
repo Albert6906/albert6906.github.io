@@ -183,6 +183,14 @@ function fillEmptyHome(items){
   renderTiles(prepared);
   renderOtherDetails();
 }
+function setRotation(tracks){
+  const chosen=uniqueTracks(tracks).slice(0,36);
+  if(!chosen.length)return false;
+  list.tracks=arrangeForDisplay(chosen).slice(0,24);
+  manualUntil=Date.now()+120000;
+  renderHero(0);renderTiles(list.tracks);renderOtherDetails();
+  return true;
+}
 function renderCoverArt(node,t){
   if(!node)return;
   node.style.backgroundImage=img(t)?'url("'+img(t)+'")':'';
@@ -669,6 +677,8 @@ window.TransmissionRuntime={
   get owner(){return owner},
   get publicSnapshot(){return publicSnapshot},
   fillEmptyHome,
+  setRotation,
+  get ownerArtists(){return [...ownerArtists]},
   get ownerTracks(){return [...ownerTracks]},
   get playlists(){return [...list.playlists]},
   get recent(){return [...list.recent]},
