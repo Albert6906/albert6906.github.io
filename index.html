@@ -87,11 +87,21 @@
 .tm-recent-items .tm-empty{background:none;padding:12px 0}
 .tm-rail-image{background-size:cover!important;background-position:center!important}
 .toast.show{opacity:1;transform:translateY(0);pointer-events:auto}
+.rail-head .tm-station-button{display:flex;gap:9px;justify-content:space-between;align-items:center;margin-top:12px;padding:8px 9px;border:1px solid var(--yellow);color:#111;background:var(--yellow);font-size:13px;font-weight:900;line-height:1.1}
+.rail-head .tm-station-button:hover{background:white;border-color:white}
+.tm-owner-publish{border:1px solid #242a0d;background:#c2d452;padding:14px;margin:14px 0;color:#1a1a1a}
+.tm-owner-publish[hidden]{display:none}
+.tm-owner-publish p{margin:9px 0 10px!important;font:12px/1.5 Arial,sans-serif!important}
+.tm-owner-publish small{font:10px/1.6 var(--mono);display:block;margin-top:9px}
+.tm-share-label{display:flex;align-items:start;gap:7px;font:10px/1.5 var(--mono);margin:8px 0 13px}
+.tm-share-label input{accent-color:#232905;margin:1px 0}
+.tm-export-button{border:1px solid #222;background:#121212;color:#fff;padding:10px;font-weight:900;font-size:15px;cursor:pointer}
+.tm-export-button:hover{background:#383838}
 </style>
-<link rel="stylesheet" href="./spotify-controls.css?v=20261011f">
-<script defer src="./spotify-auth.js?v=20261011f"></script>
-<script defer src="./spotify-editorial.js?v=20261011f"></script>
-<script defer src="./spotify-controls.js?v=20261011f"></script>
+<link rel="stylesheet" href="./spotify-controls.css?v=20261011g">
+<script defer src="./spotify-auth.js?v=20261011g"></script>
+<script defer src="./spotify-editorial.js?v=20261011g"></script>
+<script defer src="./spotify-controls.js?v=20261011g"></script>
 </head>
 <body>
   <a class="skip-link" href="#main">Saltar al contenido</a>
@@ -147,7 +157,7 @@
     </div>
   </div>
   <aside class="mixtape-rail" id="mixtapes" aria-label="Playlists personales">
-    <div class="rail-head"><div class="rail-heading">PERSONAL<br>PLAYLISTS</div><span class="rail-heading-arrows">↗</span><p>Las listas se llenarán con tu música real, sin ejemplos ficticios.</p></div>
+    <div class="rail-head"><div class="rail-heading">PERSONAL<br>PLAYLISTS</div><span class="rail-heading-arrows">↗</span><p>Tus selecciones, álbumes favoritos y sesiones para escuchar.</p><button id="tm-station-play" class="tm-station-button" type="button" aria-label="Escuchar mi estación musical">▶ MY ROTATION <span>↗</span></button></div>
     <button class="rail-item" type="button" id="rail-placeholder"><span class="rail-item-cover art-focus">♫</span><span class="rail-item-label">TUS PLAYLISTS <small>CONÉCTATE A SPOTIFY</small></span><span class="rail-item-arrow">↗</span></button>
     <button class="rail-all" id="rail-all" type="button">EXPLORE THE COLLECTION <span>↗</span></button>
   </aside>
@@ -262,7 +272,14 @@
         <button id="shared-button" class="light-cta tm-submit" disabled type="button">▶ PLAY HERE</button>
         <button id="shared-share" class="light-cta tm-submit" type="button">COPIAR ENLACE ↗</button>
       </div>
-      <button id="reconnect-button" class="tm-link" type="button">CONECTAR / DESCONECTAR SPOTIFY ↗</button>
+      <div id="owner-public-export" class="tm-owner-publish" hidden>
+  <span class="eyebrow">PRIVATE CONTROL / OWNER ONLY</span>
+  <p>Preparar una selección pública de mis canciones y playlists. No se publican contraseñas ni autorizaciones de Spotify.</p>
+  <label class="tm-share-label"><input id="tm-share-recent" type="checkbox"> Incluir también mis últimas escuchas en la portada pública</label>
+  <button id="tm-export-public" class="tm-export-button" type="button">PREPARAR PORTADA PÚBLICA ↗</button>
+  <small>Se descargará <code>featured.json</code>. Adjunta ese archivo al chat para publicarlo en esta misma web.</small>
+</div>
+<button id="reconnect-button" class="tm-link" type="button">CONECTAR / DESCONECTAR SPOTIFY ↗</button>
     </div>
   </div>
 </section>
