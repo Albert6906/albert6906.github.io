@@ -54,3 +54,16 @@ No afirmar audio verificado solo con pruebas de sintaxis: requiere una sesión P
 - Diagnóstico: tres scripts principales analizados sintácticamente, todas las referencias DOM comprobadas, simulados los estados público/propietario/invitado y el flujo de transferencia y reproducción del SDK con respuestas sintéticas. **No** se afirma que se haya oído audio real, ni que GitHub Pages haya sido abierto desde el entorno de desarrollo.
 
 Para disponer de canciones propias visibles en la portada **sin inicio de sesión**, sigue pendiente publicar una selección autorizada del propietario en `featured.json`; no puede extraerse su biblioteca privada desde solo el enlace público del perfil debido a restricciones de Spotify 2026.
+
+## Revisión editorial y escucha reciente (octubre 2026)
+
+Se conserva la composición original: portada, controles, rail, cuadrículas, bloque abstracto, colecciones, historial, sección de compartir y pie. Los metadatos ficticios o repetidos se han reducido.
+
+- **Para ahora:** selección determinista que prioriza las reproducciones recientes, después las canciones más escuchadas de las últimas semanas y las guardadas. Con sesión autorizada, puede añadir algunos temas encontrados mediante Spotify Search para artistas escuchados recientemente. **No usa ni reproduce el algoritmo cerrado de recomendaciones de Spotify.** Se limita a dos consultas de búsqueda de artista por activación y mantiene los resultados temporalmente en memoria.
+- **Me gusta:** consulta `GET /me/tracks` bajo el permiso `user-library-read`, con paginación por lotes. Se muestra una cuadrícula de carátulas original y, cuando no hay playlists, puede completar el rail con canciones guardadas.
+- **Sin datos de clasificación:** las carátulas de guardados pueden ocupar la portada, sin canciones inventadas.
+- **Portada pública:** `featured.json` puede contener la propiedad `liked`; solo se incorpora al archivo de exportación del propietario si este selecciona explícitamente la casilla «Incluir mis canciones guardadas». Continúa siendo necesaria la subida posterior del archivo a GitHub. En esta revisión `featured.json` sigue en estado `pending_authorization`; no afirma mostrar automáticamente gustos del dueño a visitantes anónimos.
+- **Reducción de tráfico:** la vista de favoritos reutiliza el estado ya cargado por el reproductor principal en lugar de duplicar todas las consultas de Top Tracks y escucha reciente.
+- **Pruebas:** se comprobaron sintaxis y referencias de DOM; en simulaciones de propietario se cargaron carátulas y se calculó la secuencia reciente. También se verificó que una cuenta invitada no sustituye los títulos de la portada pública. Spotify real y el audio en el navegador del usuario quedan por validar.
+
+La opción «Para ahora» no representa «Spotify Radio», «Discover Weekly», «DJ», «Smart Shuffle» ni otro algoritmo privado. Consultar esas recomendaciones mediante la API de una aplicación nueva no está permitido por las restricciones de noviembre de 2024. Spotify Search únicamente permite explorar el catálogo mediante criterios explícitos.
