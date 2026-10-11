@@ -111,8 +111,12 @@
 #taste-artist-names{display:flex;gap:8px 15px;flex-wrap:wrap;margin-top:9px}
 #taste-artist-names span{font-size:16px;font-weight:800;line-height:1;text-transform:uppercase}
 #taste-artist-names span:before{content:'↗ ';color:var(--yellow)}
+.tm-public-embed{margin:16px 0;border:1px solid #343c21;padding:9px;background:#141812;max-width:570px}
+.tm-public-embed[hidden]{display:none}
+.tm-public-embed iframe{width:100%;height:352px;display:block;border:0;border-radius:8px;background:#191414}
+.tm-shared-name{overflow-wrap:anywhere}
 </style>
-<link rel="stylesheet" href="./spotify-controls.css?v=20261011final">
+<link rel="stylesheet" href="./spotify-controls.css?v=20261011master">
 <script defer src="./spotify-auth.js?v=20261011final"></script>
 <script defer src="./spotify-editorial.js?v=20261011final"></script>
 <script defer src="./spotify-controls.js?v=20261011final"></script>
@@ -284,6 +288,7 @@
       </form>
       <div id="shared-info" class="eyebrow">NO PLAYLIST LOADED</div>
       <p id="shared-name" class="tm-shared-name"></p>
+      <div id="tm-public-embed" class="tm-public-embed" hidden aria-label="Playlist de Spotify integrada"></div>
       <div class="tm-actions">
         <button id="shared-button" class="light-cta tm-submit" disabled type="button">▶ PLAY HERE</button>
         <button id="shared-share" class="light-cta tm-submit" type="button">COPIAR ENLACE ↗</button>
