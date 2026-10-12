@@ -660,7 +660,7 @@ function bind(){
   $('collection-playlists').onclick=()=>document.getElementById('mixtapes').scrollIntoView({behavior:'smooth'});
   $('collection-liked').onclick=()=>document.getElementById('liked').scrollIntoView({behavior:'smooth'});
   $('top-refresh').onclick=()=>void loadHome();
-  $('random-discovery').onclick=()=>list.tracks.length?renderHero(Math.floor(Math.random()*list.tracks.length)):banner('La colección pública aún no está preparada.');
+  $('random-discovery').onclick=()=>window.TransmissionTaste?.refreshRotation?void window.TransmissionTaste.refreshRotation():list.tracks.length?renderHero((hero+1)%list.tracks.length):banner('La colección pública aún no está preparada.');
   $('tm-station-play').onclick=()=>void playStation();
   $('shared-form').onsubmit=e=>{e.preventDefault();const id=parsePlaylist($('shared-link').value);if(!id){status('Introduce el enlace real de una playlist de Spotify.',true);return}void loadShared(id).catch(err=>status(err.message,true))}
   $('shared-button').onclick=()=>{if(list.shared)void playPlaylist(list.shared)};
