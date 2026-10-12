@@ -21,7 +21,10 @@ function updateArtists(track){
  const block=document.getElementById('taste-artists');
  if(!container||!block)return;
  container.replaceChildren(...nodes.slice(0,6).map(name=>{
-   const span=document.createElement('span');span.textContent=name;return span
+   const button=document.createElement('button');button.type='button';button.textContent=name;
+   button.title='Explorar '+name;
+   button.onclick=()=>window.TransmissionArtist?.open?.(name);
+   return button
  }));
  block.hidden=!container.childElementCount;
 }
