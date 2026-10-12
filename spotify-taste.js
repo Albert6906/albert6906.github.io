@@ -162,10 +162,10 @@ function recentWeight(entries){
 }
 async function startSongs(tracks){
  const playlist=unique(tracks).slice(0,40);
- if(!playlist.length){status('Todavía no hay suficientes canciones en la selección.',true);return}
+ if(!playlist.length){status('Todavía no hay suficientes canciones en la selección.',true);return false}
  const first=playlist[0];
  if(!rt?.account){
-   await rt?.playTrack(first);return
+   await rt?.playTrack(first);return false
  }
  rt.player?.activateElement?.();
  const result=await rt.action(async()=>{
@@ -174,9 +174,11 @@ async function startSongs(tracks){
      method:'PUT',body:JSON.stringify({uris:playlist.map(t=>t.uri)})
    });
  });
- if(result!==true && result!==undefined){
+ if(result!==true){
    await rt.playTrack(first);
+   return false;
  }
+ return true;
 }
 let discoveryCache=[],discoveryTime=0,discoveryTurn=0;
 try{discoveryTurn=Math.max(0,Number(localStorage.getItem('tm_discovery_turn'))||0)}catch{}
@@ -339,8 +341,8 @@ async function playNow(){
    const discoveries=await lightDiscovery(known,true);
    const queue=arrangeSession(known,discoveries);
    if(!queue.length)return;
-   await startSongs(queue);
-   recordStart(queue[0]?.id);
+   const started=await startSongs(queue);
+   if(started)recordStart(queue[0]?.id);
    rememberDiscoveries(discoveries);
  }catch(e){status('No pude preparar la sesión: '+e.message,true)}
  finally{button.disabled=false;caption.textContent=previous}
