@@ -162,6 +162,10 @@
     <div class="live-badge" id="live-label">ESCUCHAR <span class="pulse-dot"></span></div>
     <div class="tm-strip-song"><strong id="strip-song">EN ESPERA</strong><small id="strip-artist"></small></div>
     <span class="tm-strip-owner" id="owner-display"></span>
+    <label class="tm-strip-volume" aria-label="Volumen del reproductor">
+      <svg viewBox="0 0 24 24" width="15" height="15" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9H4Zm12-1a6 6 0 0 1 0 8m3-11a10 10 0 0 1 0 14" stroke="currentColor" fill="none" stroke-width="1.5"/></svg>
+      <input id="tm-strip-volume" type="range" min="0" max="100" value="70" aria-label="Volumen">
+    </label>
     <button class="strip-control" id="audio-previous" aria-label="Canción anterior">⏮</button>
     <button class="strip-control" id="audio-toggle" aria-label="Reproducir o pausar">▶</button>
     <button class="strip-control" id="audio-next" aria-label="Siguiente canción">⏭</button>
