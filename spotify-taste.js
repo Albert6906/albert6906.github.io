@@ -231,6 +231,33 @@ async function lightDiscovery(known,force=false){
      for(const t of data?.tracks?.items||[])consider(t);
    }catch(e){console.warn('Catalog search:',e?.message)}
  }
+ // A transparent collaboration-graph recommendation: move one step beyond
+ // regular artists via co-credited artists on real Spotify catalog recordings.
+ const adjacent=new Map();
+ const core=new Set(artists.map(a=>a.name?.toLocaleLowerCase()).filter(Boolean));
+ for(const t of [...fresh,...later]){
+   const lineup=t.artists||[];
+   if(!lineup.some(a=>core.has(a.name?.toLocaleLowerCase())))continue;
+   for(const a of lineup){
+     const name=a.name?.toLocaleLowerCase();
+     if(name&&!core.has(name)&&!adjacent.has(name))adjacent.set(name,a);
+   }
+ }
+ const neighbours=[...adjacent.values()];
+ if(neighbours.length){
+   const neighbour=neighbours[discoveryTurn%neighbours.length];
+   try{
+     const query=new URLSearchParams({
+       q:'artist:"'+neighbour.name.replace(/"/g,'')+'"',
+       type:'track',limit:'10',
+       offset:String((discoveryTurn%3)*10)
+     });
+     const result=await sp.api('/search?'+query);
+     for(const t of result?.tracks?.items||[]){
+       if((t.artists||[]).some(a=>a.name?.toLocaleLowerCase()===neighbour.name.toLocaleLowerCase()))consider(t);
+     }
+   }catch(e){console.warn('Collaborator search unavailable:',e?.message)}
+ }
  // Deep cuts from an actual artist's album, where this API is available.
  const seed=picked.find(a=>a?.id&&/^[a-zA-Z0-9]{22}$/.test(a.id));
  if(seed && fresh.length<10){
