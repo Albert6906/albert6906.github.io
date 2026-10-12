@@ -287,6 +287,17 @@ function renderRecent(tracks){
     btn.onclick=()=>void playTrack(t);section.append(btn);
   });
 }
+function setLiveLabel(value){
+ const badge=$('live-label');
+ const dot=badge?.querySelector('.pulse-dot');
+ if(!badge)return;
+ badge.replaceChildren(document.createTextNode(value+' '));
+ if(dot)badge.append(dot);
+ else{
+   const span=create('span','pulse-dot');
+   badge.append(span)
+ }
+}
 function renderOtherDetails(){
   const ownerOnline=account?.id===owner;
   const published=!!publicSnapshot?.tracks?.length;
@@ -384,6 +395,27 @@ async function action(fn){
     status(e.message||String(e),true);
     return false;
   }
+}
+async function playSequence(items){
+ const tracks=uniqueTracks(items).filter(t=>t?.uri).slice(0,40);
+ if(!tracks.length){status('La selección no contiene canciones disponibles.',true);return false}
+ if(!account){status('Conecta una cuenta Premium para reproducir la sesión.',true);return false}
+ player?.activateElement?.();
+ const ok=await action(async()=>{
+   await activatePlayer();
+   await sp.api('/me/player/play?device_id='+encodeURIComponent(device),{
+     method:'PUT',body:JSON.stringify({uris:tracks.map(t=>t.uri)})
+   });
+ });
+ if(!ok){
+   station=null;
+   status('Spotify no inició la secuencia completa. Consulta Diagnóstico.',true);
+   return false;
+ }
+ station={tracks,index:0,loop:false,queuedFor:null,busy:false};
+ updatePlayerSong(tracks[0]);
+ closeOfficialEmbed();
+ return true;
 }
 async function playTrack(t){
   if(!t?.uri)return;
@@ -490,10 +522,10 @@ async function readPlaying(){
         deviceId:data.device?.id,deviceName:data.device?.name,volume:data.device?.volume_percent};
       window.dispatchEvent(new CustomEvent('tm:playback',{detail:lastPlayback}));
       $('player-device').textContent='DEVICE / '+(data.device?.name||'SPOTIFY');
-      $('live-label').textContent=data.is_playing?'NOW PLAYING':'PAUSED';
+      setLiveLabel(data.is_playing?'SONANDO':'PAUSADO');
       if(account.id===owner && data.is_playing){noteOwnerPlay(data.item);renderHighlighted(data.item)}
       if(data.is_playing&&station)void maintainStation(data.item)
-    }else $('live-label').textContent='READY';
+    }else setLiveLabel('ESCUCHAR');
   }catch(e){if(e.status===403||e.status===401)status(e.message,true)}
 }
 let lastOwnerRecentId=null;
@@ -696,7 +728,7 @@ function bind(){
   document.addEventListener('visibilitychange',()=>{if(!document.hidden&&account)void readPlaying()});
 }
 window.TransmissionRuntime={
-  sdk,activatePlayer,toggle,readPlaying,playTrack,playPlaylist,playPlaylistAt,
+  sdk,activatePlayer,toggle,readPlaying,playTrack,playPlaylist,playPlaylistAt,playSequence,
   action,status,
   get ready(){return ready},
   get diagnostics(){return [...diagLog]},
