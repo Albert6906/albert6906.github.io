@@ -164,23 +164,9 @@ function recentWeight(entries){
 }
 async function startSongs(tracks){
  const playlist=unique(tracks).slice(0,40);
- if(!playlist.length){status('Todavía no hay suficientes canciones en la selección.',true);return false}
- const first=playlist[0];
- if(!rt?.account){
-   await rt?.playTrack(first);return false
- }
- rt.player?.activateElement?.();
- const result=await rt.action(async()=>{
-   await rt.activatePlayer();
-   await sp.api('/me/player/play?device_id='+encodeURIComponent(rt.device),{
-     method:'PUT',body:JSON.stringify({uris:playlist.map(t=>t.uri)})
-   });
- });
- if(result!==true){
-   await rt.playTrack(first);
-   return false;
- }
- return true;
+ if(!playlist.length){status('No hay suficientes canciones disponibles.',true);return false}
+ if(!rt?.account){status('Conecta Spotify para reproducir esta sesión.',true);return false}
+ return !!await rt.playSequence(playlist);
 }
 let discoveryCache=[],discoveryTime=0,discoveryTurn=0;
 try{discoveryTurn=Math.max(0,Number(localStorage.getItem('tm_discovery_turn'))||0)}catch{}
@@ -384,6 +370,21 @@ async function prepare(){
  const station=el('tm-station-play');
  if(station&&!hasSelection && !(rt?.ownerTracks?.length||rt?.playlists?.length))station.hidden=true;
 }
+async function surprisePlay(){
+ const favorites=recentWeight(recentEvents);
+ const discoveries=await lightDiscovery(favorites,true);
+ const never=unique(discoveries).filter(t=>!favorites.some(f=>f.id===t.id));
+ let queue;
+ if(never.length){
+   // Distinct from Para ahora: unfamiliar music receives priority.
+   queue=unique([...never,...favorites]).slice(0,40);
+ }else{
+   queue=arrangeSession(favorites,[]);
+ }
+ if(!queue.length){status('Todavía no hay canciones para descubrir.',true);return}
+ const ok=await startSongs(queue);
+ if(ok){recordStart(queue[0].id);rememberDiscoveries(discoveries)}
+}
 async function refreshRotation(){
  const button=el('top-refresh');
  if(!rt?.setRotation||!button)return;
@@ -402,7 +403,8 @@ async function refreshRotation(){
  }catch(e){status('No pude renovar la selección: '+e.message,true)}
  finally{button.disabled=false;button.removeAttribute('aria-busy');if(label)label.textContent=original}
 }
-el('tm-now-play').onclick=()=>void playNow();
+el('tm-now-play').onclick=()=>{rt?.player?.activateElement?.();void playNow()};
+el('random-discovery').onclick=()=>{rt?.player?.activateElement?.();void surprisePlay()};
 el('top-refresh').onclick=()=>void refreshRotation();
 play.onclick=()=>void playLiked();
 more.onclick=()=>void loadNext();
@@ -413,7 +415,7 @@ window.TransmissionTaste={
  getOwnerLiked:()=>ownerConnected?unique(liked).slice(0,40):[],
  getPublicLiked:()=>unique(liked).slice(0,40),
  getNowSongs:()=>recentWeight(recentEvents),
- refreshRotation,
+ refreshRotation,surprisePlay,
  getLiked:()=>unique(liked)
 };
 await prepare();
