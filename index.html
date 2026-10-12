@@ -153,9 +153,9 @@
       <a class="support-link" href="#support">COMPARTIR <span aria-hidden="true">↗</span></a>
     </nav>
     <div class="header-tools">
-      <button class="header-search icon-button" id="search-trigger" aria-label="Buscar en Spotify" title="Buscar en Spotify"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.4"/><path d="m15.2 15.2 5 5"/></svg></button>
+      <div class="tm-inline-search" id="tm-inline-search"><button class="header-search icon-button" id="search-trigger" aria-label="Buscar canciones" title="Buscar canciones"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.4"/><path d="m15.2 15.2 5 5"/></svg></button><input id="tm-inline-query" type="search" aria-label="Buscar música" autocomplete="off" placeholder="BUSCAR MÚSICA"><div id="tm-inline-results" class="tm-inline-results" hidden role="region" aria-label="Resultados de búsqueda"></div></div>
       <span class="tool-divider"></span>
-      <button class="header-account" id="saved-trigger" title="Conectar o desconectar Spotify"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 4h12v17l-6-4-6 4z"/></svg> <span>MI CUENTA</span></button>
+      <button class="header-account" id="saved-trigger" title="Conectar o desconectar Spotify"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 4h12v17l-6-4-6 4z"/></svg> <span id="account-name">CONECTAR</span></button>
     </div>
   </div>
   <div class="live-strip" id="radio">
@@ -180,7 +180,7 @@
       <div class="hero-topline"><span></span><span class="hero-onair" hidden><i></i> ESCUCHANDO</span></div>
       <div class="hero-caption">
         <button class="hero-play" id="hero-play" aria-label="Reproducir canción destacada" disabled><svg viewBox="0 0 40 40" aria-hidden="true"><path d="M10 5v30L34 20z"/></svg></button>
-        <p class="hero-kicker" id="hero-kicker">EN ROTACIÓN</p>
+        <p class="hero-kicker" id="hero-kicker"></p>
         <h1 class="hero-title" id="hero-title">MI MÚSICA</h1>
         <p class="hero-description" id="hero-description">Discos, canciones y descubrimientos.</p>
       </div>
@@ -207,6 +207,7 @@
     <span class="eyebrow">REPRODUCIENDO</span>
     <strong id="player-track">SIN REPRODUCCIÓN</strong>
     <small id="player-artist"></small>
+    <button id="tm-favorite" class="tm-favorite-button" type="button" aria-label="Guardar canción en Me gusta" title="Guardar canción" disabled>♡</button>
     <div class="tm-timeline">
       <span id="tm-elapsed" aria-label="Posición actual">0:00</span>
       <input id="tm-seek" type="range" min="0" max="1000" value="0" step="1" aria-label="Avanzar dentro de la canción" disabled>
@@ -399,6 +400,7 @@
 <div id="tm-mini-player" class="tm-mini-player" hidden aria-label="Reproductor compacto">
  <div id="tm-mini-cover" class="tm-mini-cover"></div>
  <div class="tm-mini-copy"><strong id="tm-mini-title"></strong><small id="tm-mini-artist"></small></div>
+ <button id="tm-mini-favorite" type="button" aria-label="Guardar en Me gusta" title="Me gusta" disabled>♡</button>
  <button id="tm-mini-toggle" type="button" aria-label="Pausar o reanudar">▶</button>
  <label class="tm-mini-volume" aria-label="Volumen"><svg viewBox="0 0 24 24" width="15" height="15" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9H4Zm12-1a6 6 0 0 1 0 8m3-11a10 10 0 0 1 0 14" stroke="currentColor" fill="none" stroke-width="1.5"/></svg><input id="tm-mini-volume" type="range" min="0" max="100" value="70" aria-label="Volumen del reproductor"></label>
 </div>
