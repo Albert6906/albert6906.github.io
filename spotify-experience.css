@@ -72,3 +72,17 @@
 @media(max-width:700px){.tm-liked-grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}.tm-playlist-cover{width:112px;height:112px;flex-basis:112px}.tm-playlist-heading{gap:14px}.tm-playlist-about h3{font-size:clamp(32px,6vw,54px)}}
 @media(max-width:540px){.mixtape-rail{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));grid-template-rows:auto}.mixtape-rail .rail-head{grid-column:1/-1;min-height:0;display:flex;padding:14px}.tm-rail-actions{flex-direction:row}.tm-rail-actions #tm-station-play,.tm-rail-actions #tm-now-play{width:50%;min-width:0}.mixtape-rail>.rail-all{display:flex!important;grid-column:1/-1}.tm-liked-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.tm-playlist-heading{align-items:start}.tm-playlist-cover{width:83px;height:83px;flex-basis:83px}.tm-playlist-about h3{font-size:34px}.tm-playlist-actions{gap:9px}.tm-playlist-actions button,.tm-playlist-actions a{font-size:12px}.tm-playlist-track{gap:8px}.tm-playlist-track-index{min-width:21px}.tm-playlist-track-title strong{font-size:15px}.tm-mini-player{bottom:9px;left:9px;width:calc(100vw - 18px)}}
 @media(prefers-reduced-motion:reduce){.tm-liked-card{animation:none}}
+
+/* Visible but restrained movement; follow play state, never invent a beat. */
+.marquee-inner{animation:move-left 43s linear infinite!important;animation-play-state:running!important;will-change:transform}
+.crosshair{animation:slow-spin 20s linear infinite!important}
+.collection-art-one:before{animation:slow-spin 59s linear infinite!important}
+.pulse-dot,.hero-onair i{opacity:.64!important}
+body.tm-is-playing .live-strip .pulse-dot,body.tm-is-playing .hero-onair i{
+  animation:tm-breathe 1.85s ease-in-out infinite!important;
+  opacity:1!important;
+}
+body:not(.tm-is-playing) .live-strip .pulse-dot{animation:none!important;opacity:.68!important}
+@media(prefers-reduced-motion:reduce){
+ .marquee-inner,.crosshair,.collection-art-one:before,.pulse-dot,.hero-onair i{animation:none!important;will-change:auto!important}
+}
