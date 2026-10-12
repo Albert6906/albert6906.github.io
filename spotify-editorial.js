@@ -427,6 +427,24 @@ async function playPlaylist(p){
     status('No se pudo iniciar el Web Player; abrí el reproductor oficial en nuestra página.',true);
   }
 }
+async function playPlaylistAt(playlist,index){
+ if(!playlist?.id||!Number.isInteger(index)||index<0)return false;
+ if(!account){showOfficialEmbed('playlist',playlist.id);return false}
+ station=null;
+ player?.activateElement?.();
+ const ok=await action(async()=>{
+   await activatePlayer();
+   await sp.api('/me/player/play?device_id='+encodeURIComponent(device),{
+     method:'PUT',body:JSON.stringify({
+       context_uri:playlist.uri||'spotify:playlist:'+playlist.id,
+       offset:{position:index}
+     })
+   });
+ });
+ if(ok)closeOfficialEmbed();
+ else showOfficialEmbed('playlist',playlist.id);
+ return ok;
+}
 async function toggle(){
   player?.activateElement?.();
   await action(async()=>{
@@ -672,7 +690,7 @@ function bind(){
   document.addEventListener('visibilitychange',()=>{if(!document.hidden&&account)void readPlaying()});
 }
 window.TransmissionRuntime={
-  sdk,activatePlayer,toggle,readPlaying,playTrack,playPlaylist,
+  sdk,activatePlayer,toggle,readPlaying,playTrack,playPlaylist,playPlaylistAt,
   action,status,
   get ready(){return ready},
   get diagnostics(){return [...diagLog]},
