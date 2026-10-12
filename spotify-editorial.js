@@ -168,7 +168,7 @@ function renderHero(index){
   $('hero-title').textContent=title(t);
   $('hero-description').textContent=artist(t);
   applyTrackArt($('hero-image'),t);
-  $('slider-count').textContent='';
+  $('slider-count').textContent=(hero+1)+' / '+arr.length;
   $('progress-fill').style.width=((hero+1)/arr.length*100)+'%';
   $('hero-play').disabled=false;
   $('pause-slide').textContent='▶';
@@ -294,7 +294,8 @@ function renderOtherDetails(){
   $('collection-count-1').textContent=list.tracks.length?list.tracks.length+' CANCIONES ↗':'';
   $('collection-count-2').textContent=list.playlists.length?list.playlists.length+' LISTAS ↗':'';
   $('collection-count-3').textContent=window.TransmissionTaste?.getLiked?.().length?window.TransmissionTaste.getLiked().length+' CANCIONES ↗':publicSnapshot?.liked?.length?publicSnapshot.liked.length+' CANCIONES ↗':'';
-  $('owner-display').textContent=ownerOnline?'MI CUENTA':account?'INVITADO':'';
+  $('owner-display').textContent=account?.display_name||account?.id?.slice(0,10)||'';
+  const accountName=$('account-name');if(accountName)accountName.textContent=account?.display_name||'CONECTAR';
   $('connect-button').textContent=account?'CONECTADO ✓':'CONECTAR';
 }
 function playFeedback(msg,err=false){status(msg,err)}
