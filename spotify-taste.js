@@ -300,8 +300,9 @@ async function prepare(){
 async function refreshRotation(){
  const button=el('top-refresh');
  if(!rt?.setRotation||!button)return;
- const prev=button.textContent;
- button.disabled=true;button.textContent='BUSCANDO…';
+ const label=button.firstChild,original=label?.textContent;
+ button.disabled=true;button.setAttribute('aria-busy','true');
+ if(label)label.textContent='BUSCANDO… ';
  try{
    const familiar=recentWeight(recentEvents);
    const discovered=await lightDiscovery(familiar,true);
@@ -312,7 +313,7 @@ async function refreshRotation(){
    rt.setRotation(rotated);
    rememberDiscoveries(discovered.slice(0,8));
  }catch(e){status('No pude renovar la selección: '+e.message,true)}
- finally{button.disabled=false;button.textContent=prev}
+ finally{button.disabled=false;button.removeAttribute('aria-busy');if(label)label.textContent=original}
 }
 el('tm-now-play').onclick=()=>void playNow();
 el('top-refresh').onclick=()=>void refreshRotation();
