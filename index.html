@@ -400,8 +400,11 @@
 <div id="tm-mini-player" class="tm-mini-player" hidden aria-label="Reproductor compacto">
  <div id="tm-mini-cover" class="tm-mini-cover"></div>
  <div class="tm-mini-copy"><strong id="tm-mini-title"></strong><small id="tm-mini-artist"></small></div>
- <button id="tm-mini-favorite" type="button" aria-label="Guardar en Me gusta" title="Me gusta" disabled>♡</button>
  <button id="tm-mini-toggle" type="button" aria-label="Pausar o reanudar">▶</button>
+ <span id="tm-mini-elapsed" class="tm-mini-time">0:00</span>
+ <input id="tm-mini-seek" type="range" min="0" max="1000" value="0" aria-label="Avanzar canción" disabled>
+ <span id="tm-mini-duration" class="tm-mini-time">0:00</span>
+ <button id="tm-mini-favorite" type="button" aria-label="Guardar en Me gusta" title="Me gusta" disabled>♡</button>
  <label class="tm-mini-volume" aria-label="Volumen"><svg viewBox="0 0 24 24" width="15" height="15" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9H4Zm12-1a6 6 0 0 1 0 8m3-11a10 10 0 0 1 0 14" stroke="currentColor" fill="none" stroke-width="1.5"/></svg><input id="tm-mini-volume" type="range" min="0" max="100" value="70" aria-label="Volumen del reproductor"></label>
 </div>
 
