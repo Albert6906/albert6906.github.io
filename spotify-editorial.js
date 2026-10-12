@@ -521,7 +521,12 @@ function renderArtistOrbit(items){
   const artists=(items||[]).slice(0,6).map(x=>String(x?.name||'').trim()).filter(Boolean);
   if(!artists.length){wrap.hidden=true;line.replaceChildren();return}
   line.replaceChildren();
-  artists.forEach(name=>line.append(create('span','',name)));
+  artists.forEach(name=>{
+    const button=create('button','',name);button.type='button';
+    button.title='Explorar '+name;
+    button.onclick=()=>window.TransmissionArtist?.open?.(name);
+    line.append(button);
+  });
   wrap.hidden=false;
 }
 async function loadOwnerExtras(){
