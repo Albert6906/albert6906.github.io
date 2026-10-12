@@ -164,7 +164,7 @@ function renderHero(index){
   hero=((index%arr.length)+arr.length)%arr.length;
   featured=arr[hero];
   const t=featured;
-  $('hero-kicker').textContent='EN ROTACIÓN';
+  $('hero-kicker').textContent='';
   $('hero-title').textContent=title(t);
   $('hero-description').textContent=artist(t);
   applyTrackArt($('hero-image'),t);
@@ -531,12 +531,12 @@ async function loadHome(){
   if(list.tracks.length){
     renderHero(0);renderTiles(list.tracks);
     if(isOwner&&!lastOnAirId){
-      $('hero-kicker').textContent='EN ROTACIÓN';
+      $('hero-kicker').textContent='';
     }else if(!isOwner){
-      $('hero-kicker').textContent='EN ROTACIÓN';
+      $('hero-kicker').textContent='';
     }
   }else{
-    $('hero-kicker').textContent='EN PORTADA';
+    $('hero-kicker').textContent='';
     $('hero-title').textContent='MI MÚSICA';
     $('hero-description').textContent='Canciones, discos y descubrimientos.';
     $('slider-count').textContent='';
