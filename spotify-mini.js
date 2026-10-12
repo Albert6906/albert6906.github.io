@@ -6,6 +6,8 @@ if(!rt)return;
 const $=id=>document.getElementById(id);
 const mini=$('tm-mini-player'),primary=$('player'),toggle=$('tm-mini-toggle');
 const miniVolume=$('tm-mini-volume'),mainVolume=$('tm-volume'),stripVolume=$('tm-strip-volume');
+const progress=$('tm-mini-seek'),mainProgress=$('tm-seek');
+let miniSeeking=false;
 if(!mini||!primary)return;
 let actualTrack=null,playing=false,mainVisible=true;
 const shapes={
@@ -14,7 +16,7 @@ const shapes={
 };
 const icon=name=>'<svg width="19" height="19" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8">'+shapes[name]+'</svg>';
 function show(){
- mini.hidden=mainVisible||!actualTrack||!rt.account;
+ mini.hidden=!actualTrack||!rt.account;
  toggle.innerHTML=icon(playing?'pause':'play');
  toggle.setAttribute('aria-label',playing?'Pausar':'Reproducir');
 }
@@ -33,6 +35,7 @@ window.addEventListener('tm:playback',e=>{
  const state=rt.state;
  if(state?.volume!=null){miniVolume.value=state.volume;if(stripVolume)stripVolume.value=state.volume}
  else if(mainVolume){miniVolume.value=mainVolume.value;if(stripVolume)stripVolume.value=mainVolume.value}
+ if(progress)progress.disabled=!rt.state?.duration;
  show()
 });
 toggle.onclick=()=>{if($('tm-play'))$('tm-play').click()};
@@ -55,5 +58,32 @@ if(typeof IntersectionObserver!=='undefined'){
  const check=()=>{const r=primary.getBoundingClientRect();mainVisible=r.bottom>0&&r.top<window.innerHeight;show()};
  window.addEventListener('scroll',check,{passive:true});window.addEventListener('resize',check);check()
 }
+if(progress&&mainProgress){
+ progress.addEventListener('pointerdown',()=>{miniSeeking=true});
+ progress.addEventListener('input',()=>{
+   miniSeeking=true;
+   const duration=rt.state?.duration||0;
+   $('tm-mini-elapsed').textContent=formatTime(Number(progress.value)/1000*duration);
+ });
+ progress.addEventListener('change',()=>{
+   miniSeeking=false;
+   mainProgress.value=progress.value;
+   mainProgress.dispatchEvent(new Event('change',{bubbles:true}));
+ });
+}
+function formatTime(ms){
+ const s=Math.floor(Math.max(0,Number(ms)||0)/1000);
+ return Math.floor(s/60)+':'+String(s%60).padStart(2,'0')
+}
+setInterval(()=>{
+ const state=rt.state;
+ if(!state?.duration||!actualTrack)return;
+ const max=state.duration;
+ $('tm-mini-duration').textContent=formatTime(max);
+ if(!miniSeeking){
+   if(mainProgress?.value)progress.value=mainProgress.value;
+   $('tm-mini-elapsed').textContent=$('tm-elapsed')?.textContent||formatTime(state.position||0);
+ }
+},1000);
 if(rt.state?.playing&&rt.currentTrack?.id)updateTrack(rt.currentTrack);
 })();
