@@ -48,6 +48,8 @@ function render(){
    }
  }
  play.disabled=!active.length;
+ const pager=el('tm-liked-pager');
+ if(pager)pager.hidden=active.length<=size && !(ownerConnected&&canFetchMore);
  const prev=el('tm-liked-prev');
  if(prev)prev.disabled=page===0||loading;
  more.disabled=loading||((page+1)*size>=active.length && !(ownerConnected&&canFetchMore));
