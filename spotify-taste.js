@@ -22,20 +22,24 @@ const unique=items=>{
  }
  return out;
 };
-let liked=[],likesTotal=0,canFetchMore=false,visible=12,loading=false;
+let liked=[],likesTotal=0,canFetchMore=false,page=0,loading=false;
+const pageSize=()=>window.matchMedia?.('(max-width:540px)').matches?2:window.matchMedia?.('(max-width:700px)').matches?3:6;
 let recentEvents=[],ownerTop=[],rt=null,ownerConnected=false,accountReady=false;
 const likedGrid=el('tm-liked-grid'),more=el('tm-liked-more'),play=el('tm-liked-play'),label=el('liked-kicker');
 function status(message,error=false){rt?.status(message,error)}
 function render(){
  likedGrid.replaceChildren();
  const active=unique(liked);
+ const size=pageSize();
+ const maximum=Math.max(0,Math.ceil(active.length/size)-1);
+ page=Math.min(page,maximum);
  if(!active.length){
-   likedGrid.append(create('p','tm-liked-empty',ownerConnected?'Spotify no devolvió canciones guardadas.':'La selección de favoritas aún no está publicada.'));
+   likedGrid.append(create('p','tm-liked-empty',ownerConnected?'No se recibieron canciones guardadas.':'Las favoritas todavía no están publicadas.'));
  }else{
-   for(const t of active.slice(0,visible)){
+   for(const t of active.slice(page*size,(page+1)*size)){
      const card=create('article','tm-liked-card');
-     const cover=create('button','tm-liked-art');
-     cover.type='button';cover.setAttribute('aria-label','Reproducir '+t.name);cover.title=t.name;
+     const cover=create('button','tm-liked-art');cover.type='button';
+     cover.setAttribute('aria-label','Reproducir '+t.name);cover.title=t.name;
      if(image(t))cover.style.backgroundImage='url("'+image(t)+'")';
      cover.onclick=()=>void rt?.playTrack(t);
      const meta=create('div','tm-liked-caption');
@@ -43,13 +47,13 @@ function render(){
      card.append(cover,meta);likedGrid.append(card);
    }
  }
- label.textContent=active.length?'FAVORITAS':'ARCHIVO';
  play.disabled=!active.length;
- more.hidden=!(active.length>visible||ownerConnected&&canFetchMore);
+ const prev=el('tm-liked-prev');
+ if(prev)prev.disabled=page===0||loading;
+ more.disabled=loading||((page+1)*size>=active.length && !(ownerConnected&&canFetchMore));
+ more.hidden=false;
  el('collection-count-3').textContent=active.length?(likesTotal||active.length)+' '+((likesTotal||active.length)===1?'CANCIÓN':'CANCIONES')+' ↗':'';
- if(!ownerConnected && rt?.publicSnapshot?.status==='ready' && !active.length){
-   label.textContent='SELECCIÓN PÚBLICA';
- }
+ label.hidden=true;
 }
 function fillPlaylistRail(){
  if(!rt||rt.playlists?.length)return;
@@ -105,19 +109,25 @@ async function loadFirst(){
 }
 async function loadNext(){
  if(loading)return;
- loading=true;more.disabled=true;
- try{
-   if(ownerConnected&&canFetchMore&&visible+12>liked.length){
+ const desired=(page+2)*pageSize();
+ if(desired>liked.length&&ownerConnected&&canFetchMore){
+   loading=true;more.disabled=true;
+   try{
      const data=await sp.api('/me/tracks?limit=50&offset='+liked.length);
-     const seen=new Set(liked.map(t=>t.id));
-     for(const row of data.items||[]){
-       const t=row.track;if(valid(t)&&!seen.has(t.id)){liked.push(t);seen.add(t.id)}
+     const known=new Set(liked.map(t=>t.id));
+     for(const row of data?.items||[]){
+       const t=row?.track;
+       if(valid(t)&&!known.has(t.id)){liked.push(t);known.add(t.id)}
      }
-     canFetchMore=!!data.next&&liked.length<(Number(data.total)||liked.length);
-   }
-   visible+=12;
- }catch(e){status('No se pudieron cargar más favoritas: '+e.message,true)}
- finally{loading=false;more.disabled=false;render()}
+     canFetchMore=!!data?.next&&liked.length<(Number(data?.total)||liked.length);
+   }catch(e){status('No se pudieron cargar más favoritas: '+e.message,true)}
+   finally{loading=false}
+ }
+ if((page+1)*pageSize()<liked.length)page++;
+ render();
+}
+function previousLiked(){
+ if(page>0){page--;render()}
 }
 function recentWeight(entries){
  const score=new Map();
@@ -361,6 +371,8 @@ el('tm-now-play').onclick=()=>void playNow();
 el('top-refresh').onclick=()=>void refreshRotation();
 play.onclick=()=>void playLiked();
 more.onclick=()=>void loadNext();
+el('tm-liked-prev').onclick=previousLiked;
+window.addEventListener?.('resize',render);
 window.TransmissionTaste={
  arrangeSession,
  getOwnerLiked:()=>ownerConnected?unique(liked).slice(0,40):[],
