@@ -295,17 +295,21 @@ function arrangeSession(familiar,discoveries){
  const never=explored.filter(t=>!starts.includes(t.id));
  const fallback=explored.filter(t=>starts.includes(t.id));
  const unknown=[...never,...fallback];
- const fresh=unknown.length>0;
  const lastIds=new Set(starts.slice(-8));
  const nonrecent=known.filter(t=>!lastIds.has(t.id));
- const pool=nonrecent.length?nonrecent:known;
- // Persisted rotation prevents the same perennial favorite from starting every session.
+ // A song from the previous session must not be forced to start again.
+ const alternatives=unique([...never,...nonrecent,...fallback,...known]);
+ const recentlyStarted=starts.slice(-Math.min(8,Math.max(1,alternatives.length-1)));
+ let starters=alternatives.filter(t=>!recentlyStarted.includes(t.id));
+ if(!starters.length)starters=alternatives;
  let turn=0;
  try{turn=Math.max(0,Number(localStorage.getItem('tm_now_turn')||0))}catch{}
  turn++;
  try{localStorage.setItem('tm_now_turn',String(turn))}catch{}
- const pick=(values,shift)=>values.length?values[(turn+shift)%values.length]:null;
- const starter=fresh?pick(unknown,0):pick(pool,0);
+ let starter=starters[(turn-1)%starters.length]||null;
+ if(starter?.id===starts.at(-1)&&starters.length>1){
+   starter=starters.find(t=>t.id!==starter.id)||starter;
+ }
  if(!starter)return [];
  const order=[starter],seen=new Set([starter.id]);
  const remainingKnown=[...known].sort((a,b)=>{
