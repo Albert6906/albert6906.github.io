@@ -267,7 +267,7 @@
     <section class="catalog-section tm-liked-section" id="liked" aria-label="Canciones guardadas">
   <div class="section-heading">
     <div><span class="eyebrow" id="liked-kicker" hidden></span><h2>ME GUSTA <span class="heading-indicator">↗</span></h2></div>
-    <div class="tm-liked-actions"><button class="view-all" id="tm-liked-play" type="button" disabled>▶ ESCUCHAR</button><button class="view-all" id="tm-liked-more" type="button" hidden>VER MÁS ↗</button></div>
+    <div class="tm-liked-actions"><button class="view-all" id="tm-liked-play" type="button" disabled>▶ ESCUCHAR</button><div class="tm-liked-pager" aria-label="Navegación de favoritas"><button id="tm-liked-prev" type="button" aria-label="Canciones anteriores" disabled>←</button><button id="tm-liked-more" type="button" aria-label="Canciones siguientes" disabled>→</button></div></div>
   </div>
   <div class="tm-liked-grid" id="tm-liked-grid" aria-live="polite"></div>
 </section>
@@ -362,10 +362,41 @@
      <div class="tm-library-filters" role="group" aria-label="Filtrar listas"><button type="button" data-filter="all" aria-pressed="true">TODAS</button><button type="button" data-filter="radios" aria-pressed="false">RADIOS / MIXES</button></div>
    </div>
    <div class="tm-library-grid" id="tm-library-grid"></div>
+<div id="tm-playlist-detail" class="tm-playlist-detail" hidden>
+  <button type="button" id="tm-playlist-back" class="tm-playlist-back">← MIS LISTAS</button>
+  <div class="tm-playlist-heading">
+    <div id="tm-playlist-cover" class="tm-playlist-cover" aria-hidden="true"></div>
+    <div class="tm-playlist-about">
+      <h3 id="tm-playlist-name"></h3>
+      <p id="tm-playlist-owner"></p>
+      <div class="tm-playlist-actions">
+        <button id="tm-playlist-all" type="button">▶ REPRODUCIR LISTA</button>
+        <a id="tm-playlist-external" target="_blank" rel="noopener noreferrer">ABRIR EN SPOTIFY ↗</a>
+      </div>
+    </div>
+  </div>
+  <div id="tm-playlist-tracks" class="tm-playlist-tracks" aria-live="polite"></div>
+  <div id="tm-playlist-frame" class="tm-playlist-frame" hidden></div>
+  <button id="tm-playlist-next" type="button" hidden>MÁS CANCIONES ↓</button>
+</div>
    <div class="tm-library-bottom"><button id="tm-library-more" type="button" hidden>CARGAR MÁS ↗</button><p id="tm-library-feedback" role="status"></p></div>
  </div>
 </div>
-  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  <div id="tm-artist-modal" class="tm-artist-modal" hidden>
+ <div class="tm-artist-body" role="dialog" aria-modal="true" aria-labelledby="tm-artist-title">
+  <div class="tm-artist-top"><h2 id="tm-artist-title"></h2><button id="tm-artist-close" type="button" aria-label="Cerrar artista">✕</button></div>
+  <div id="tm-artist-songs" class="tm-artist-songs"></div>
+  <a id="tm-artist-external" target="_blank" rel="noopener noreferrer">VER EN SPOTIFY ↗</a>
+ </div>
+</div>
+<div id="tm-mini-player" class="tm-mini-player" hidden aria-label="Reproductor compacto">
+ <div id="tm-mini-cover" class="tm-mini-cover"></div>
+ <div class="tm-mini-copy"><strong id="tm-mini-title"></strong><small id="tm-mini-artist"></small></div>
+ <button id="tm-mini-toggle" type="button" aria-label="Pausar o reanudar">▶</button>
+ <label class="tm-mini-volume" aria-label="Volumen"><svg viewBox="0 0 24 24" width="15" height="15" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9H4Zm12-1a6 6 0 0 1 0 8m3-11a10 10 0 0 1 0 14" stroke="currentColor" fill="none" stroke-width="1.5"/></svg><input id="tm-mini-volume" type="range" min="0" max="100" value="70" aria-label="Volumen del reproductor"></label>
+</div>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
 
 </body>
 </html>
