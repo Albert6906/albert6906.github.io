@@ -5,7 +5,7 @@ const rt=window.TransmissionRuntime;
 if(!rt)return;
 const $=id=>document.getElementById(id);
 const mini=$('tm-mini-player'),primary=$('player'),toggle=$('tm-mini-toggle');
-const miniVolume=$('tm-mini-volume'),mainVolume=$('tm-volume');
+const miniVolume=$('tm-mini-volume'),mainVolume=$('tm-volume'),stripVolume=$('tm-strip-volume');
 if(!mini||!primary)return;
 let actualTrack=null,playing=false,mainVisible=true;
 const shapes={
@@ -31,16 +31,20 @@ window.addEventListener('tm:track',e=>updateTrack(e.detail?.track));
 window.addEventListener('tm:playback',e=>{
  playing=!!e.detail?.playing;
  const state=rt.state;
- if(state?.volume!=null)miniVolume.value=state.volume;
- else if(mainVolume)miniVolume.value=mainVolume.value;
+ if(state?.volume!=null){miniVolume.value=state.volume;if(stripVolume)stripVolume.value=state.volume}
+ else if(mainVolume){miniVolume.value=mainVolume.value;if(stripVolume)stripVolume.value=mainVolume.value}
  show()
 });
 toggle.onclick=()=>{if($('tm-play'))$('tm-play').click()};
-miniVolume.addEventListener('input',()=>{
+function changeVolume(value){
  if(!mainVolume)return;
- mainVolume.value=miniVolume.value;
+ mainVolume.value=value;
+ miniVolume.value=value;
+ if(stripVolume)stripVolume.value=value;
  mainVolume.dispatchEvent(new Event('input',{bubbles:true}));
-});
+}
+miniVolume.addEventListener('input',()=>changeVolume(miniVolume.value));
+stripVolume?.addEventListener('input',()=>changeVolume(stripVolume.value));
 if(typeof IntersectionObserver!=='undefined'){
  const observer=new IntersectionObserver(entries=>{
    mainVisible=entries[0]?.isIntersecting!==false;
