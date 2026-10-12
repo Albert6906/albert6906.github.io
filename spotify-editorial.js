@@ -272,7 +272,7 @@ function renderRail(items){
     const label=create('span','rail-item-label');
     label.append(document.createTextNode(pl.name||'PLAYLIST'),create('small','',(pl.items?.total??pl.tracks?.total??'—')+' CANCIONES'));
     button.append(cover,label,create('span','rail-item-arrow','▶'));
-    button.onclick=()=>void playPlaylist(pl);
+    button.onclick=()=>window.TransmissionLibrary?.openDetail?.(pl)??void playPlaylist(pl);
     rail.insertBefore(button,anchor);
   });
 }
