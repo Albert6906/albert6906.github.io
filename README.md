@@ -67,3 +67,17 @@ Se conserva la composición original: portada, controles, rail, cuadrículas, bl
 - **Pruebas:** se comprobaron sintaxis y referencias de DOM; en simulaciones de propietario se cargaron carátulas y se calculó la secuencia reciente. También se verificó que una cuenta invitada no sustituye los títulos de la portada pública. Spotify real y el audio en el navegador del usuario quedan por validar.
 
 La opción «Para ahora» no representa «Spotify Radio», «Discover Weekly», «DJ», «Smart Shuffle» ni otro algoritmo privado. Consultar esas recomendaciones mediante la API de una aplicación nueva no está permitido por las restricciones de noviembre de 2024. Spotify Search únicamente permite explorar el catálogo mediante criterios explícitos.
+
+## Revisión funcional y visual adicional
+
+- El estado y los errores del reproductor ya no se imprimen debajo del reproductor; los últimos 15 errores se almacenan solo en memoria de la pestaña y están disponibles en «Más opciones → Diagnóstico». No se guardan tokens ni contraseñas en ese registro.
+- `spotify-auth.js` valida respuestas de la Web API antes de intentar interpretarlas como JSON; una respuesta no JSON genera un error manejado, sin mostrar el texto crudo de la API.
+- `spotify-library.js` añade navegador editorial de listas con búsqueda, filtro por nombres de radios/mixes y paginación de hasta 50 playlists por petición. No garantiza acceso a las radios algorítmicas de Spotify que no se exponen en `GET /me/playlists`.
+- `spotify-polish.css` y `spotify-polish.js` conservan la estructura original y ralentizan el marquee (95 s), rotaciones decorativas y punto rojo. La luz responde a reproducir/pausar, **NO al BPM real**: la API/SDK no entregan señal PCM ni pulso de audio para esa función.
+- En sesión del propietario, los artistas del bloque verde y el historial reciente se actualizan con una nueva escucha detectada por `GET /me/player`; mientras la web esté cerrada no existe sincronización pública en tiempo real sin backend independiente.
+- «Otras canciones» y «Sorpréndeme» construyen una rotación distinta con los datos actuales y, si hay permiso de catálogo, buscan más temas en distintas páginas de resultados de artistas recientes y discos. Evitan propuestas ya ofrecidas mediante una lista acotada almacenada en el navegador. No afirman ser Spotify Radio ni Spotify Recommendations.
+- Se retiraron etiquetas editoriales redundantes, explicaciones dirigidas al dueño, subtítulos duplicados, números ficticios y la frase de cierre que no aportaba contenido.
+- Validación: scripts analizados sin errores de sintaxis, ids y enlaces internos resueltos, simulación de cuenta autorizada que carga carátulas, favoritas, 50 playlists y reproduce el estado play/pause; simulación de la paginación con la solicitud `/me/playlists?limit=50&offset=50`.
+- A fecha de esta revisión, suma de los 13 archivos principales HTML/CSS/JS/SVG/JSON: **145 340 bytes (141,9 KiB)**; `index.html`: **55 765 bytes (54,5 KiB)**. Excluye fuentes, carátulas y recursos de Spotify de terceros. El tamaño informado por GitHub para el repositorio completo es aproximadamente 680 KB, incluyendo datos no equivalentes al peso transferido en una visita.
+
+El despliegue público y el audio real necesitan comprobación desde una sesión Premium autorizada en un navegador. La selección pública del propietario sigue requiriendo `featured.json` autorizado, que no ha sido recibido ni publicado (`status: pending_authorization`).
