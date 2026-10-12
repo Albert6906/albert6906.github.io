@@ -86,3 +86,9 @@ body:not(.tm-is-playing) .live-strip .pulse-dot{animation:none!important;opacity
 @media(prefers-reduced-motion:reduce){
  .marquee-inner,.crosshair,.collection-art-one:before,.pulse-dot,.hero-onair i{animation:none!important;will-change:auto!important}
 }
+
+.tm-strip-volume{display:flex;align-items:center;gap:6px;flex:0 0 auto;padding:0 9px;border-left:1px solid #4c4c4c;color:#dedede}
+.tm-strip-volume svg{width:15px;height:15px;flex:0 0 15px}
+.tm-strip-volume input{width:63px;height:12px;accent-color:var(--yellow);cursor:pointer}
+@media(max-width:770px){.tm-strip-volume{padding:0 6px}.tm-strip-volume input{width:45px}}
+@media(max-width:590px){.tm-strip-volume{display:none}}
