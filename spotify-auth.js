@@ -6,7 +6,7 @@
     clientId: '9dca144b3c2c42889f8d3f58705a85d0',
     redirectUri: 'https://salempro123a-sudo.github.io/musica.html',
     ownerId: '31irk65dnljb6i3jfg57lkixtgqu',
-    scopes: ['streaming','user-read-private','user-read-playback-state','user-modify-playback-state','user-read-currently-playing','user-top-read','user-library-read','playlist-read-private','user-read-recently-played']
+    scopes: ['streaming','user-read-private','user-read-playback-state','user-modify-playback-state','user-read-currently-playing','user-top-read','user-library-read','user-library-modify','playlist-read-private','user-read-recently-played']
   });
   const KEY='transmission_spotify_v3';
   const PKCE='transmission_spotify_pkce_v1';
