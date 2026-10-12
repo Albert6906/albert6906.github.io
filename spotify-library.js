@@ -123,6 +123,7 @@ async function loadTracks(){
 }
 async function openDetail(p){
  if(!validId(p?.id))return;
+ if(shell.hidden)open();
  requestSerial++;
  active=p;trackRows=[];trackOffset=0;trackNext=false;
  browsing(false);clearEmbed();
