@@ -92,3 +92,5 @@ body:not(.tm-is-playing) .live-strip .pulse-dot{animation:none!important;opacity
 .tm-strip-volume input{width:63px;height:12px;accent-color:var(--yellow);cursor:pointer}
 @media(max-width:770px){.tm-strip-volume{padding:0 6px}.tm-strip-volume input{width:45px}}
 @media(max-width:590px){.tm-strip-volume{display:none}}
+
+.tm-liked-pager[hidden]{display:none!important}
