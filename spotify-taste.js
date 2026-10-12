@@ -239,28 +239,70 @@ async function lightDiscovery(known,force=false){
  discoveryTime=Date.now();
  return [...discoveryCache]
 }
+function readStarts(){
+ try{return JSON.parse(localStorage.getItem('tm_recent_starts')||'[]').filter(id=>/^[A-Za-z0-9]{22}$/.test(id)).slice(-35)}
+ catch{return []}
+}
+function recordStart(id){
+ if(!id)return;
+ try{
+   const history=readStarts().filter(x=>x!==id);
+   history.push(id);
+   localStorage.setItem('tm_recent_starts',JSON.stringify(history.slice(-35)));
+ }catch{}
+}
+function arrangeSession(familiar,discoveries){
+ const known=unique(familiar);
+ const explored=unique(discoveries).filter(t=>!known.some(k=>k.id===t.id));
+ const starts=readStarts();
+ const never=explored.filter(t=>!starts.includes(t.id));
+ const fallback=explored.filter(t=>starts.includes(t.id));
+ const unknown=[...never,...fallback];
+ const fresh=unknown.length>0;
+ const lastIds=new Set(starts.slice(-8));
+ const nonrecent=known.filter(t=>!lastIds.has(t.id));
+ const pool=nonrecent.length?nonrecent:known;
+ // Persisted rotation prevents the same perennial favorite from starting every session.
+ let turn=0;
+ try{turn=Math.max(0,Number(localStorage.getItem('tm_now_turn')||0))}catch{}
+ turn++;
+ try{localStorage.setItem('tm_now_turn',String(turn))}catch{}
+ const pick=(values,shift)=>values.length?values[(turn+shift)%values.length]:null;
+ const starter=fresh?pick(unknown,0):pick(pool,0);
+ if(!starter)return [];
+ const order=[starter],seen=new Set([starter.id]);
+ const remainingKnown=[...known].sort((a,b)=>{
+   const ap=starts.lastIndexOf(a.id),bp=starts.lastIndexOf(b.id);
+   return ap-bp
+ });
+ const others=[...unknown.filter(t=>!seen.has(t.id)),...remainingKnown];
+ let avoidArtist=(t)=>artists(t).toLocaleLowerCase();
+ while(others.length&&order.length<40){
+   const last=order[order.length-1];
+   let i=others.findIndex(t=>!seen.has(t.id)&&avoidArtist(t)!==avoidArtist(last)&&t.album?.id!==last.album?.id);
+   if(i<0)i=others.findIndex(t=>!seen.has(t.id));
+   if(i<0)break;
+   const next=others.splice(i,1)[0];seen.add(next.id);order.push(next)
+ }
+ return order;
+}
 async function playNow(){
  const button=el('tm-now-play'),caption=el('tm-now-caption');
- const songs=recentWeight(recentEvents);
- if(!songs.length){status('La selección reciente aún no tiene canciones.',true);return}
+ if(button.disabled)return;
+ const known=recentWeight(recentEvents);
+ if(!known.length){status('Aún no hay canciones suficientes para preparar una sesión.',true);return}
  button.disabled=true;
- const original=caption.textContent;
- caption.textContent='Buscando canciones afines…';
+ const previous=caption.textContent;
+ caption.textContent='Buscando otras canciones…';
  try{
-   // Spotify Search supplies artist catalog tracks, not personalized Recommendation API results.
-   const discoveries=[...await lightDiscovery(songs)];
-   const queue=[];
-   for(let i=0;i<songs.length;i++){
-     queue.push(songs[i]);
-     if((i+1)%4===0 && discoveries.length)queue.push(discoveries.shift());
-   }
-   // Con un archivo pequeño también deben entrar canciones descubiertas.
-   while(discoveries.length&&queue.length<40)queue.push(discoveries.shift());
+   const discoveries=await lightDiscovery(known,true);
+   const queue=arrangeSession(known,discoveries);
+   if(!queue.length)return;
    await startSongs(queue);
-   rememberDiscoveries(queue.filter(t=>!songs.some(x=>x.id===t.id)));
- }finally{
-   button.disabled=false;caption.textContent=original;
- }
+   recordStart(queue[0]?.id);
+   rememberDiscoveries(discoveries);
+ }catch(e){status('No pude preparar la sesión: '+e.message,true)}
+ finally{button.disabled=false;caption.textContent=previous}
 }
 async function playLiked(){await startSongs(liked)}
 async function fetchRecent(){
@@ -320,6 +362,7 @@ el('top-refresh').onclick=()=>void refreshRotation();
 play.onclick=()=>void playLiked();
 more.onclick=()=>void loadNext();
 window.TransmissionTaste={
+ arrangeSession,
  getOwnerLiked:()=>ownerConnected?unique(liked).slice(0,40):[],
  getPublicLiked:()=>unique(liked).slice(0,40),
  getNowSongs:()=>recentWeight(recentEvents),
